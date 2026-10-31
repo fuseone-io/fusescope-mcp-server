@@ -65,7 +65,7 @@ allowed but skipped by the signal check.
   positive limit and non-empty v5 order. For time-series views,
   the limit selects groups over the whole requested range, so a short-lived
   locally significant series can fall outside the returned top N.
-- **Full Query Builder v5 spec:** https://signoz.io/docs/userguide/query-builder-v5/
+- **Query Builder reference:** https://fuseone-io.github.io/fusescope-docs/querying/query-builder/
 
 ## Update flow
 

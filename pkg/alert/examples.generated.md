@@ -222,109 +222,7 @@ Counts matching log records (ERROR severity + body contains) over a rolling wind
 }
 ```
 
-### 3. metric_anomaly — Metric anomaly rule
-
-Wraps a builder query in the `anomaly` function with daily seasonality, so SigNoz compares each point against the forecast for that time of day. The threshold is compared against the signed anomaly score, so `below` with a target of -2 fires when an abrupt drop holds for the entire window; `requireMinPoints` guards against noisy intervals.
-
-```json
-{
-  "alert": "Anomalous drop in ingested spans",
-  "alertType": "METRIC_BASED_ALERT",
-  "annotations": {
-    "description": "Ingestion rate for tenant {{$tenant_id}} is anomalously low (z-score {{$value}}).",
-    "summary": "Span ingestion anomaly"
-  },
-  "condition": {
-    "algorithm": "standard",
-    "compositeQuery": {
-      "panelType": "graph",
-      "queries": [
-        {
-          "spec": {
-            "aggregations": [
-              {
-                "metricName": "otelcol_receiver_accepted_spans",
-                "spaceAggregation": "sum",
-                "timeAggregation": "rate"
-              }
-            ],
-            "filter": {
-              "expression": "tenant_tier = 'premium'"
-            },
-            "functions": [
-              {
-                "args": [
-                  {
-                    "name": "z_score_threshold",
-                    "value": 2
-                  }
-                ],
-                "name": "anomaly"
-              }
-            ],
-            "groupBy": [
-              {
-                "fieldContext": "attribute",
-                "fieldDataType": "string",
-                "name": "tenant_id"
-              }
-            ],
-            "legend": "{{tenant_id}}",
-            "name": "A",
-            "signal": "metrics",
-            "stepInterval": 21600
-          },
-          "type": "builder_query"
-        }
-      ],
-      "queryType": "builder"
-    },
-    "requireMinPoints": true,
-    "requiredNumPoints": 3,
-    "seasonality": "daily",
-    "selectedQueryName": "A",
-    "thresholds": {
-      "kind": "basic",
-      "spec": [
-        {
-          "channels": [
-            "slack-ingestion"
-          ],
-          "matchType": "all_the_times",
-          "name": "warning",
-          "op": "below",
-          "target": -2
-        }
-      ]
-    }
-  },
-  "description": "Detect an abrupt drop in span ingestion using a z-score anomaly function",
-  "evaluation": {
-    "kind": "rolling",
-    "spec": {
-      "evalWindow": "24h",
-      "frequency": "3h"
-    }
-  },
-  "labels": {
-    "severity": "warning"
-  },
-  "notificationSettings": {
-    "renotify": {
-      "alertStates": [
-        "firing"
-      ],
-      "enabled": true,
-      "interval": "4h"
-    }
-  },
-  "ruleType": "anomaly_rule",
-  "schemaVersion": "v2alpha1",
-  "version": "v5"
-}
-```
-
-### 4. metric_promql — Metric threshold PromQL rule
+### 3. metric_promql — Metric threshold PromQL rule
 
 PromQL expression instead of the builder. Dotted OTEL resource attributes are quoted ("deployment.environment"). Useful for queries that combine series with group_right or other Prom operators.
 
@@ -398,7 +296,7 @@ PromQL expression instead of the builder. Dotted OTEL resource attributes are qu
 }
 ```
 
-### 5. metric_threshold_formula — Metric threshold multi-query formula
+### 4. metric_threshold_formula — Metric threshold multi-query formula
 
 Computes disk utilization as (1 - available/capacity) * 100 by combining two disabled base queries with a builder_formula. The formula emits 0–100, so compositeQuery.unit is set to "percent" and the target is a bare number.
 
@@ -534,7 +432,7 @@ Computes disk utilization as (1 - available/capacity) * 100 by combining two dis
 }
 ```
 
-### 6. metric_threshold_single — Metric threshold single builder query
+### 5. metric_threshold_single — Metric threshold single builder query
 
 Fires when a pod consumes more than 80% of its requested CPU for the whole evaluation window. Uses `k8s.pod.cpu_request_utilization`.
 
@@ -633,7 +531,7 @@ Fires when a pod consumes more than 80% of its requested CPU for the whole evalu
 }
 ```
 
-### 7. notification_settings — Full notification settings (grouping, nodata renotify, grace period)
+### 6. notification_settings — Full notification settings (grouping, nodata renotify, grace period)
 
 Demonstrates the full notificationSettings surface: `groupBy` merges alerts across labels to cut noise, `newGroupEvalDelay` gives newly-appearing series a grace period before firing, `renotify` re-alerts every 30m while firing OR while the alert is in nodata (missing data is treated as actionable), and `usePolicy: false` means channels come from the threshold entries rather than global routing policies. Set `usePolicy: true` to skip per-threshold channels and route via the org-level notification policy instead.
 
@@ -769,7 +667,7 @@ Demonstrates the full notificationSettings surface: `groupBy` merges alerts acro
 }
 ```
 
-### 8. tiered_thresholds — Tiered thresholds with per-tier channels
+### 7. tiered_thresholds — Tiered thresholds with per-tier channels
 
 Two tiers (warning and critical) in a single rule, each with its own target, op, matchType, and channels so warnings and pages route to different receivers. `alertOnAbsent` + `absentFor` fires a no-data alert when the query returns no series for 15 consecutive evaluations.
 
@@ -915,7 +813,7 @@ Two tiers (warning and critical) in a single rule, each with its own target, op,
 }
 ```
 
-### 9. traces_error_rate_formula — Traces error rate error spans / total spans × 100
+### 8. traces_error_rate_formula — Traces error rate error spans / total spans × 100
 
 Two disabled trace count queries (A = error spans where hasError=true, B = total spans) combined via a builder_formula into a percentage. Mirrors the common request-error-rate dashboard shape.
 
@@ -1049,7 +947,7 @@ Two disabled trace count queries (A = error spans where hasError=true, B = total
 }
 ```
 
-### 10. traces_threshold_latency — Traces threshold p99 latency (ns → s conversion)
+### 9. traces_threshold_latency — Traces threshold p99 latency (ns → s conversion)
 
 Builder query against the traces signal with p99(duration_nano). The series unit is ns (compositeQuery.unit), the target is in seconds (threshold.targetUnit) SigNoz converts before comparing. Canonical shape when series and target live in different units.
 

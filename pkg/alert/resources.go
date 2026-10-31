@@ -7,7 +7,7 @@ const Instructions = `# FuseScope Alert Rule — Instructions
 An alert rule monitors a signal (metrics, logs, traces, or exceptions) and fires when a condition is met.
 The alert is created via POST /api/v2/rules.
 
-Every rule type (threshold_rule, promql_rule, anomaly_rule) uses schemaVersion **v2alpha1**: structured thresholds + evaluation + notificationSettings. Always set schemaVersion="v2alpha1" explicitly: FuseScope treats an omitted schemaVersion as the retired v1 schema and then requires the v1 condition fields instead.
+Every rule type (threshold_rule, promql_rule) uses schemaVersion **v2alpha1**: structured thresholds + evaluation + notificationSettings. Always set schemaVersion="v2alpha1" explicitly: FuseScope treats an omitted schemaVersion as the retired v1 schema and then requires the v1 condition fields instead.
 
 ## Before Creating or Updating an Alert
 1. Read fusescope://alert/examples for complete payloads unless already read for the same prepared operation.
@@ -18,7 +18,7 @@ Every rule type (threshold_rule, promql_rule, anomaly_rule) uses schemaVersion *
 ## Quick Workflow: From User Intent to Payload
 A repeatable mental model for going from a user request ("alert me when login p99 > 2s") to a valid payload:
 1. **Signal -> alertType.** CPU, memory, latency histograms, request rate -> METRIC_BASED_ALERT. Log lines or log volume -> LOGS_BASED_ALERT. Span latency or span error rate -> TRACES_BASED_ALERT. Exception counts -> EXCEPTIONS_BASED_ALERT. FuseScope validates the value.
-2. **Pick ruleType.** Default to threshold_rule. Use promql_rule only if the user provided a PromQL expression. Use anomaly_rule only for metric deviation detection; see the Anomaly Alerts section for its condition fields and signed targets.
+2. **Pick ruleType.** Default to threshold_rule. Use promql_rule only if the user provided a PromQL expression. FuseScope rejects anomaly_rule.
 3. **Pick compositeQuery.queryType + matching envelope type.** See the "Query envelope type" table.
 4. **Pick the aggregation shape.** Metrics -> object {metricName, timeAggregation, spaceAggregation}. Logs/traces -> {expression: "count()" | "p99(duration_nano)" | ...}.
 5. **Write the filter.** See "Filter & Having Expressions" for the operator set. Prefer resource attributes (service.name, deployment.environment, k8s.*); the backend indexes them.
@@ -49,7 +49,7 @@ The envelope type must match compositeQuery.queryType:
 - filter: {expression: "service.name = 'frontend' AND http.status_code >= 500"}
 - groupBy: [{name, fieldContext: "resource" | "attribute", fieldDataType}]
 - order and limit: omit both on alert queries. On a grouped query they cap evaluation to the top-N series (FuseScope builds a top-N CTE from them), so series beyond N are silently never evaluated; a "below" alert ordered descending can miss every breaching series. Set them only when top-N alerting is the explicit intent, using Query Builder v5 wire ordering (metrics: [{key: {name: "__result"}, direction: "desc"}]), never dashboard editor orderBy.
-- functions: post-query transforms. Required for anomaly_rule: [{name: "anomaly", args: [{name: "z_score_threshold", value: 2}]}]
+- functions: post-query transforms
 - disabled: true when the query is used only as an input to a formula
 
 ### PromQL / ClickHouse query spec (envelope type=promql or clickhouse_sql)
@@ -266,34 +266,6 @@ Example: deployment.environment = "production" AND threshold.name = "critical"
 | false | absent on any tier | Invalid; preferredChannels is not a v2 fallback |
 | true | omit (any supplied names are still validated) | Match alert labels against the org-level routing policy; send to policy-matched channels |
 
-## Anomaly Alerts (ruleType: anomaly_rule)
-Anomaly rules use the same v2alpha1 shape and routing as threshold rules: schemaVersion="v2alpha1", condition.thresholds tiers with channels (or notificationSettings.usePolicy=true), evaluation, and notificationSettings.
-
-Required fields:
-- alertType: METRIC_BASED_ALERT
-- ruleType: anomaly_rule
-- condition.compositeQuery: a builder metrics query with spec.functions carrying the anomaly function, e.g. [{name: "anomaly", args: [{name: "z_score_threshold", value: 2}]}]
-- condition.algorithm ("standard") and condition.seasonality.
-- condition.thresholds tiers: op, matchType, and a signed target compared against the anomaly score (see Scoring). Leave targetUnit empty; a unit would rescale the score.
-- evaluation: kind=rolling, e.g. evalWindow 24h and frequency 3h.
-- condition.requireMinPoints and condition.requiredNumPoints are recommended to guard against noisy intervals.
-
-### Anomaly tuning
-- **seasonality**: "hourly" for short-period patterns, "daily" for business-hours / off-hours patterns, "weekly" for weekend-vs-weekday traffic.
-- **Deviation**: how many standard deviations count as anomalous. Use it as the magnitude of each tier target, and pass the same value as z_score_threshold in spec.functions args; z_score_threshold sets the expected-range band FuseScope returns with the scores, while the tier targets decide when the rule fires.
-
-  | Deviation | Sensitivity | Use case |
-  |-----------|-------------|----------|
-  | 4.0 | Conservative | Only the strongest anomalies; minimal false positives |
-  | 3.0 | Balanced (recommended) | Default choice for most series |
-  | 2.5 | Sensitive | Catch moderate deviations |
-  | 2.0 | Very sensitive | Catch small deviations; higher risk of false positives |
-
-- **Scoring**: anomaly_score = (actual_value − predicted_value) / stddev(current_season), so it is negative when the value falls below the forecast. Each tier compares this signed score with its op and target: op="above", target=3 fires on a rise of more than 3 standard deviations; op="below", target=-3 fires on a drop of more than 3; op="outside_bounds", target=3 compares the absolute score and fires on either.
-- **evalWindow** selects the period being evaluated (e.g. 5m); seasonality controls separate historical lookbacks. Check data coverage across those lookbacks before choosing an anomaly rule. Increasing evalWindow does not supply missing history.
-
-See fusescope://alert/examples → "metric_anomaly" for a complete payload.
-
 ## Set These Explicitly
 The payload is forwarded to FuseScope exactly as composed, and FuseScope fills in very little (version="v5" and notificationSettings.usePolicy=false). Everything else is on the author:
 - schemaVersion: always "v2alpha1"; FuseScope treats an omitted schemaVersion as the retired v1 schema and then requires the v1 condition fields.
@@ -305,13 +277,7 @@ The payload is forwarded to FuseScope exactly as composed, and FuseScope fills i
 
 ## Further Reading
 User-facing docs. Cite these back to the user when they want to understand a concept in depth:
-- Metrics alerts: https://signoz.io/docs/alerts-management/metrics-based-alerts
-- Log alerts: https://signoz.io/docs/alerts-management/log-based-alerts
-- Trace alerts: https://signoz.io/docs/alerts-management/trace-based-alerts
-- Exception alerts: https://signoz.io/docs/alerts-management/exceptions-based-alerts
-- Anomaly alerts: https://signoz.io/docs/alerts-management/anomaly-based-alerts
-- Routing policies: https://signoz.io/docs/alerts-management/routing-policy
-- Planned maintenance: https://signoz.io/docs/alerts-management/planned-maintenance
-- Notification channel setup: https://signoz.io/docs/setup-alerts-notification
-- Alerts history: https://signoz.io/docs/alerts-management/alerts-history
+- Alert rules: https://fuseone-io.github.io/fusescope-docs/alerts/alert-rules/
+- Routing policies and planned downtime: https://fuseone-io.github.io/fusescope-docs/alerts/routing-and-downtime/
+- Notification channels: https://fuseone-io.github.io/fusescope-docs/alerts/notification-channels/
 `

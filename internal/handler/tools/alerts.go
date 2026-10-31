@@ -97,7 +97,7 @@ func (h *Handler) RegisterAlertsHandlers(s *mcp.Server) {
 		withCreateToolAnnotations(),
 		mcp.WithDescription(
 			"Use this when the user wants a new FuseScope alert rule; use fusescope_update_alert to change an existing rule. "+
-				"Supports v2alpha1 threshold, PromQL, and metric anomaly alerts. Read fusescope://alert/instructions and fusescope://alert/examples before composing any payload, unless already read in the same prepared operation; for PromQL also read fusescope://promql/instructions. "+
+				"Supports v2alpha1 threshold and PromQL alerts; FuseScope rejects anomaly_rule. Read fusescope://alert/instructions and fusescope://alert/examples before composing any payload, unless already read in the same prepared operation; for PromQL also read fusescope://promql/instructions. "+
 				"For direct routing, reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If none fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never guess or create automatically. FuseScope rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
 		),
 		mcp.WithInputSchema[types.CreateAlertInput](),
@@ -573,7 +573,7 @@ func (h *Handler) registerAlertResources(s *mcp.Server) {
 	alertInstructions := mcp.NewResource(
 		"fusescope://alert/instructions",
 		"Alert Rule Instructions",
-		mcp.WithResourceDescription("Read this before creating or updating an alert unless its current content was already read for the same prepared operation. It explains the query envelopes, threshold tiers, and evaluation specs the input schema does not describe, anomaly scoring, and when to reuse or call fusescope_list_notification_channels. Read fusescope://alert/examples only when examples are still needed."),
+		mcp.WithResourceDescription("Read this before creating or updating an alert unless its current content was already read for the same prepared operation. It explains the query envelopes, threshold tiers, and evaluation specs the input schema does not describe, and when to reuse or call fusescope_list_notification_channels. Read fusescope://alert/examples only when examples are still needed."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(alert.Instructions))),
 	)
@@ -591,7 +591,7 @@ func (h *Handler) registerAlertResources(s *mcp.Server) {
 	alertExamples := mcp.NewResource(
 		"fusescope://alert/examples",
 		"Alert Rule Examples",
-		mcp.WithResourceDescription("Read this after fusescope://alert/instructions only when examples are still needed. Resolve illustrative direct/anomaly names with fusescope_list_notification_channels; if none fits, offer fusescope_create_notification_channel. Confirmed v2 policy routing may omit direct channels."),
+		mcp.WithResourceDescription("Read this after fusescope://alert/instructions only when examples are still needed. Resolve illustrative channel names with fusescope_list_notification_channels; if none fits, offer fusescope_create_notification_channel. Confirmed v2 policy routing may omit direct channels."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(alert.Examples))),
 	)
