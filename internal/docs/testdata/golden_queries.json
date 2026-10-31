@@ -5,7 +5,7 @@
       "https://fuseone-io.github.io/fusescope-docs/install/helm/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "otlp endpoints",
@@ -13,7 +13,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/otlp/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "instrument java application",
@@ -21,7 +21,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/instrumentation/java/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "instrument python opentelemetry",
@@ -29,7 +29,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/instrumentation/python/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "nodejs instrumentation",
@@ -37,7 +37,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/instrumentation/nodejs/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 2
   },
   {
     "query": "collector docker",
@@ -45,7 +45,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/collector-docker/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "kubernetes logs",
@@ -53,7 +53,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/logs-kubernetes/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "syslog",
@@ -61,7 +61,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/logs-syslog/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "log pipelines",
@@ -69,7 +69,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/log-pipelines/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "postgresql integration",
@@ -77,7 +77,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/integrations/postgresql/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "redis metrics",
@@ -86,7 +86,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/integrations/aws-elasticache-redis/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "dashboard variables",
@@ -94,7 +94,7 @@
       "https://fuseone-io.github.io/fusescope-docs/dashboards/variables/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "notification channels",
@@ -102,7 +102,7 @@
       "https://fuseone-io.github.io/fusescope-docs/alerts/notification-channels/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "service accounts api key",
@@ -110,7 +110,7 @@
       "https://fuseone-io.github.io/fusescope-docs/administration/service-accounts/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "data retention",
@@ -118,7 +118,7 @@
       "https://fuseone-io.github.io/fusescope-docs/administration/retention/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "source maps",
@@ -126,7 +126,7 @@
       "https://fuseone-io.github.io/fusescope-docs/frontend/source-maps/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "search syntax",
@@ -134,7 +134,7 @@
       "https://fuseone-io.github.io/fusescope-docs/querying/search-syntax/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "single sign-on",
@@ -142,7 +142,7 @@
       "https://fuseone-io.github.io/fusescope-docs/configuration/sso/"
     ],
     "style": "keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "how do I find why a service is failing",
@@ -150,7 +150,7 @@
       "https://fuseone-io.github.io/fusescope-docs/guides/failing-service/"
     ],
     "style": "sentence",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "how to investigate a slow endpoint",
@@ -158,7 +158,7 @@
       "https://fuseone-io.github.io/fusescope-docs/guides/slow-endpoint/"
     ],
     "style": "sentence",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "how can I see the logs for one request",
@@ -166,7 +166,7 @@
       "https://fuseone-io.github.io/fusescope-docs/guides/logs-for-a-request/"
     ],
     "style": "sentence",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "how do I create my first alert",
@@ -175,7 +175,7 @@
       "https://fuseone-io.github.io/fusescope-docs/alerts/alert-rules/"
     ],
     "style": "sentence",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "how do I build a dashboard",
@@ -184,7 +184,7 @@
       "https://fuseone-io.github.io/fusescope-docs/dashboards/dashboards/"
     ],
     "style": "sentence",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "how do I silence alerts during planned maintenance",
@@ -192,7 +192,7 @@
       "https://fuseone-io.github.io/fusescope-docs/alerts/routing-and-downtime/"
     ],
     "style": "sentence",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "rum",
@@ -208,7 +208,7 @@
       "https://fuseone-io.github.io/fusescope-docs/configuration/sso/"
     ],
     "style": "abbreviation",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "k8s logs",
@@ -216,7 +216,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/logs-kubernetes/"
     ],
     "style": "abbreviation",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "apm services",
@@ -224,7 +224,7 @@
       "https://fuseone-io.github.io/fusescope-docs/apm/services/"
     ],
     "style": "abbreviation",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "llm observability",
@@ -233,7 +233,7 @@
       "https://fuseone-io.github.io/fusescope-docs/analyze/ai-observability-python/"
     ],
     "style": "abbreviation",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "rds postgres",
@@ -241,7 +241,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/integrations/aws-rds-postgresql/"
     ],
     "style": "abbreviation",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "traces explorer filter spans",
@@ -249,7 +249,7 @@
       "https://fuseone-io.github.io/fusescope-docs/explore/traces/"
     ],
     "style": "production-raw",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "trace details waterfall",
@@ -257,7 +257,7 @@
       "https://fuseone-io.github.io/fusescope-docs/explore/trace-details/"
     ],
     "style": "production-raw",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "logs explorer",
@@ -265,7 +265,7 @@
       "https://fuseone-io.github.io/fusescope-docs/explore/logs/"
     ],
     "style": "production-raw",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "metrics explorer",
@@ -273,7 +273,7 @@
       "https://fuseone-io.github.io/fusescope-docs/explore/metrics/"
     ],
     "style": "production-raw",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "clickhouse sql promql panel",
@@ -281,7 +281,7 @@
       "https://fuseone-io.github.io/fusescope-docs/querying/clickhouse-promql/"
     ],
     "style": "production-raw",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "service map",
@@ -289,7 +289,7 @@
       "https://fuseone-io.github.io/fusescope-docs/apm/service-map/"
     ],
     "style": "production-keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "exceptions",
@@ -297,7 +297,7 @@
       "https://fuseone-io.github.io/fusescope-docs/apm/exceptions/"
     ],
     "style": "production-keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "messaging queues kafka",
@@ -305,7 +305,7 @@
       "https://fuseone-io.github.io/fusescope-docs/analyze/messaging-queues/"
     ],
     "style": "production-keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "external apis",
@@ -313,7 +313,7 @@
       "https://fuseone-io.github.io/fusescope-docs/analyze/external-apis/"
     ],
     "style": "production-keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "cost meter",
@@ -321,7 +321,7 @@
       "https://fuseone-io.github.io/fusescope-docs/analyze/cost-meter/"
     ],
     "style": "production-keyword",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "send logs from files with the collector",
@@ -329,7 +329,7 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/logs-files/"
     ],
     "style": "production-real",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "set up android app monitoring",
@@ -337,7 +337,7 @@
       "https://fuseone-io.github.io/fusescope-docs/frontend/set-up-android/"
     ],
     "style": "production-real",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "upload r8 mapping files",
@@ -345,7 +345,7 @@
       "https://fuseone-io.github.io/fusescope-docs/frontend/r8-mappings/"
     ],
     "style": "production-real",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "query builder aggregation group by",
@@ -353,7 +353,7 @@
       "https://fuseone-io.github.io/fusescope-docs/querying/query-builder/"
     ],
     "style": "production-real",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "users and roles permissions",
@@ -361,7 +361,7 @@
       "https://fuseone-io.github.io/fusescope-docs/administration/users-and-roles/"
     ],
     "style": "production-real",
-    "baseline_rank": 0
+    "baseline_rank": 1
   },
   {
     "query": "prometheus scrape metrics",
@@ -369,6 +369,6 @@
       "https://fuseone-io.github.io/fusescope-docs/sending-data/prometheus/"
     ],
     "style": "production-real",
-    "baseline_rank": 0
+    "baseline_rank": 1
   }
 ]

@@ -6,25 +6,21 @@
     "jsonrpc": "2.0",
     "method": "resources/read",
     "params": {
-      "uri": "fusescope://docs/sitemap"
+      "uri": "fusescope://fusescope-docs/sitemap"
     }
   },
   "httpStatus": 200,
   "contentType": "application/json",
   "framing": "json",
   "response": {
+    "error": {
+      "code": -32602,
+      "data": {
+        "uri": "fusescope://fusescope-docs/sitemap"
+      },
+      "message": "Resource not found"
+    },
     "id": 0,
-    "jsonrpc": "2.0",
-    "result": {
-      "cacheScope": "public",
-      "contents": [
-        {
-          "mimeType": "text/markdown",
-          "text": "- [Send logs](https://signoz.io/docs/logs-management/send-logs/)\n- [Install Docker](https://signoz.io/docs/install/docker/)\n",
-          "uri": "fusescope://docs/sitemap"
-        }
-      ],
-      "ttlMs": 0
-    }
+    "jsonrpc": "2.0"
   }
 }

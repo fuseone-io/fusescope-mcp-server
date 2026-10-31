@@ -5108,7 +5108,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this after fusescope_search_docs, or when an exact official SigNoz docs URL or /docs/... path is known, to return one page's full Markdown or a requested heading. Do not use it to discover pages or query live tenant data; use fusescope_search_docs for topical discovery.",
+          "description": "Use this after fusescope_search_docs, or when an exact official FuseScope docs URL or /fusescope-docs/... path is known, to return one page's full Markdown or a requested heading. Do not use it to discover pages or query live tenant data; use fusescope_search_docs for topical discovery.",
           "inputSchema": {
             "properties": {
               "heading": {
@@ -5120,7 +5120,7 @@
                 "type": "string"
               },
               "url": {
-                "description": "Full https://signoz.io/docs/... URL or /docs/... path.",
+                "description": "Full https://fuseone-io.github.io/fusescope-docs/... URL or /fusescope-docs/... path.",
                 "type": "string"
               }
             },
@@ -7473,7 +7473,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Search official SigNoz documentation and return ranked pages with URLs and snippets for product, setup, instrumentation, configuration, API, deployment, or troubleshooting questions. Send 2 to 6 keywords for one topic and keep product and technology names as the user wrote them; split multi-intent questions into separate calls. If the top result is off-topic, retry with fewer or different terms. Do not use for live tenant data; use fusescope_fetch_doc for the full content of a selected result or exact docs URL.",
+          "description": "Search the official FuseScope documentation and return ranked pages with URLs and snippets for product, setup, instrumentation, configuration, API, deployment, or troubleshooting questions. Send 2 to 6 keywords for one topic and keep product and technology names as the user wrote them; split multi-intent questions into separate calls. If the top result is off-topic, retry with fewer or different terms. Do not use for live tenant data; use fusescope_fetch_doc for the full content of a selected result or exact docs URL.",
           "inputSchema": {
             "properties": {
               "limit": {
@@ -7493,7 +7493,7 @@
                 "type": "string"
               },
               "section_slug": {
-                "description": "Optional exact top-level docs section filter, for example \"setup\", \"logs-management\", \"apm-distributed-tracing\", \"metrics\", \"alerts\", \"dashboards\", \"signoz-apis\", \"querying\", or \"collection-agents\". Reuse the section_slug from an earlier result when narrowing; an unknown slug returns zero results.",
+                "description": "Optional exact top-level docs section filter, for example \"start-here\", \"install\", \"send-data\", \"how-to-guides\", \"observe\", \"frontend-rum\", \"respond\", \"analyze\", \"query-reference\", or \"operate\". Reuse the section_slug from an earlier result when narrowing; an unknown slug returns zero results.",
                 "type": "string"
               }
             },

@@ -122,6 +122,12 @@
           "uri": "fusescope://dashboard/widgets-examples"
         },
         {
+          "description": "Use this resource when an MCP client needs the indexed official FuseScope documentation catalog and page URLs. Use fusescope_search_docs for topical discovery and fusescope_fetch_doc for page content.",
+          "mimeType": "text/markdown",
+          "name": "FuseScope Docs Sitemap",
+          "uri": "fusescope://docs/sitemap"
+        },
+        {
           "description": "Read this before writing Query Builder v5 JSON for logs or filtering on unfamiliar log fields. It explains filter syntax, field discovery, body, JSON-path, and cross-field search(), row and aggregate queries, stable pagination, limits, ordering, timestamps, and examples for rows, single values, and time series.",
           "mimeType": "text/markdown",
           "name": "Logs Query Builder Guide",
@@ -176,12 +182,6 @@
           "name": "Saved View Instructions",
           "size": 5623,
           "uri": "fusescope://view/instructions"
-        },
-        {
-          "description": "Use this resource when an MCP client needs the indexed official SigNoz documentation catalog and page URLs. Use fusescope_search_docs for topical discovery and fusescope_fetch_doc for page content.",
-          "mimeType": "text/markdown",
-          "name": "SigNoz Docs Sitemap",
-          "uri": "fusescope://docs/sitemap"
         },
         {
           "description": "Read this before writing Query Builder v5 JSON for traces or filtering on unfamiliar trace fields. It explains filter syntax, field discovery, built-in span fields, row and aggregate queries, limits, ordering, timestamps, and examples for rows, single values, and time series.",

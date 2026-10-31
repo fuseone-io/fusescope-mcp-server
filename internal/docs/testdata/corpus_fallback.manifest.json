@@ -1,0 +1,19 @@
+{
+  "schema_version": 2,
+  "built_at": "2026-10-31T16:42:05.310455008Z",
+  "sitemap_hash": "af1be6f4850c35418b21582002c3e3173b1c124d5d296c09cb6a6a1531ef5d77",
+  "pages": [
+    {
+      "url": "https://fuseone-io.github.io/fusescope-docs/explore/logs/",
+      "title": "Logs Explorer",
+      "sha256": "c1f3dfa606253d20f701e79a81081d0893d94916d2f7c032c76f83acd7b408a4",
+      "fetched_at": "2026-10-31T16:42:05.310455008Z"
+    },
+    {
+      "url": "https://fuseone-io.github.io/fusescope-docs/install/helm/",
+      "title": "Install with Helm",
+      "sha256": "28b018f035a991fb5c85f71f20d50081507d3794762da3efada2cfbd8a0e6bd5",
+      "fetched_at": "2026-10-31T16:42:05.310455008Z"
+    }
+  ]
+}
