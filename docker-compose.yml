@@ -1,9 +1,9 @@
 services:
-  signoz-mcp-server:
-    build: 
+  fusescope-mcp-server:
+    build:
       context: .
       dockerfile: Dockerfile
-    container_name: signoz-mcp-server
+    container_name: fusescope-mcp-server
     ports:
       - "${MCP_SERVER_PORT:-8000}:8000"
     environment:
@@ -14,11 +14,11 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-info}
     restart: unless-stopped
     networks:
-      - signoz-mcp-network
+      - fusescope-mcp-network
     labels:
-      - "com.signoz.service=signoz-mcp-server"
-      - "com.signoz.description=SigNoz MCP Server for AI assistants"
+      - "io.fuseone.service=fusescope-mcp-server"
+      - "io.fuseone.description=FuseScope MCP Server for AI assistants"
 
 networks:
-  signoz-mcp-network:
+  fusescope-mcp-network:
     driver: bridge
