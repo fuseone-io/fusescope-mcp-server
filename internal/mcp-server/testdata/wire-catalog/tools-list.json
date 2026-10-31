@@ -503,13 +503,6 @@
                       "boolean"
                     ]
                   },
-                  "algorithm": {
-                    "description": "anomaly_rule only: the anomaly detection algorithm. The supported value is standard.",
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
                   "compositeQuery": {
                     "description": "The queries whose result is compared against the thresholds.",
                     "properties": {
@@ -572,13 +565,6 @@
                     "type": [
                       "null",
                       "integer"
-                    ]
-                  },
-                  "seasonality": {
-                    "description": "anomaly_rule only: the seasonal period the history is compared against, hourly, daily or weekly.",
-                    "type": [
-                      "null",
-                      "string"
                     ]
                   },
                   "selectedQueryName": {
@@ -727,7 +713,11 @@
                 ]
               },
               "ruleType": {
-                "description": "The evaluation strategy: threshold_rule compares against thresholds, promql_rule evaluates a PromQL expression, anomaly_rule scores deviation from seasonal history. Defaults to threshold_rule for builder and clickhouse_sql queries and is forced to promql_rule for promql queries.",
+                "description": "The evaluation strategy: threshold_rule compares against thresholds, promql_rule evaluates a PromQL expression. Defaults to threshold_rule for builder and clickhouse_sql queries and is forced to promql_rule for promql queries.",
+                "enum": [
+                  "threshold_rule",
+                  "promql_rule"
+                ],
                 "type": "string"
               },
               "schemaVersion": {
@@ -8032,13 +8022,6 @@
                       "boolean"
                     ]
                   },
-                  "algorithm": {
-                    "description": "anomaly_rule only: the anomaly detection algorithm. The supported value is standard.",
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
                   "compositeQuery": {
                     "description": "The queries whose result is compared against the thresholds.",
                     "properties": {
@@ -8101,13 +8084,6 @@
                     "type": [
                       "null",
                       "integer"
-                    ]
-                  },
-                  "seasonality": {
-                    "description": "anomaly_rule only: the seasonal period the history is compared against, hourly, daily or weekly.",
-                    "type": [
-                      "null",
-                      "string"
                     ]
                   },
                   "selectedQueryName": {
@@ -8264,7 +8240,11 @@
                 "type": "string"
               },
               "ruleType": {
-                "description": "The evaluation strategy: threshold_rule compares against thresholds, promql_rule evaluates a PromQL expression, anomaly_rule scores deviation from seasonal history. Defaults to threshold_rule for builder and clickhouse_sql queries and is forced to promql_rule for promql queries.",
+                "description": "The evaluation strategy: threshold_rule compares against thresholds, promql_rule evaluates a PromQL expression. Defaults to threshold_rule for builder and clickhouse_sql queries and is forced to promql_rule for promql queries.",
+                "enum": [
+                  "threshold_rule",
+                  "promql_rule"
+                ],
                 "type": "string"
               },
               "schemaVersion": {
