@@ -10,7 +10,7 @@ package promql
 // tool descriptions, and the dashboard widgets-instructions resource.
 const Instructions = `
 FuseScope PromQL Guide
-Source: https://signoz.io/docs/userguide/write-a-prom-query-with-new-format/
+Reference: https://fuseone-io.github.io/fusescope-docs/querying/clickhouse-promql/
 ================================================================================
 CRITICAL RULES
 ================================================================================

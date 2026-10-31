@@ -75,7 +75,7 @@
     },
     {
       "name": "fusescope_create_alert",
-      "description": "Create a v2alpha1 threshold, PromQL, or anomaly alert; direct routing resolves exact displayName values with fusescope_list_notification_channels, while confirmed v2 policy routing may omit channels"
+      "description": "Create a v2alpha1 threshold or PromQL alert; direct routing resolves exact displayName values with fusescope_list_notification_channels, while confirmed v2 policy routing may omit channels"
     },
     {
       "name": "fusescope_update_alert",
@@ -214,13 +214,13 @@
     {
       "uri": "fusescope://alert/examples",
       "name": "Alert Rule Examples",
-      "description": "Read this after fusescope://alert/instructions only when examples are still needed. Resolve illustrative direct/anomaly names with fusescope_list_notification_channels; if none fits, offer fusescope_create_notification_channel. Confirmed v2 policy routing may omit direct channels.",
+      "description": "Read this after fusescope://alert/instructions only when examples are still needed. Resolve illustrative channel names with fusescope_list_notification_channels; if none fits, offer fusescope_create_notification_channel. Confirmed v2 policy routing may omit direct channels.",
       "mimeType": "text/markdown"
     },
     {
       "uri": "fusescope://alert/instructions",
       "name": "Alert Rule Instructions",
-      "description": "Read this before creating or updating an alert unless its current content was already read for the same prepared operation. It explains the query envelopes, threshold tiers, and evaluation specs the input schema does not describe, anomaly scoring, and when to reuse or call fusescope_list_notification_channels. Read fusescope://alert/examples only when examples are still needed.",
+      "description": "Read this before creating or updating an alert unless its current content was already read for the same prepared operation. It explains the query envelopes, threshold tiers, and evaluation specs the input schema does not describe, and when to reuse or call fusescope_list_notification_channels. Read fusescope://alert/examples only when examples are still needed.",
       "mimeType": "text/markdown"
     },
     {

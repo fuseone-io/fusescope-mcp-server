@@ -228,6 +228,10 @@ def dashboard_schemas(spec: Spec) -> dict[str, dict]:
 
 # ---- examples rendering -----------------------------------------------------------
 
+# Spec examples for features the FuseScope community build rejects
+# (anomaly_rule: "unsupported rule type").
+UNSUPPORTED_EXAMPLES = {("post", "/api/v2/rules"): {"metric_anomaly"}}
+
 
 def render_examples(spec: Spec, title: str, operations: Iterable[tuple[str, str, str]], extra: str = "") -> str:
     """Render the request examples of the given operations as Markdown.
@@ -245,7 +249,8 @@ def render_examples(spec: Spec, title: str, operations: Iterable[tuple[str, str,
     if extra:
         lines += [extra.rstrip("\n"), ""]
     for method, path, heading in operations:
-        examples = spec.request_examples(path, method)
+        skipped = UNSUPPORTED_EXAMPLES.get((method, path), set())
+        examples = {k: v for k, v in spec.request_examples(path, method).items() if k not in skipped}
         lines += [f"## {heading}", ""]
         for index, (key, example) in enumerate(examples.items(), start=1):
             summary = example.get("summary") or key
