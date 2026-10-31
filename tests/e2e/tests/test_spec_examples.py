@@ -205,5 +205,7 @@ def test_query_builder_examples_execute(mcp_client: MCPClient) -> None:
     start = end - 30 * 60 * 1000
     for title, query in section(text, "Run a query"):
         body = {**query, "start": start, "end": end}
-        result = mcp_client.call_tool("fusescope_execute_builder_query", {"searchContext": f"run {title}", "query": body})
+        result = mcp_client.call_tool(
+            "fusescope_execute_builder_query", {"searchContext": f"run {title}", "query": body}
+        )
         assert not result.get("isError", False), f"{title}: {text_blocks(result)[:600]}"

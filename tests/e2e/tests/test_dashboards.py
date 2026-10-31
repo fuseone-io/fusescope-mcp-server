@@ -176,7 +176,8 @@ def test_text_panel_create_get_update_patch_defaults_layout_and_cleanup(mcp_clie
         assert "deleted" in text_blocks(deleted_result).lower()
         deleted = True
         gone = mcp_client.call_tool(
-            "fusescope_get_dashboard", {"searchContext": f"confirm dashboard {dashboard_id} is gone", "id": dashboard_id}
+            "fusescope_get_dashboard",
+            {"searchContext": f"confirm dashboard {dashboard_id} is gone", "id": dashboard_id},
         )
         assert gone.get("isError", False), f"dashboard {dashboard_id} remained after delete"
     finally:

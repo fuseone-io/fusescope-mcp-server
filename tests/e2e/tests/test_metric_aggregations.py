@@ -128,7 +128,9 @@ def test_metadata_lookup_matches_the_exact_name(mcp_client: MCPClient, test_id: 
     )
     assert missing.get("isError", False), f"the prefix of {gauge} resolved as a metric: {note_blocks(missing)}"
     assert result_code(missing) == "VALIDATION_FAILED", f"unexpected code: {missing}"
-    assert "Search for the right name with fusescope_list_metrics" in first_text_block(missing), first_text_block(missing)
+    assert "Search for the right name with fusescope_list_metrics" in first_text_block(missing), first_text_block(
+        missing
+    )
 
 
 def test_scalar_requires_an_explicit_reduce_to(mcp_client: MCPClient, test_id: str, telemetry: None) -> None:

@@ -66,7 +66,9 @@ def seeded(mcp_client: MCPClient, telemetry: None) -> Seeded:
 
 
 def search_rows(client: MCPClient, arguments: dict) -> list[dict]:
-    result = assert_tool_ok(client.call_tool("fusescope_search_traces", {"timeRange": "1h", "limit": "50", **arguments}))
+    result = assert_tool_ok(
+        client.call_tool("fusescope_search_traces", {"timeRange": "1h", "limit": "50", **arguments})
+    )
     return query_range_rows(first_text_block(result))
 
 
@@ -326,7 +328,9 @@ def test_ai_alert_round_trip(mcp_client: MCPClient, seeded: Seeded, test_id: str
         "evaluation": {"kind": "rolling", "spec": {"evalWindow": "5m", "frequency": "1m"}},
         "notificationSettings": {"usePolicy": True},
     }
-    created = assert_tool_ok(mcp_client.call_tool("fusescope_create_alert", {"searchContext": "alert on AI cost", **rule}))
+    created = assert_tool_ok(
+        mcp_client.call_tool("fusescope_create_alert", {"searchContext": "alert on AI cost", **rule})
+    )
     rule_id = (first_block_json(created).get("data") or {}).get("id")
     assert isinstance(rule_id, str) and rule_id, f"create_alert returned no rule id: {first_text_block(created)[:300]}"
     try:

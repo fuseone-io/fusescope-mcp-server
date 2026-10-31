@@ -67,7 +67,9 @@ def create_rule(client: MCPClient, rule: dict) -> str:
 
 
 def delete_rule(client: MCPClient, rule_id: str) -> None:
-    assert_tool_ok(client.call_tool("fusescope_delete_alert", {"searchContext": f"delete rule {rule_id}", "id": rule_id}))
+    assert_tool_ok(
+        client.call_tool("fusescope_delete_alert", {"searchContext": f"delete rule {rule_id}", "id": rule_id})
+    )
 
 
 def listed_rule_names(client: MCPClient) -> set:
@@ -93,7 +95,9 @@ def test_alert_crud_round_trip(mcp_client: MCPClient, test_id: str) -> None:
         assert rule.get("alertType") == "METRIC_BASED_ALERT"
         assert rule.get("schemaVersion") == "v2alpha1", f"schemaVersion did not round-trip: {rule.get('schemaVersion')}"
         by_alias = assert_tool_ok(
-            mcp_client.call_tool("fusescope_get_alert", {"searchContext": f"get rule {name} by alias", "ruleId": rule_id})
+            mcp_client.call_tool(
+                "fusescope_get_alert", {"searchContext": f"get rule {name} by alias", "ruleId": rule_id}
+            )
         )
         assert first_block_json(by_alias)["data"].get("alert") == name, "the legacy ruleId alias read another rule"
 
