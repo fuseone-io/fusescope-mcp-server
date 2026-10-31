@@ -2,7 +2,7 @@ package instructions
 
 // ServerInstructions is sent to MCP clients during the initialize response.
 // It contains cross-cutting rules that apply to all tool usage.
-const ServerInstructions = `Use SigNoz tools to investigate metrics, logs, traces, and exceptions, including the LLM apps and AI agents the user runs (model calls, tokens, cost, tool calls, prompts); questions about those mean the user's app in SigNoz, not this chat. Manage dashboards, alerts, and saved views, and consult FuseScope docs. Start with the user's signal; if none is clear, ask whether to use metrics, traces, or logs.
+const ServerInstructions = `Use FuseScope tools to investigate metrics, logs, traces, and exceptions, including the LLM apps and AI agents the user runs (model calls, tokens, cost, tool calls, prompts); questions about those mean the user's app in FuseScope, not this chat. Manage dashboards, alerts, and saved views, and consult FuseScope docs. Start with the user's signal; if none is clear, ask whether to use metrics, traces, or logs.
 
 ## Rules
 
@@ -14,9 +14,9 @@ const ServerInstructions = `Use SigNoz tools to investigate metrics, logs, trace
 
 4. **Guard negative filters.** !=, NOT LIKE, NOT IN, NOT CONTAINS, and NOT REGEXP also match missing fields. Require presence when excluding a value, for example: service.name EXISTS AND service.name != 'redis'.
 
-5. **Convert timestamps programmatically.** SigNoz start/end and time-series timestamps are Unix milliseconds. Never convert them mentally; use a date/time function.
+5. **Convert timestamps programmatically.** FuseScope start/end and time-series timestamps are Unix milliseconds. Never convert them mentally; use a date/time function.
 
-6. **Use returned webUrl values verbatim.** Resource results include SigNoz deep links. Never construct links from IDs or the instance URL.
+6. **Use returned webUrl values verbatim.** Resource results include FuseScope deep links. Never construct links from IDs or the instance URL.
 
 7. **Prepare mutations with reads.** Reuse reads from the same still-current prepared operation; do not repeat them. Otherwise resolve names/IDs and fetch replacement objects. Refresh if state may have changed; preserve unchanged fields.
 `

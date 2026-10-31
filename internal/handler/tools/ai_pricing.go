@@ -31,7 +31,7 @@ func (h *Handler) RegisterAIPricingHandlers(s *mcp.Server) {
 
 	tool := mcp.NewTool("fusescope_get_ai_pricing",
 		withReadOnlyToolAnnotations(),
-		mcp.WithDescription("Use this when the user asks which per-token price SigNoz uses for an AI model's cost, or which models have no price. view=rules (default) lists the pricing rules: provider, model name and match patterns, input, output, and cache prices in USD per million tokens, and whether each rule is enabled. view=unpriced_models lists the models seen in spans during the last hour that no rule prices, with span counts; their spans carry no cost. SigNoz stamps cost on each span at ingest, so a price change does not touch spans already stored. Prices are changed on the Model pricing tab of AI Observability in SigNoz; this tool cannot change them."),
+		mcp.WithDescription("Use this when the user asks which per-token price FuseScope uses for an AI model's cost, or which models have no price. view=rules (default) lists the pricing rules: provider, model name and match patterns, input, output, and cache prices in USD per million tokens, and whether each rule is enabled. view=unpriced_models lists the models seen in spans during the last hour that no rule prices, with span counts; their spans carry no cost. FuseScope stamps cost on each span at ingest, so a price change does not touch spans already stored. Prices are changed on the Model pricing tab of AI Observability in FuseScope; this tool cannot change them."),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
 		mcp.WithString("view", mcp.DefaultString(aiPricingViewRules), mcp.Enum(aiPricingViewRules, aiPricingViewUnpricedModels),
 			mcp.Description("Which list to return. rules: the configured model prices. unpriced_models: models seen in the last hour that no rule prices. Default: rules.")),
@@ -114,7 +114,7 @@ func (h *Handler) listAIPricingRules(ctx context.Context, client signozclient.Cl
 			// result would look complete when it is not.
 			h.logger.WarnContext(ctx, "Unexpected response shape from the pricing rules endpoint; upstream contract may have changed",
 				slog.String("response", logpkg.TruncBody(body)))
-			return aiPricingOutput{}, upstreamResponseError("SigNoz returned AI pricing rules without data.items and data.total; retry, and report it if it persists")
+			return aiPricingOutput{}, upstreamResponseError("FuseScope returned AI pricing rules without data.items and data.total; retry, and report it if it persists")
 		}
 		total = *resp.Data.Total
 		items = append(items, resp.Data.Items...)
@@ -150,7 +150,7 @@ func (h *Handler) listUnpricedAIModels(ctx context.Context, client signozclient.
 	if resp.Data == nil || resp.Data.Items == nil {
 		h.logger.WarnContext(ctx, "Unexpected response shape from the unpriced models endpoint; upstream contract may have changed",
 			slog.String("response", logpkg.TruncBody(body)))
-		return aiPricingOutput{}, upstreamResponseError("SigNoz returned unpriced AI models without data.items; retry, and report it if it persists")
+		return aiPricingOutput{}, upstreamResponseError("FuseScope returned unpriced AI models without data.items; retry, and report it if it persists")
 	}
 
 	matched := make([]json.RawMessage, 0, len(resp.Data.Items))

@@ -36,7 +36,7 @@ const (
 	// DashboardWriteTimeout is used for dashboard create/update operations.
 	DashboardWriteTimeout = 30 * time.Second
 
-	errorEnvelopeWarning = "SigNoz error envelope drift or unsafe guidance detected"
+	errorEnvelopeWarning = "FuseScope error envelope drift or unsafe guidance detected"
 )
 
 var (
@@ -183,9 +183,9 @@ func (s *SigNoz) ValidateCredentials(ctx context.Context) error {
 	}
 	status, body, err := s.doValidationRequest(ctx, req)
 	if err != nil {
-		s.logger.ErrorContext(ctx, "SigNoz credential validation request failed",
+		s.logger.ErrorContext(ctx, "FuseScope credential validation request failed",
 			slog.String("url", req.URL.String()), logpkg.ErrAttr(err))
-		return fmt.Errorf("failed to reach SigNoz API: %w", err)
+		return fmt.Errorf("failed to reach FuseScope API: %w", err)
 	}
 
 	return s.evaluateValidationResponse(ctx, status, body)
@@ -223,19 +223,19 @@ func (s *SigNoz) evaluateValidationResponse(ctx context.Context, status int, bod
 	case http.StatusOK:
 		return nil
 	case http.StatusUnauthorized, http.StatusForbidden:
-		s.logger.WarnContext(ctx, "SigNoz credential validation failed",
+		s.logger.WarnContext(ctx, "FuseScope credential validation failed",
 			slog.Int("status", status),
 			slog.Int("response.body.size_bytes", len(body)))
 		return fmt.Errorf("%w: status %d", ErrUnauthorized, status)
 	case http.StatusNotFound:
 		if isHTMLBody(body) {
-			s.logger.WarnContext(ctx, "no SigNoz API at instance URL (HTML 404)",
+			s.logger.WarnContext(ctx, "no FuseScope API at instance URL (HTML 404)",
 				slog.Int("response.body.size_bytes", len(body)))
 			return fmt.Errorf("%w: status %d", ErrInstanceNotFound, status)
 		}
 		fallthrough
 	default:
-		s.logger.WarnContext(ctx, "SigNoz credential validation returned unexpected status",
+		s.logger.WarnContext(ctx, "FuseScope credential validation returned unexpected status",
 			slog.Int("status", status),
 			slog.Int("response.body.size_bytes", len(body)))
 		return errors.New(newHTTPStatusError(status, body).Error())
@@ -356,7 +356,7 @@ func (s *SigNoz) GetMetricMetadata(ctx context.Context, metricName string) (json
 // the generated request.
 func (s *SigNoz) ListAlerts(ctx context.Context, params types.ListAlertsParams) (json.RawMessage, error) {
 	query := params.QueryParams().Encode()
-	s.logger.DebugContext(s.ensureTenantContext(ctx), "Fetching alerts from SigNoz", slog.String("query", query))
+	s.logger.DebugContext(s.ensureTenantContext(ctx), "Fetching alerts from FuseScope", slog.String("query", query))
 	return s.callAPI(ctx, DefaultQueryTimeout, func(ctx context.Context, api *apiclient.Client) (*http.Response, error) {
 		return api.GetAlerts(ctx, withRawQuery(query))
 	})
@@ -366,7 +366,7 @@ func (s *SigNoz) ListAlerts(ctx context.Context, params types.ListAlertsParams) 
 // GET /api/v3/rules. SigNoz clamps limit to its own maximum, so the handler
 // walks pages until it has the window it was asked for.
 func (s *SigNoz) ListAlertRules(ctx context.Context, params *apiclient.ListRulesV3Params) (json.RawMessage, error) {
-	s.logger.DebugContext(s.ensureTenantContext(ctx), "Fetching alert rules from SigNoz")
+	s.logger.DebugContext(s.ensureTenantContext(ctx), "Fetching alert rules from FuseScope")
 	return s.callAPI(ctx, DefaultQueryTimeout, func(ctx context.Context, api *apiclient.Client) (*http.Response, error) {
 		return api.ListRulesV3(ctx, params)
 	})
@@ -392,7 +392,7 @@ func (s *SigNoz) ListDashboards(ctx context.Context, limit, offset int, filter, 
 		Limit:  optInt(limit),
 		Offset: optInt(offset),
 	}
-	s.logger.DebugContext(s.ensureTenantContext(ctx), "Fetching dashboards from SigNoz (v2)")
+	s.logger.DebugContext(s.ensureTenantContext(ctx), "Fetching dashboards from FuseScope (v2)")
 	return s.callAPI(ctx, DefaultQueryTimeout, func(ctx context.Context, api *apiclient.Client) (*http.Response, error) {
 		return api.ListDashboardsV2(ctx, params)
 	})
@@ -411,7 +411,7 @@ func (s *SigNoz) ListServices(ctx context.Context, start, end string) (json.RawM
 	payload := map[string]string{"start": start, "end": end}
 	bodyBytes, _ := json.Marshal(payload)
 
-	s.logger.DebugContext(s.ensureTenantContext(ctx), "Fetching services from SigNoz",
+	s.logger.DebugContext(s.ensureTenantContext(ctx), "Fetching services from FuseScope",
 		slog.String("start", start), slog.String("end", end))
 	return s.doReplaySafePost(ctx, s.baseURL+"/api/v2/services", bodyBytes, DefaultQueryTimeout)
 }

@@ -71,7 +71,7 @@ func TestSearchTraces_QueryTypeRequestTypeAndOrderByReachSigNoz(t *testing.T) {
 			`[{"key":{"name":"duration_nano"},"direction":"asc"}]`},
 		{"builder_ai_query span rows", map[string]any{"queryType": "builder_ai_query", "filter": "trace.tool_call_count > 10"}, "builder_ai_query", "raw", newestFirst},
 		{"plain trace rows", map[string]any{"requestType": "trace"}, "builder_query", "trace", ""},
-		{"AI trace rows leave the order to SigNoz", map[string]any{"requestType": "trace", "queryType": "builder_ai_query"}, "builder_ai_query", "trace", ""},
+		{"AI trace rows leave the order to FuseScope", map[string]any{"requestType": "trace", "queryType": "builder_ai_query"}, "builder_ai_query", "trace", ""},
 		{"AI trace rows with a per-trace orderBy", map[string]any{"requestType": "trace", "queryType": "builder_ai_query", "orderBy": "trace.estimated_total_cost desc"}, "builder_ai_query", "trace",
 			`[{"key":{"name":"trace.estimated_total_cost"},"direction":"desc"}]`},
 		{"an unknown requestType runs as span rows", map[string]any{"requestType": "spans"}, "builder_query", "raw", newestFirst},
@@ -93,7 +93,7 @@ func TestSearchTraces_QueryTypeRequestTypeAndOrderByReachSigNoz(t *testing.T) {
 			require.Equal(t, tc.wantType, envelope["type"])
 			require.Equal(t, tc.wantRequestType, requestType)
 			spec := envelope["spec"].(map[string]any)
-			require.Equal(t, "traces", spec["signal"], "SigNoz requires the signal on every trace spec")
+			require.Equal(t, "traces", spec["signal"], "FuseScope requires the signal on every trace spec")
 			if tc.wantOrder == "" {
 				require.NotContains(t, spec, "order")
 			} else {

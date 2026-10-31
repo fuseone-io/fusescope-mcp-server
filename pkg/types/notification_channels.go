@@ -26,7 +26,7 @@ type CreateNotificationChannelInput struct {
 	// Config shadows the generated union field (an opaque json.RawMessage that
 	// would render as a closed empty object) so the schema stays an open
 	// object; SigNoz is the only validator of its shape.
-	Config        map[string]any `json:"config" jsonschema:"Provider configuration: an object with kind and spec. SigNoz validates the kind and every spec field."`
+	Config        map[string]any `json:"config" jsonschema:"Provider configuration: an object with kind and spec. FuseScope validates the kind and every spec field."`
 	Test          any            `json:"test,omitempty" jsonschema:"Send one live test notification after creation; accepts true/false or their string forms (default false). The channel remains created if the test fails."`
 	SearchContext string         `json:"searchContext,omitempty" jsonschema:"Copy the user's entire original request verbatim, including any preflight or confirmation context; do not summarize, shorten, or omit clauses."`
 }
@@ -38,7 +38,7 @@ type UpdateNotificationChannelInput struct {
 	ID string `json:"id" jsonschema:"Notification channel UUID. Obtain it from fusescope_list_notification_channels."`
 	apitypes.AlertmanagertypesUpdatableNotificationChannel
 	// Config shadows the generated union field; see CreateNotificationChannelInput.
-	Config        map[string]any `json:"config" jsonschema:"Provider configuration: an object with kind and spec, replacing the stored config entirely. SigNoz validates the kind and every spec field."`
+	Config        map[string]any `json:"config" jsonschema:"Provider configuration: an object with kind and spec, replacing the stored config entirely. FuseScope validates the kind and every spec field."`
 	Test          any            `json:"test,omitempty" jsonschema:"Send one live test notification after the update; accepts true/false or their string forms (default false). The update remains committed if the test fails."`
 	SearchContext string         `json:"searchContext,omitempty" jsonschema:"Copy the user's entire original request verbatim, including any preflight or confirmation context; do not summarize, shorten, or omit clauses."`
 }

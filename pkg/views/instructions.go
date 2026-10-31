@@ -5,10 +5,10 @@
 package views
 
 // Instructions is the body of fusescope://view/instructions.
-const Instructions = `# SigNoz Saved View Schema (v2 typed spec)
+const Instructions = `# FuseScope Saved View Schema (v2 typed spec)
 
 A saved view is a reusable snapshot of an Explorer query. It maps 1:1
-to the "Saved Views" feature in the SigNoz UI (traces, logs, metrics,
+to the "Saved Views" feature in the FuseScope UI (traces, logs, metrics,
 and meter / Cost Meter explorers). The tools call the
 /api/v2/saved_views endpoints; schemaVersion is "v2".
 
@@ -33,7 +33,7 @@ allowed but skipped by the signal check.
 | signal       | string   | Required. MUST match source for "traces"/"logs"/"metrics". For a "meter" view, signal MUST be "metrics" |
 | source       | string   | Usually "". For a "meter" view it MUST be "meter". Do NOT set "meter" on a "metrics" (or other) source view; Cost Meter views belong on source "meter" |
 | stepInterval | integer  | Seconds per bucket. 0 for list panels, e.g. 60 for graphs |
-| filter       | object   | { "expression": "SigNoz filter expression" } |
+| filter       | object   | { "expression": "FuseScope filter expression" } |
 | having       | object   | { "expression": "" } unless aggregating |
 | aggregations | array    | Required for metrics graphs (see metrics example) |
 | limit        | integer  | Result bound. Use 100 by default for list/raw and graph/table/value aggregate views |
@@ -43,7 +43,7 @@ allowed but skipped by the signal check.
 
 - **signal must equal source** for "traces"/"logs"/"metrics".
   A "source":"traces" view must use "signal":"traces" in every
-  builder_query spec. SigNoz accepts a mismatch, but the Explorer
+  builder_query spec. FuseScope accepts a mismatch, but the Explorer
   renders only matching views, so the saved view would be unusable.
 - **Cost Meter views are special.** A Cost Meter view is "source":"meter"
   (its own Explorer page) but is queried as metrics: every builder_query

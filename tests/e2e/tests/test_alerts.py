@@ -136,7 +136,7 @@ def test_create_alert_unknown_channel_rejected(mcp_client: MCPClient, test_id: s
             delete_rule(mcp_client, leaked)
         raise AssertionError(f"SigNoz accepted an unknown channel: {first_text_block(result)[:300]}")
     body = first_text_block(result)
-    assert body.startswith("SigNoz API error:"), f"channel rejection lost the uniform prefix: {body!r}"
+    assert body.startswith("FuseScope API error:"), f"channel rejection lost the uniform prefix: {body!r}"
     assert "mcp-e2e-no-such-channel" in body, f"rejection does not name the unknown channel: {body!r}"
     assert name not in listed_rule_names(mcp_client), "rejected rule was persisted anyway"
 

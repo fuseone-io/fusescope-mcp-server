@@ -18,7 +18,7 @@ const examplesPreamble = `Complete v6 (Perses) dashboard payloads. The create ex
 
 Create envelope: {schemaVersion:"v6", generateName:true, tags:[...], spec:{display, variables, panels, layouts, links:[]}}. Do not set the top-level "name" on create (generateName lets the server derive it); send it unchanged on a full replacement.
 
-Metrics Query Builder temporality: omit it. SigNoz resolves cumulative, delta or unspecified from the metric's metadata; set it only to override that, since a wrong value returns no data.
+Metrics Query Builder temporality: omit it. FuseScope resolves cumulative, delta or unspecified from the metric's metadata; set it only to override that, since a wrong value returns no data.
 
 Metrics Query Builder ordering: the order key of a grouped or aggregated metrics query is the composed aggregation expression spaceAggregation(timeAggregation(metricName)), for example sum(rate(system.cpu.time)), or __result; the bare metric name is rejected.
 

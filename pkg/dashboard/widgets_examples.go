@@ -1,14 +1,14 @@
 package dashboard
 
 const WidgetExamples = `
-Worked v6 (Perses) dashboard examples. Every payload below is a real widget created against a live SigNoz instance and read back (GET), so each field is server-accepted, not guessed. Each block is one panel: the object you place in the spec.panels map under a panel id (shown unkeyed here). Copy the structure, not the literal attribute names.
+Worked v6 (Perses) dashboard examples. Every payload below is a real widget created against a live FuseScope instance and read back (GET), so each field is server-accepted, not guessed. Each block is one panel: the object you place in the spec.panels map under a panel id (shown unkeyed here). Copy the structure, not the literal attribute names.
 
 For the rules behind these (which panel and query type to choose, layout, legends, the one-query-per-panel constraint, and variables), read fusescope://dashboard/instructions and fusescope://dashboard/widgets-instructions. For the exact field set, use the create/update tool's JSON Schema.
 
 Quick reference (all illustrated below):
 - Aggregations: count(), p50/p95/p99(field), avg/sum/min/max(field). Name a column with the aggregation's "alias" field (NOT "as '...'" inside the expression). Multiple aggregations = multiple entries in the aggregations[] array.
 - Filters: a single filter.expression string. Operators include =, !=, IN, AND, EXISTS. Reference variables as $name (omit the $ and it matches the literal string instead).
-- Result bounds and ordering: give every builder query an explicit positive "limit" and a non-empty "order", except the base queries of a formula. An order entry is {"key": {"name": <field-or-aggregation>}, "direction": "asc"|"desc"}. Order raw/list queries by timestamp desc (logs: timestamp desc then id desc); order scalar/time_series (aggregated or grouped) queries by the primary aggregation expression desc, e.g. {"key": {"name": "count()"}, "direction": "desc"}. Use limit 100 for standalone graph/table/pie/value and grouped queries; for time_series it ranks the top N groups over the whole selected window, so a locally significant series can fall outside it. For a formula, omit "limit" and "order" on each base query it references, because SigNoz applies base limits before the formula runs and drops series from its result; the formula output uses limit 100 and orders by "__result" desc.
+- Result bounds and ordering: give every builder query an explicit positive "limit" and a non-empty "order", except the base queries of a formula. An order entry is {"key": {"name": <field-or-aggregation>}, "direction": "asc"|"desc"}. Order raw/list queries by timestamp desc (logs: timestamp desc then id desc); order scalar/time_series (aggregated or grouped) queries by the primary aggregation expression desc, e.g. {"key": {"name": "count()"}, "direction": "desc"}. Use limit 100 for standalone graph/table/pie/value and grouped queries; for time_series it ranks the top N groups over the whole selected window, so a locally significant series can fall outside it. For a formula, omit "limit" and "order" on each base query it references, because FuseScope applies base limits before the formula runs and drops series from its result; the formula output uses limit 100 and orders by "__result" desc.
 
 === EXAMPLES ===
 
@@ -105,7 +105,7 @@ A timeseries widget with just one query and no formula, so the panel's single qu
 
 Example: Number of Requests (single builder query with groupBy: per-series legend)
 
-A timeseries widget that groups a count() of trace spans by the service.name resource attribute, so each service renders as its own line. Like Example 2 it has a single query and no formula, so the query's plugin is signoz/BuilderQuery directly (no signoz/CompositeQuery wrapper). The groupBy entry uses "name" (the v6 field, not the old "key") alongside fieldContext/fieldDataType/signal, and legend "{{service.name}}" templates each series label from that groupBy key (set legend whenever a series-producing panel has a groupBy, else SigNoz shows raw query ids). The filter combines dashboard-level DynamicVariables ($service_name / $language / $llm_model) with a static condition (llm.provider = 'anthropic'). Legend sits at the bottom via the panel plugin; y-axis unit and soft min/max are left to server defaults.
+A timeseries widget that groups a count() of trace spans by the service.name resource attribute, so each service renders as its own line. Like Example 2 it has a single query and no formula, so the query's plugin is signoz/BuilderQuery directly (no signoz/CompositeQuery wrapper). The groupBy entry uses "name" (the v6 field, not the old "key") alongside fieldContext/fieldDataType/signal, and legend "{{service.name}}" templates each series label from that groupBy key (set legend whenever a series-producing panel has a groupBy, else FuseScope shows raw query ids). The filter combines dashboard-level DynamicVariables ($service_name / $language / $llm_model) with a static condition (llm.provider = 'anthropic'). Legend sits at the bottom via the panel plugin; y-axis unit and soft min/max are left to server defaults.
 
 {
   "kind": "Panel",

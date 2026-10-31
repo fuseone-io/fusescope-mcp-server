@@ -56,14 +56,14 @@ func (h *Handler) RegisterAIAttributeMappingHandlers(s *mcp.Server) {
 
 	listTool := mcp.NewTool("fusescope_list_ai_attribute_mappings",
 		withReadOnlyToolAnnotations(),
-		mcp.WithDescription("Use this when the user asks why AI spans show no model, tokens, or cost, or which vendor attributes SigNoz maps to gen_ai.* keys. At ingest, a mapping group runs on spans whose attribute keys contain one of its condition substrings, and each mapper fills one gen_ai.* key from the first source key present, by priority. Mappings apply only to spans ingested afterwards and are changed on the Attribute Mapping tab of AI Observability in SigNoz. To see how a sample span maps, use fusescope_test_ai_attribute_mapping; for spans with a model but no cost, use fusescope_get_ai_pricing. If incomplete is true, failedGroups names the groups whose mappers could not be read."),
+		mcp.WithDescription("Use this when the user asks why AI spans show no model, tokens, or cost, or which vendor attributes FuseScope maps to gen_ai.* keys. At ingest, a mapping group runs on spans whose attribute keys contain one of its condition substrings, and each mapper fills one gen_ai.* key from the first source key present, by priority. Mappings apply only to spans ingested afterwards and are changed on the Attribute Mapping tab of AI Observability in FuseScope. To see how a sample span maps, use fusescope_test_ai_attribute_mapping; for spans with a model but no cost, use fusescope_get_ai_pricing. If incomplete is true, failedGroups names the groups whose mappers could not be read."),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
 	)
 	h.addTool(s, listTool, h.handleListAIAttributeMappings)
 
 	testTool := mcp.NewTool("fusescope_test_ai_attribute_mapping",
 		withReadOnlyToolAnnotations(),
-		mcp.WithDescription("Use this when the user wants to know whether SigNoz will treat a framework's spans as model, tool, or agent calls, or wants to try a mapping before adding it. It runs sample spans through the mapping groups (the saved ones by default) and returns each span as SigNoz would store it; nothing is saved. A span that gains gen_ai.request.model counts as a model call. To read the saved mappings, use fusescope_list_ai_attribute_mappings."),
+		mcp.WithDescription("Use this when the user wants to know whether FuseScope will treat a framework's spans as model, tool, or agent calls, or wants to try a mapping before adding it. It runs sample spans through the mapping groups (the saved ones by default) and returns each span as FuseScope would store it; nothing is saved. A span that gains gen_ai.request.model counts as a model call. To read the saved mappings, use fusescope_list_ai_attribute_mappings."),
 		mcp.WithInputSchema[types.TestAIAttributeMappingInput](),
 	)
 	h.addTool(s, testTool, h.handleTestAIAttributeMapping)
@@ -88,7 +88,7 @@ func (h *Handler) handleListAIAttributeMappings(ctx context.Context, _ mcp.CallT
 	for _, raw := range groups {
 		group, summary, ok := h.decodeMappingGroup(ctx, raw)
 		if !ok {
-			out.FailedGroups = append(out.FailedGroups, aiMappingGroupFailure{Code: CodeUpstreamError, Message: "SigNoz returned a mapping group without an id"})
+			out.FailedGroups = append(out.FailedGroups, aiMappingGroupFailure{Code: CodeUpstreamError, Message: "FuseScope returned a mapping group without an id"})
 			continue
 		}
 		body, err := client.ListAIAttributeMappers(ctx, summary.ID)
@@ -110,7 +110,7 @@ func (h *Handler) handleListAIAttributeMappings(ctx context.Context, _ mcp.CallT
 		}
 		mappers, ok := h.decodeMappers(ctx, summary.ID, body)
 		if !ok {
-			out.FailedGroups = append(out.FailedGroups, aiMappingGroupFailure{GroupID: summary.ID, Name: summary.Name, Code: CodeUpstreamError, Message: "SigNoz returned this group's mappers in an unreadable shape"})
+			out.FailedGroups = append(out.FailedGroups, aiMappingGroupFailure{GroupID: summary.ID, Name: summary.Name, Code: CodeUpstreamError, Message: "FuseScope returned this group's mappers in an unreadable shape"})
 			mappers = json.RawMessage("null")
 		}
 		group["mappers"] = mappers
@@ -207,7 +207,7 @@ func (h *Handler) handleTestAIAttributeMapping(ctx context.Context, req mcp.Call
 		// Without one mapped span per sample the test answered nothing usable, so it must not look like a result.
 		h.logger.WarnContext(ctx, "Unexpected response shape from the span mapper test endpoint; upstream contract may have changed",
 			slog.String("response", logpkg.TruncBody(respBody)))
-		return upstreamResponseError("SigNoz did not return one mapped span per sample span; retry, and report it if it persists"), nil
+		return upstreamResponseError("FuseScope did not return one mapped span per sample span; retry, and report it if it persists"), nil
 	}
 
 	out := aiAttributeMappingTestOutput{
@@ -242,7 +242,7 @@ func (h *Handler) listMappingGroups(ctx context.Context, client signozclient.Cli
 	if resp.Data == nil || resp.Data.Items == nil {
 		h.logger.WarnContext(ctx, "Unexpected response shape from the span mapper groups endpoint; upstream contract may have changed",
 			slog.String("response", logpkg.TruncBody(body)))
-		return nil, upstreamResponseError("SigNoz returned AI attribute mapping groups without data.items; retry, and report it if it persists")
+		return nil, upstreamResponseError("FuseScope returned AI attribute mapping groups without data.items; retry, and report it if it persists")
 	}
 	return resp.Data.Items, nil
 }

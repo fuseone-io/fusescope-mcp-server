@@ -39,7 +39,7 @@ func TestToolHandlers_MissingCredentialsAreCoded(t *testing.T) {
 func newToolServerWithoutSigNoz(t *testing.T) *mcp.Server {
 	t.Helper()
 	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		t.Errorf("invalid arguments reached SigNoz: %s %s", r.Method, r.URL.Path)
+		t.Errorf("invalid arguments reached FuseScope: %s %s", r.Method, r.URL.Path)
 		w.WriteHeader(http.StatusInternalServerError)
 	}))
 	t.Cleanup(upstream.Close)
@@ -159,8 +159,8 @@ func TestErrorCodeDecorator_AddsOperationSpecificAuthorizationRecovery(t *testin
 		wantCode   string
 		wantText   string
 	}{
-		{name: "unauthorized", statusCode: 401, wantCode: CodeUnauthorized, wantText: "Re-authenticate with valid SigNoz credentials"},
-		{name: "forbidden", statusCode: 403, wantCode: CodePermissionDenied, wantText: "Request access to this SigNoz operation"},
+		{name: "unauthorized", statusCode: 401, wantCode: CodeUnauthorized, wantText: "Re-authenticate with valid FuseScope credentials"},
+		{name: "forbidden", statusCode: 403, wantCode: CodePermissionDenied, wantText: "Request access to this FuseScope operation"},
 	}
 
 	for _, tt := range tests {

@@ -43,7 +43,7 @@ Examples
 - name = 'overview'
 - name CONTAINS 'overview'
 - name ILIKE 'prod%'
-- created_by LIKE '%@signoz.io'
+- created_by LIKE '%@example.com'
 - locked = true
 - created_at >= '2026-03-10T00:00:00Z'
 - updated_at BETWEEN '2026-03-10T00:00:00Z' AND '2026-03-20T00:00:00Z'
@@ -53,7 +53,7 @@ Examples
 - locked = true AND created_by = 'a@b.com'
 - (locked = true OR locked = false) AND created_by = 'a@b.com'
 - NOT team = 'pulse' AND name = 'overview'
-- name CONTAINS 'overview' AND created_by = 'naman.verma@signoz.io' AND database = 'mongo'
+- name CONTAINS 'overview' AND created_by = 'jane.doe@example.com' AND database = 'mongo'
 
 Tips
 - To find a dashboard by a word in its title, description, or tags, just pass that word as free text.

@@ -27,7 +27,7 @@
           "inputSchema": {
             "properties": {
               "aggregations": {
-                "description": "Aggregation expressions to compute, written as the Query Builder writes them: count(), count_distinct(user_id), avg(duration), sum(bytes), min(x), max(x), p50(x) to p99(x), rate(), or a conditional such as countIf(severity_text = 'ERROR'). One expression or an array; results come back as __result_0, __result_1, ... in that order. Example: [\"count()\", \"p99(duration)\"]. SigNoz validates the expressions.",
+                "description": "Aggregation expressions to compute, written as the Query Builder writes them: count(), count_distinct(user_id), avg(duration), sum(bytes), min(x), max(x), p50(x) to p99(x), rate(), or a conditional such as countIf(severity_text = 'ERROR'). One expression or an array; results come back as __result_0, __result_1, ... in that order. Example: [\"count()\", \"p99(duration)\"]. FuseScope validates the expressions.",
                 "items": {
                   "type": "string"
                 },
@@ -44,11 +44,11 @@
                 ]
               },
               "filter": {
-                "description": "Filter expression text in SigNoz search syntax, not {\"expression\": ...} (see fusescope://logs/query-builder-guide). Combine conditions with AND, OR, parentheses. An unknown key may not fail: no rows plus a `key ... not found in metadata` warning means the key is absent. Ambiguous keys default to resource; prefix attribute.\u003ckey\u003e or resource.\u003ckey\u003e to choose. Log keys are workspace-specific; even service.name exists only when the log pipeline sets it. Discover keys and values with fusescope_get_field_keys and fusescope_get_field_values first. For message text use body CONTAINS 'term'. Only when you don't know which field holds a term, use search('term') for every field or search('term', attribute); scopes (body, attribute, resource, log) are ORed. search() is slow and may be rejected over wide ranges. There is no key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%', and EXISTS or NOT EXISTS. Example: \"service.name = 'payment-svc' AND severity_text = 'ERROR'\". Combined with service/severity params using AND.",
+                "description": "Filter expression text in FuseScope search syntax, not {\"expression\": ...} (see fusescope://logs/query-builder-guide). Combine conditions with AND, OR, parentheses. An unknown key may not fail: no rows plus a `key ... not found in metadata` warning means the key is absent. Ambiguous keys default to resource; prefix attribute.\u003ckey\u003e or resource.\u003ckey\u003e to choose. Log keys are workspace-specific; even service.name exists only when the log pipeline sets it. Discover keys and values with fusescope_get_field_keys and fusescope_get_field_values first. For message text use body CONTAINS 'term'. Only when you don't know which field holds a term, use search('term') for every field or search('term', attribute); scopes (body, attribute, resource, log) are ORed. search() is slow and may be rejected over wide ranges. There is no key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%', and EXISTS or NOT EXISTS. Example: \"service.name = 'payment-svc' AND severity_text = 'ERROR'\". Combined with service/severity params using AND.",
                 "type": "string"
               },
               "functions": {
-                "description": "Post-query transforms applied in order to each time_series result, as an array of {name, args} objects, or a JSON-encoded string of that array. SigNoz applies them to time_series results only and returns scalar results unchanged, so set requestType to time_series. Names are the Query Builder function names, for example cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, cumulativeSum, ewma3, median5, timeShift, or fillZero; args carries the function's parameters, for example [{\"value\": 10}] for cutOffMin. SigNoz validates names and args.",
+                "description": "Post-query transforms applied in order to each time_series result, as an array of {name, args} objects, or a JSON-encoded string of that array. FuseScope applies them to time_series results only and returns scalar results unchanged, so set requestType to time_series. Names are the Query Builder function names, for example cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, cumulativeSum, ewma3, median5, timeShift, or fillZero; args carries the function's parameters, for example [{\"value\": 10}] for cutOffMin. FuseScope validates names and args.",
                 "items": {
                   "properties": {
                     "args": {
@@ -94,7 +94,7 @@
                 ]
               },
               "groupBy": {
-                "description": "Field names to group results by, as an array or a comma-separated string (e.g. [\"service.name\", \"severity_text\"] or 'service.name, severity_text'). Leave empty for a single aggregate value. Group by keys fusescope_get_field_keys returns; an unknown key can come back as one empty group. A body field (body.\u003cpath\u003e) can be grouped only when fusescope_get_field_keys(signal=\"logs\", fieldContext=\"body\") lists it; otherwise SigNoz rejects it with `can be filtered but not selected or grouped` or `field not found`, so filter on it instead.",
+                "description": "Field names to group results by, as an array or a comma-separated string (e.g. [\"service.name\", \"severity_text\"] or 'service.name, severity_text'). Leave empty for a single aggregate value. Group by keys fusescope_get_field_keys returns; an unknown key can come back as one empty group. A body field (body.\u003cpath\u003e) can be grouped only when fusescope_get_field_keys(signal=\"logs\", fieldContext=\"body\") lists it; otherwise FuseScope rejects it with `can be filtered but not selected or grouped` or `field not found`, so filter on it instead.",
                 "items": {
                   "type": "string"
                 },
@@ -104,7 +104,7 @@
                 ]
               },
               "having": {
-                "description": "Condition on the aggregation results, in the filter syntax, applied after grouping. Reference an aggregation by its expression, for example \"count() \u003e 100\" or \"p99(duration_nano) \u003e 500000000\". SigNoz validates it.",
+                "description": "Condition on the aggregation results, in the filter syntax, applied after grouping. Reference an aggregation by its expression, for example \"count() \u003e 100\" or \"p99(duration_nano) \u003e 500000000\". FuseScope validates it.",
                 "type": "string"
               },
               "limit": {
@@ -178,7 +178,7 @@
           "inputSchema": {
             "properties": {
               "aggregations": {
-                "description": "Aggregation expressions to compute, written as the Query Builder writes them: count(), count_distinct(name), avg(duration_nano), sum(x), min(x), max(x), p50(duration_nano) to p99(duration_nano), rate(), or a conditional such as countIf(has_error = true). duration_nano is span latency in nanoseconds. One expression or an array; results come back as __result_0, __result_1, ... in that order. Example: [\"count()\", \"p99(duration_nano)\"]. SigNoz validates the expressions.",
+                "description": "Aggregation expressions to compute, written as the Query Builder writes them: count(), count_distinct(name), avg(duration_nano), sum(x), min(x), max(x), p50(duration_nano) to p99(duration_nano), rate(), or a conditional such as countIf(has_error = true). duration_nano is span latency in nanoseconds. One expression or an array; results come back as __result_0, __result_1, ... in that order. Example: [\"count()\", \"p99(duration_nano)\"]. FuseScope validates the expressions.",
                 "items": {
                   "type": "string"
                 },
@@ -202,11 +202,11 @@
                 ]
               },
               "filter": {
-                "description": "Filter expression text in SigNoz search syntax, not {\"expression\": ...} (see fusescope://traces/query-builder-guide). search() is logs-only; traces use field predicates. Combine conditions with AND, OR, and parentheses for precedence. An unknown key may not fail: SigNoz can match a guessed attribute and return a `key ... not found in metadata` warning with no rows, so read that warning as an absent key. Keys present in multiple contexts default to resource context; disambiguate with attribute.\u003ckey\u003e, resource.\u003ckey\u003e, or span.\u003ckey\u003e. Every condition needs a key and an operator: there is no full-text search, key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%' and EXISTS or NOT EXISTS. Discover valid keys with fusescope_get_field_keys, then confirm values with fusescope_get_field_values, before filtering. Examples: \"service.name = 'payment-svc' AND has_error = true\", \"http_method = 'POST' AND (has_error = true OR duration_nano \u003e 1000000000)\". Combined with service/operation/error/duration params using AND.",
+                "description": "Filter expression text in FuseScope search syntax, not {\"expression\": ...} (see fusescope://traces/query-builder-guide). search() is logs-only; traces use field predicates. Combine conditions with AND, OR, and parentheses for precedence. An unknown key may not fail: FuseScope can match a guessed attribute and return a `key ... not found in metadata` warning with no rows, so read that warning as an absent key. Keys present in multiple contexts default to resource context; disambiguate with attribute.\u003ckey\u003e, resource.\u003ckey\u003e, or span.\u003ckey\u003e. Every condition needs a key and an operator: there is no full-text search, key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%' and EXISTS or NOT EXISTS. Discover valid keys with fusescope_get_field_keys, then confirm values with fusescope_get_field_values, before filtering. Examples: \"service.name = 'payment-svc' AND has_error = true\", \"http_method = 'POST' AND (has_error = true OR duration_nano \u003e 1000000000)\". Combined with service/operation/error/duration params using AND.",
                 "type": "string"
               },
               "functions": {
-                "description": "Post-query transforms applied in order to each time_series result, as an array of {name, args} objects, or a JSON-encoded string of that array. SigNoz applies them to time_series results only and returns scalar results unchanged, so set requestType to time_series. Names are the Query Builder function names, for example cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, cumulativeSum, ewma3, median5, timeShift, or fillZero; args carries the function's parameters, for example [{\"value\": 10}] for cutOffMin. SigNoz validates names and args.",
+                "description": "Post-query transforms applied in order to each time_series result, as an array of {name, args} objects, or a JSON-encoded string of that array. FuseScope applies them to time_series results only and returns scalar results unchanged, so set requestType to time_series. Names are the Query Builder function names, for example cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, cumulativeSum, ewma3, median5, timeShift, or fillZero; args carries the function's parameters, for example [{\"value\": 10}] for cutOffMin. FuseScope validates names and args.",
                 "items": {
                   "properties": {
                     "args": {
@@ -262,7 +262,7 @@
                 ]
               },
               "having": {
-                "description": "Condition on the aggregation results, in the filter syntax, applied after grouping. Reference an aggregation by its expression, for example \"count() \u003e 100\" or \"p99(duration_nano) \u003e 500000000\". SigNoz validates it.",
+                "description": "Condition on the aggregation results, in the filter syntax, applied after grouping. Reference an aggregation by its expression, for example \"count() \u003e 100\" or \"p99(duration_nano) \u003e 500000000\". FuseScope validates it.",
                 "type": "string"
               },
               "limit": {
@@ -465,7 +465,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants a new SigNoz alert rule; use fusescope_update_alert to change an existing rule. Supports v2alpha1 threshold, PromQL, and metric anomaly alerts. Read fusescope://alert/instructions and fusescope://alert/examples before composing any payload, unless already read in the same prepared operation; for PromQL also read fusescope://promql/instructions. For direct routing, reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If none fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never guess or create automatically. SigNoz rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
+          "description": "Use this when the user wants a new FuseScope alert rule; use fusescope_update_alert to change an existing rule. Supports v2alpha1 threshold, PromQL, and metric anomaly alerts. Read fusescope://alert/instructions and fusescope://alert/examples before composing any payload, unless already read in the same prepared operation; for PromQL also read fusescope://promql/instructions. For direct routing, reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If none fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never guess or create automatically. FuseScope rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
           "inputSchema": {
             "properties": {
               "alert": {
@@ -773,7 +773,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants a custom SigNoz dashboard built from a complete title, layout, variables, and panel configuration; use fusescope_import_dashboard instead when a curated template fits. Use fusescope_create_view instead to save one Explorer query. Before composing the payload, read fusescope://dashboard/instructions, fusescope://dashboard/widgets-instructions, fusescope://dashboard/widgets-examples, and fusescope://dashboard/examples (complete worked dashboards), then follow the query-specific resource linked by the widget guide.",
+          "description": "Use this when the user wants a custom FuseScope dashboard built from a complete title, layout, variables, and panel configuration; use fusescope_import_dashboard instead when a curated template fits. Use fusescope_create_view instead to save one Explorer query. Before composing the payload, read fusescope://dashboard/instructions, fusescope://dashboard/widgets-instructions, fusescope://dashboard/widgets-examples, and fusescope://dashboard/examples (complete worked dashboards), then follow the query-specific resource linked by the widget guide.",
           "inputSchema": {
             "$defs": {
               "CommonJSONRef": {
@@ -4646,13 +4646,13 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants a new notification channel; use fusescope_update_notification_channel to replace an existing one. The payload is config: {kind, spec} plus name, or generateName=true with displayName. Read fusescope://notification-channel/examples for every kind SigNoz accepts, each kind's spec fields, and a worked payload per kind, unless already read in the same prepared operation. SigNoz rejects an unknown kind, an unknown or missing spec field, and a duplicate name, each with the exact requirement. Minimal example: {\"name\":\"ops-hook\",\"config\":{\"kind\":\"webhook\",\"spec\":{\"url\":\"https://example.com/hook\"}}}. name is an immutable DNS-1123 label; alert routing references displayName (SigNoz defaults it from name). test defaults to false: ask whether the user wants one live test notification and set test=true only if they agree; the channel remains created if the test fails.",
+          "description": "Use this when the user wants a new notification channel; use fusescope_update_notification_channel to replace an existing one. The payload is config: {kind, spec} plus name, or generateName=true with displayName. Read fusescope://notification-channel/examples for every kind FuseScope accepts, each kind's spec fields, and a worked payload per kind, unless already read in the same prepared operation. FuseScope rejects an unknown kind, an unknown or missing spec field, and a duplicate name, each with the exact requirement. Minimal example: {\"name\":\"ops-hook\",\"config\":{\"kind\":\"webhook\",\"spec\":{\"url\":\"https://example.com/hook\"}}}. name is an immutable DNS-1123 label; alert routing references displayName (FuseScope defaults it from name). test defaults to false: ask whether the user wants one live test notification and set test=true only if they agree; the channel remains created if the test fails.",
           "inputSchema": {
             "additionalProperties": false,
             "properties": {
               "config": {
                 "additionalProperties": {},
-                "description": "Provider configuration: an object with kind and spec. SigNoz validates the kind and every spec field.",
+                "description": "Provider configuration: an object with kind and spec. FuseScope validates the kind and every spec field.",
                 "type": "object"
               },
               "displayName": {
@@ -4974,11 +4974,11 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this only when dedicated log, trace, and metric tools cannot express the request, such as multi-query requests, formulas, PromQL, or ClickHouse SQL. Use fusescope_search_logs/fusescope_search_traces for raw rows, fusescope_aggregate_logs/fusescope_aggregate_traces for grouped or top-N analysis, and fusescope_query_metrics for ordinary metrics queries. Read the matching fusescope://logs/query-builder-guide, fusescope://traces/query-builder-guide, fusescope://ai/query-builder-guide, or fusescope://metrics-aggregation-guide; formulas require the metrics guide, and PromQL requires fusescope://promql/instructions. fusescope://query-builder/examples has a full request per query and request type. Leave limit unset on each builder_query a formula references, because SigNoz applies an input's limit before the formula runs, dropping series. Give every other builder_query and each builder_formula a positive limit (100 for results) and non-empty spec.order (not dashboard orderBy); the server fills in omitted ones.",
+          "description": "Use this only when dedicated log, trace, and metric tools cannot express the request, such as multi-query requests, formulas, PromQL, or ClickHouse SQL. Use fusescope_search_logs/fusescope_search_traces for raw rows, fusescope_aggregate_logs/fusescope_aggregate_traces for grouped or top-N analysis, and fusescope_query_metrics for ordinary metrics queries. Read the matching fusescope://logs/query-builder-guide, fusescope://traces/query-builder-guide, fusescope://ai/query-builder-guide, or fusescope://metrics-aggregation-guide; formulas require the metrics guide, and PromQL requires fusescope://promql/instructions. fusescope://query-builder/examples has a full request per query and request type. Leave limit unset on each builder_query a formula references, because FuseScope applies an input's limit before the formula runs, dropping series. Give every other builder_query and each builder_formula a positive limit (100 for results) and non-empty spec.order (not dashboard orderBy); the server fills in omitted ones.",
           "inputSchema": {
             "properties": {
               "query": {
-                "description": "The complete query_range request; apart from the result bounds below it reaches SigNoz verbatim and SigNoz validates it. start and end are required. requestType has no default: use raw, trace, time_series, or scalar. For predictable bounds, supply a positive spec.limit and non-empty spec.order (not dashboard orderBy) on every builder_formula and on each builder_query no formula references; the server inserts signal-aware defaults when they are omitted. Missing or zero standalone and formula-result limits normalize to 100. A builder_query a formula references gets no inserted limit or order, because SigNoz applies its limit before the formula runs; leave its limit unset.",
+                "description": "The complete query_range request; apart from the result bounds below it reaches FuseScope verbatim and FuseScope validates it. start and end are required. requestType has no default: use raw, trace, time_series, or scalar. For predictable bounds, supply a positive spec.limit and non-empty spec.order (not dashboard orderBy) on every builder_formula and on each builder_query no formula references; the server inserts signal-aware defaults when they are omitted. Missing or zero standalone and formula-result limits normalize to 100. A builder_query a formula references gets no inserted limit or order, because FuseScope applies its limit before the formula runs; leave its limit unset.",
                 "properties": {
                   "compositeQuery": {
                     "description": "The queries to execute together; at least one is required and formulas may reference the others by name.",
@@ -5204,7 +5204,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user asks which per-token price SigNoz uses for an AI model's cost, or which models have no price. view=rules (default) lists the pricing rules: provider, model name and match patterns, input, output, and cache prices in USD per million tokens, and whether each rule is enabled. view=unpriced_models lists the models seen in spans during the last hour that no rule prices, with span counts; their spans carry no cost. SigNoz stamps cost on each span at ingest, so a price change does not touch spans already stored. Prices are changed on the Model pricing tab of AI Observability in SigNoz; this tool cannot change them.",
+          "description": "Use this when the user asks which per-token price FuseScope uses for an AI model's cost, or which models have no price. view=rules (default) lists the pricing rules: provider, model name and match patterns, input, output, and cache prices in USD per million tokens, and whether each rule is enabled. view=unpriced_models lists the models seen in spans during the last hour that no rule prices, with span counts; their spans carry no cost. FuseScope stamps cost on each span at ingest, so a price change does not touch spans already stored. Prices are changed on the Model pricing tab of AI Observability in FuseScope; this tool cannot change them.",
           "inputSchema": {
             "properties": {
               "limit": {
@@ -5292,7 +5292,7 @@
                 ]
               },
               "filter": {
-                "description": "Filter timeline labels using SigNoz query-builder syntax. Combine conditions with AND, OR, and parentheses; quote string values with single quotes and use operators such as =, !=, IN, and NOT IN. Example: \"severity = 'critical' AND (team = 'payments' OR service.name = 'checkout')\". To discover label keys, first call without a filter and inspect data.items[].labels[].key.name. If a filter returns no matches, retry unfiltered and verify the key spelling; malformed expressions return validation errors.",
+                "description": "Filter timeline labels using FuseScope query-builder syntax. Combine conditions with AND, OR, and parentheses; quote string values with single quotes and use operators such as =, !=, IN, and NOT IN. Example: \"severity = 'critical' AND (team = 'payments' OR service.name = 'checkout')\". To discover label keys, first call without a filter and inspect data.items[].labels[].key.name. If a filter returns no matches, retry unfiltered and verify the key spelling; malformed expressions return validation errors.",
                 "type": "string"
               },
               "id": {
@@ -5375,11 +5375,11 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user needs to discover field names available for filtering or grouping metrics, traces, or logs. It returns keys, not their observed values, scoped by signal and optional metric, context, or data type. SigNoz sets data.complete=false when it truncated the key list; narrow with searchText or fieldContext to see more. For AI trace fields (per-trace cost, tokens, call counts, gen_ai.*), set queryType=builder_ai_query. After choosing a key, use fusescope_get_field_values to discover valid values.",
+          "description": "Use this when the user needs to discover field names available for filtering or grouping metrics, traces, or logs. It returns keys, not their observed values, scoped by signal and optional metric, context, or data type. FuseScope sets data.complete=false when it truncated the key list; narrow with searchText or fieldContext to see more. For AI trace fields (per-trace cost, tokens, call counts, gen_ai.*), set queryType=builder_ai_query. After choosing a key, use fusescope_get_field_values to discover valid values.",
           "inputSchema": {
             "properties": {
               "fieldContext": {
-                "description": "Restrict results to a single field context (optional). Valid values: 'resource' (resource attributes, e.g. service.name, k8s.namespace.name), 'attribute' (user-ingested span/log attributes), 'scope' (instrumentation scope), 'log' / 'span' / 'metric' (intrinsic columns of the logs/traces/metrics signal), 'body' (fields inside a JSON log body). For span/log attributes use 'attribute', not the legacy Query Builder context 'tag': SigNoz ignores 'tag' when listing keys and returns no values for it. 'trace' (fields of a whole trace rather than one span, such as values computed over all of its spans; write them with the trace. prefix in queries).",
+                "description": "Restrict results to a single field context (optional). Valid values: 'resource' (resource attributes, e.g. service.name, k8s.namespace.name), 'attribute' (user-ingested span/log attributes), 'scope' (instrumentation scope), 'log' / 'span' / 'metric' (intrinsic columns of the logs/traces/metrics signal), 'body' (fields inside a JSON log body). For span/log attributes use 'attribute', not the legacy Query Builder context 'tag': FuseScope ignores 'tag' when listing keys and returns no values for it. 'trace' (fields of a whole trace rather than one span, such as values computed over all of its spans; write them with the trace. prefix in queries).",
                 "enum": [
                   "resource",
                   "attribute",
@@ -5393,7 +5393,7 @@
                 "type": "string"
               },
               "fieldDataType": {
-                "description": "Restrict results to a single field data type (optional). Valid values: 'string', 'bool', 'int64', 'float64', 'number'. SigNoz treats an array form like '[]string' as its element type.",
+                "description": "Restrict results to a single field data type (optional). Valid values: 'string', 'bool', 'int64', 'float64', 'number'. FuseScope treats an array form like '[]string' as its element type.",
                 "type": "string"
               },
               "metricName": {
@@ -5445,11 +5445,11 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user knows a field key and needs its observed values for a metrics, traces, or logs filter. It returns values, not field names; use fusescope_get_field_keys when the key is unknown. Match signal and fieldContext to the query that will use the value. SigNoz sets data.complete=false when it truncated the value list; narrow with searchText to see more.",
+          "description": "Use this when the user knows a field key and needs its observed values for a metrics, traces, or logs filter. It returns values, not field names; use fusescope_get_field_keys when the key is unknown. Match signal and fieldContext to the query that will use the value. FuseScope sets data.complete=false when it truncated the value list; narrow with searchText to see more.",
           "inputSchema": {
             "properties": {
               "fieldContext": {
-                "description": "Restrict results to a single field context (optional). Valid values: 'resource' (resource attributes, e.g. service.name, k8s.namespace.name), 'attribute' (user-ingested span/log attributes), 'scope' (instrumentation scope), 'log' / 'span' / 'metric' (intrinsic columns of the logs/traces/metrics signal), 'body' (fields inside a JSON log body). For span/log attributes use 'attribute', not the legacy Query Builder context 'tag': SigNoz ignores 'tag' when listing keys and returns no values for it. Set this when the same key name exists in more than one context to disambiguate which one to fetch values for.",
+                "description": "Restrict results to a single field context (optional). Valid values: 'resource' (resource attributes, e.g. service.name, k8s.namespace.name), 'attribute' (user-ingested span/log attributes), 'scope' (instrumentation scope), 'log' / 'span' / 'metric' (intrinsic columns of the logs/traces/metrics signal), 'body' (fields inside a JSON log body). For span/log attributes use 'attribute', not the legacy Query Builder context 'tag': FuseScope ignores 'tag' when listing keys and returns no values for it. Set this when the same key name exists in more than one context to disambiguate which one to fetch values for.",
                 "enum": [
                   "resource",
                   "attribute",
@@ -5534,7 +5534,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Get the current status and overall posture of the SigNoz deployment in one call. Returns typed telemetry, infrastructure, dashboard, alert, integration, access, license, and configuration summaries, the org's feature flags, plus sourceStats with every reported stats field. Use dedicated list and query tools for exact inventories or time-windowed data. Missing fields are unreported, not zero; metadata.incompleteGroups provides recovery guidance for partial projections.",
+          "description": "Get the current status and overall posture of the FuseScope deployment in one call. Returns typed telemetry, infrastructure, dashboard, alert, integration, access, license, and configuration summaries, the org's feature flags, plus sourceStats with every reported stats field. Use dedicated list and query tools for exact inventories or time-windowed data. Missing fields are unreported, not zero; metadata.incompleteGroups provides recovery guidance for partial projections.",
           "inputSchema": {
             "properties": {
               "searchContext": {
@@ -5899,14 +5899,14 @@
                   },
                   "featureFlags": {
                     "additionalProperties": false,
-                    "description": "Feature flags as SigNoz resolves them for this org. Some change how data is stored or queried, such as use_json_body for JSON log bodies.",
+                    "description": "Feature flags as FuseScope resolves them for this org. Some change how data is stored or queried, such as use_json_body for JSON log bodies.",
                     "properties": {
                       "available": {
-                        "description": "Whether SigNoz reported the feature flags. False means unknown, not that every flag is off; metadata.incompleteGroups says why.",
+                        "description": "Whether FuseScope reported the feature flags. False means unknown, not that every flag is off; metadata.incompleteGroups says why.",
                         "type": "boolean"
                       },
                       "flags": {
-                        "description": "Every flag SigNoz reported, sorted by name.",
+                        "description": "Every flag FuseScope reported, sorted by name.",
                         "items": {
                           "additionalProperties": false,
                           "properties": {
@@ -5950,7 +5950,7 @@
                     "additionalProperties": false,
                     "properties": {
                       "freeUntil": {
-                        "description": "License free-until timestamp as reported by SigNoz.",
+                        "description": "License free-until timestamp as reported by FuseScope.",
                         "type": [
                           "null",
                           "string"
@@ -6135,7 +6135,7 @@
                             ]
                           },
                           "lastObservedTime": {
-                            "description": "Latest observed telemetry timestamp as reported by SigNoz.",
+                            "description": "Latest observed telemetry timestamp as reported by FuseScope.",
                             "type": [
                               "null",
                               "string"
@@ -6190,7 +6190,7 @@
                             "type": "object"
                           },
                           "lastObservedTime": {
-                            "description": "Latest observed metric timestamp as reported by SigNoz.",
+                            "description": "Latest observed metric timestamp as reported by FuseScope.",
                             "type": [
                               "null",
                               "string"
@@ -6226,7 +6226,7 @@
                             ]
                           },
                           "lastObservedTime": {
-                            "description": "Latest observed telemetry timestamp as reported by SigNoz.",
+                            "description": "Latest observed telemetry timestamp as reported by FuseScope.",
                             "type": [
                               "null",
                               "string"
@@ -6255,7 +6255,7 @@
                   },
                   "sourceStats": {
                     "additionalProperties": {},
-                    "description": "Authoritative complete flat stats bag for this response. It contains every key and value reported by SigNoz, including backend-owned and future fields. Dotted keys and value shapes can evolve; a missing key means unreported, not zero.",
+                    "description": "Authoritative complete flat stats bag for this response. It contains every key and value reported by FuseScope, including backend-owned and future fields. Dotted keys and value shapes can evolve; a missing key means unreported, not zero.",
                     "type": "object"
                   },
                   "users": {
@@ -6454,7 +6454,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user already has a known trace ID and wants that trace's spans, metadata, and hierarchy. If the ID is unknown, discover it with fusescope_search_traces first. SigNoz locates the trace by its ID alone, so no time window is needed; an ID SigNoz does not know returns no spans. Do not use this for filtering many spans or aggregate analysis.",
+          "description": "Use this when the user already has a known trace ID and wants that trace's spans, metadata, and hierarchy. If the ID is unknown, discover it with fusescope_search_traces first. FuseScope locates the trace by its ID alone, so no time window is needed; an ID FuseScope does not know returns no spans. Do not use this for filtering many spans or aggregate analysis.",
           "inputSchema": {
             "properties": {
               "includeSpans": {
@@ -6537,7 +6537,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user asks why AI spans show no model, tokens, or cost, or which vendor attributes SigNoz maps to gen_ai.* keys. At ingest, a mapping group runs on spans whose attribute keys contain one of its condition substrings, and each mapper fills one gen_ai.* key from the first source key present, by priority. Mappings apply only to spans ingested afterwards and are changed on the Attribute Mapping tab of AI Observability in SigNoz. To see how a sample span maps, use fusescope_test_ai_attribute_mapping; for spans with a model but no cost, use fusescope_get_ai_pricing. If incomplete is true, failedGroups names the groups whose mappers could not be read.",
+          "description": "Use this when the user asks why AI spans show no model, tokens, or cost, or which vendor attributes FuseScope maps to gen_ai.* keys. At ingest, a mapping group runs on spans whose attribute keys contain one of its condition substrings, and each mapper fills one gen_ai.* key from the first source key present, by priority. Mappings apply only to spans ingested afterwards and are changed on the Attribute Mapping tab of AI Observability in FuseScope. To see how a sample span maps, use fusescope_test_ai_attribute_mapping; for spans with a model but no cost, use fusescope_get_ai_pricing. If incomplete is true, failedGroups names the groups whose mappers could not be read.",
           "inputSchema": {
             "properties": {
               "searchContext": {
@@ -6561,7 +6561,7 @@
           "inputSchema": {
             "properties": {
               "filter": {
-                "description": "Filter expression SigNoz applies before paging, at most 1024 characters. Keys: name (the rule title), severity, alert_type, rule_type, created_by, updated_by, and created_at or updated_at with RFC 3339 times (created_at \u003e= '2026-01-02T15:04:05Z'). Any other key is a rule label, matched case-sensitively (cluster = 'prod'); labels.\u003ckey\u003e matches only the label. A bare word matches the name, description, or labels, ignoring case. Example: \"name CONTAINS 'High Response Time' AND severity IN ('critical', 'error')\".",
+                "description": "Filter expression FuseScope applies before paging, at most 1024 characters. Keys: name (the rule title), severity, alert_type, rule_type, created_by, updated_by, and created_at or updated_at with RFC 3339 times (created_at \u003e= '2026-01-02T15:04:05Z'). Any other key is a rule label, matched case-sensitively (cluster = 'prod'); labels.\u003ckey\u003e matches only the label. A bare word matches the name, description, or labels, ignoring case. Example: \"name CONTAINS 'High Response Time' AND severity IN ('critical', 'error')\".",
                 "type": "string"
               },
               "limit": {
@@ -6968,7 +6968,7 @@
                 "type": "string"
               },
               "source": {
-                "description": "Optional data-source filter. Use \"meter\" to list Cost Meter metrics, the usage/billing metrics SigNoz meters on (currently telemetry ingestion volume). Omit for the default SigNoz metrics store.",
+                "description": "Optional data-source filter. Use \"meter\" to list Cost Meter metrics, the usage/billing metrics FuseScope meters on (currently telemetry ingestion volume). Omit for the default FuseScope metrics store.",
                 "type": "string"
               },
               "start": {
@@ -7001,7 +7001,7 @@
             "additionalProperties": false,
             "properties": {
               "kind": {
-                "description": "Return only this provider kind, for example \"slack\", \"email\", \"webhook\", or \"pagerduty\". SigNoz validates the value.",
+                "description": "Return only this provider kind, for example \"slack\", \"email\", \"webhook\", or \"pagerduty\". FuseScope validates the value.",
                 "type": "string"
               },
               "limit": {
@@ -7142,7 +7142,7 @@
                 "type": "string"
               },
               "source": {
-                "description": "Explorer whose views to list, for example \"traces\", \"logs\", \"metrics\", or \"meter\" (Cost Meter). SigNoz validates the value. Omit to list views from every Explorer.",
+                "description": "Explorer whose views to list, for example \"traces\", \"logs\", \"metrics\", or \"meter\" (Cost Meter). FuseScope validates the value. Omit to list views from every Explorer.",
                 "type": "string"
               }
             },
@@ -7320,7 +7320,7 @@
                 ]
               },
               "functions": {
-                "description": "Post-query transforms applied in order to each time_series result, as an array of {name, args} objects, or a JSON-encoded string of that array. SigNoz applies them to time_series results only and returns scalar results unchanged, so set requestType to time_series. Names are the Query Builder function names, for example cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, cumulativeSum, ewma3, median5, timeShift, or fillZero; args carries the function's parameters, for example [{\"value\": 10}] for cutOffMin. SigNoz validates names and args.",
+                "description": "Post-query transforms applied in order to each time_series result, as an array of {name, args} objects, or a JSON-encoded string of that array. FuseScope applies them to time_series results only and returns scalar results unchanged, so set requestType to time_series. Names are the Query Builder function names, for example cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, cumulativeSum, ewma3, median5, timeShift, or fillZero; args carries the function's parameters, for example [{\"value\": 10}] for cutOffMin. FuseScope validates names and args.",
                 "items": {
                   "properties": {
                     "args": {
@@ -7376,7 +7376,7 @@
                 ]
               },
               "having": {
-                "description": "Condition on the primary query's aggregated values, applied after grouping, e.g. \"__result \u003e 0.5\" or \"__result \u003c 100\". With a formula it filters query A's series before the formula runs; SigNoz ignores a having on the formula result itself. SigNoz validates it.",
+                "description": "Condition on the primary query's aggregated values, applied after grouping, e.g. \"__result \u003e 0.5\" or \"__result \u003c 100\". With a formula it filters query A's series before the formula runs; FuseScope ignores a having on the formula result itself. FuseScope validates it.",
                 "type": "string"
               },
               "isMonotonic": {
@@ -7424,7 +7424,7 @@
                 "type": "string"
               },
               "source": {
-                "description": "Optional data-source filter forwarded to the backend. Use \"meter\" to query Cost Meter data. Omit for the default SigNoz metrics store.",
+                "description": "Optional data-source filter forwarded to the backend. Use \"meter\" to query Cost Meter data. Omit for the default FuseScope metrics store.",
                 "type": "string"
               },
               "spaceAggregation": {
@@ -7450,7 +7450,7 @@
                 "type": "string"
               },
               "timeAggregation": {
-                "description": "Aggregation within each series over a time bucket: latest, sum, avg, min, max, count, count_distinct, rate, or increase. Omit for the type's default: avg for gauges and non-monotonic sums, rate for counters, none for histogram percentiles. SigNoz validates the combination.",
+                "description": "Aggregation within each series over a time bucket: latest, sum, avg, min, max, count, count_distinct, rate, or increase. Omit for the type's default: avg for gauges and non-monotonic sums, rate for counters, none for histogram percentiles. FuseScope validates the combination.",
                 "type": "string"
               },
               "timeRange": {
@@ -7576,7 +7576,7 @@
                 ]
               },
               "filter": {
-                "description": "Filter expression text in SigNoz search syntax, not {\"expression\": ...} (see fusescope://logs/query-builder-guide). Combine conditions with AND, OR, parentheses. An unknown key may not fail: no rows plus a `key ... not found in metadata` warning means the key is absent. Ambiguous keys default to resource; prefix attribute.\u003ckey\u003e or resource.\u003ckey\u003e to choose. Log keys are workspace-specific; even service.name exists only when the log pipeline sets it. Discover keys and values with fusescope_get_field_keys and fusescope_get_field_values first. For message text use body CONTAINS 'term'. Only when you don't know which field holds a term, use search('term') for every field or search('term', attribute); scopes (body, attribute, resource, log) are ORed. search() is slow and may be rejected over wide ranges. There is no key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%', and EXISTS or NOT EXISTS. Example: \"service.name = 'payment-svc' AND severity_text = 'ERROR'\".",
+                "description": "Filter expression text in FuseScope search syntax, not {\"expression\": ...} (see fusescope://logs/query-builder-guide). Combine conditions with AND, OR, parentheses. An unknown key may not fail: no rows plus a `key ... not found in metadata` warning means the key is absent. Ambiguous keys default to resource; prefix attribute.\u003ckey\u003e or resource.\u003ckey\u003e to choose. Log keys are workspace-specific; even service.name exists only when the log pipeline sets it. Discover keys and values with fusescope_get_field_keys and fusescope_get_field_values first. For message text use body CONTAINS 'term'. Only when you don't know which field holds a term, use search('term') for every field or search('term', attribute); scopes (body, attribute, resource, log) are ORed. search() is slow and may be rejected over wide ranges. There is no key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%', and EXISTS or NOT EXISTS. Example: \"service.name = 'payment-svc' AND severity_text = 'ERROR'\".",
                 "type": "string"
               },
               "limit": {
@@ -7604,7 +7604,7 @@
                 "type": "string"
               },
               "searchScope": {
-                "description": "Where searchText matches: body (default) for message text; attribute or resource for their keys and values; all for every field. Scopes other than body are slower, and SigNoz may reject them over wide time ranges. Use them only when you don't know which key holds the text; when you do, put a predicate such as attribute.\u003ckey\u003e CONTAINS 'text' in filter instead. Ignored, with a note, when searchText is empty.",
+                "description": "Where searchText matches: body (default) for message text; attribute or resource for their keys and values; all for every field. Scopes other than body are slower, and FuseScope may reject them over wide time ranges. Use them only when you don't know which key holds the text; when you do, put a predicate such as attribute.\u003ckey\u003e CONTAINS 'text' in filter instead. Ignored, with a note, when searchText is empty.",
                 "enum": [
                   "body",
                   "attribute",
@@ -7618,7 +7618,7 @@
                 "type": "string"
               },
               "selectFields": {
-                "description": "Extra fields to return on each row, added to the default set: timestamp, id, body, severity_text, trace_id, span_id. Pass an array of names or a comma-separated string, at most 50. Names can be resource attributes (service.name, k8s.pod.name), log attributes (http.route), or other log columns (severity_number); a resource., attribute., log., or body. prefix picks the context. Each field comes back as its own row key. A body field (body.\u003cpath\u003e) can be selected only when fusescope_get_field_keys(signal=\"logs\", fieldContext=\"body\") lists it; otherwise SigNoz rejects it with `can be filtered but not selected or grouped` or `field not found`, so filter on it instead. Discover names with fusescope_get_field_keys (signal=\"logs\"). Example: [\"service.name\", \"http.route\"].",
+                "description": "Extra fields to return on each row, added to the default set: timestamp, id, body, severity_text, trace_id, span_id. Pass an array of names or a comma-separated string, at most 50. Names can be resource attributes (service.name, k8s.pod.name), log attributes (http.route), or other log columns (severity_number); a resource., attribute., log., or body. prefix picks the context. Each field comes back as its own row key. A body field (body.\u003cpath\u003e) can be selected only when fusescope_get_field_keys(signal=\"logs\", fieldContext=\"body\") lists it; otherwise FuseScope rejects it with `can be filtered but not selected or grouped` or `field not found`, so filter on it instead. Discover names with fusescope_get_field_keys (signal=\"logs\"). Example: [\"service.name\", \"http.route\"].",
                 "items": {
                   "type": "string"
                 },
@@ -7678,7 +7678,7 @@
                 ]
               },
               "filter": {
-                "description": "Filter expression text in SigNoz search syntax, not {\"expression\": ...} (see fusescope://traces/query-builder-guide). search() is logs-only; traces use field predicates. Combine conditions with AND, OR, and parentheses for precedence. An unknown key may not fail: SigNoz can match a guessed attribute and return a `key ... not found in metadata` warning with no rows, so read that warning as an absent key. Keys present in multiple contexts default to resource context; disambiguate with attribute.\u003ckey\u003e, resource.\u003ckey\u003e, or span.\u003ckey\u003e. Every condition needs a key and an operator: there is no full-text search, key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%' and EXISTS or NOT EXISTS. Discover valid keys with fusescope_get_field_keys, then confirm values with fusescope_get_field_values, before filtering. Examples: \"service.name = 'payment-svc' AND has_error = true\", \"http_method = 'POST' AND (has_error = true OR duration_nano \u003e 1000000000)\". Combined with shortcut params using AND.",
+                "description": "Filter expression text in FuseScope search syntax, not {\"expression\": ...} (see fusescope://traces/query-builder-guide). search() is logs-only; traces use field predicates. Combine conditions with AND, OR, and parentheses for precedence. An unknown key may not fail: FuseScope can match a guessed attribute and return a `key ... not found in metadata` warning with no rows, so read that warning as an absent key. Keys present in multiple contexts default to resource context; disambiguate with attribute.\u003ckey\u003e, resource.\u003ckey\u003e, or span.\u003ckey\u003e. Every condition needs a key and an operator: there is no full-text search, key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%' and EXISTS or NOT EXISTS. Discover valid keys with fusescope_get_field_keys, then confirm values with fusescope_get_field_values, before filtering. Examples: \"service.name = 'payment-svc' AND has_error = true\", \"http_method = 'POST' AND (has_error = true OR duration_nano \u003e 1000000000)\". Combined with shortcut params using AND.",
                 "type": "string"
               },
               "limit": {
@@ -7716,7 +7716,7 @@
                 "type": "string"
               },
               "orderBy": {
-                "description": "Row order as '\u003cexpression\u003e \u003cdirection\u003e', e.g. 'duration_nano desc'; the direction defaults to desc. Span rows order by span fields and default to 'timestamp desc'. builder_ai_query trace rows order by a trace-level field or trace.last_activity_time, e.g. 'trace.estimated_total_cost desc', and default to latest activity first. builder_query trace rows always come back slowest first; SigNoz ignores orderBy for them.",
+                "description": "Row order as '\u003cexpression\u003e \u003cdirection\u003e', e.g. 'duration_nano desc'; the direction defaults to desc. Span rows order by span fields and default to 'timestamp desc'. builder_ai_query trace rows order by a trace-level field or trace.last_activity_time, e.g. 'trace.estimated_total_cost desc', and default to latest activity first. builder_query trace rows always come back slowest first; FuseScope ignores orderBy for them.",
                 "type": "string"
               },
               "queryType": {
@@ -7780,11 +7780,11 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants to know whether SigNoz will treat a framework's spans as model, tool, or agent calls, or wants to try a mapping before adding it. It runs sample spans through the mapping groups (the saved ones by default) and returns each span as SigNoz would store it; nothing is saved. A span that gains gen_ai.request.model counts as a model call. To read the saved mappings, use fusescope_list_ai_attribute_mappings.",
+          "description": "Use this when the user wants to know whether FuseScope will treat a framework's spans as model, tool, or agent calls, or wants to try a mapping before adding it. It runs sample spans through the mapping groups (the saved ones by default) and returns each span as FuseScope would store it; nothing is saved. A span that gains gen_ai.request.model counts as a model call. To read the saved mappings, use fusescope_list_ai_attribute_mappings.",
           "inputSchema": {
             "properties": {
               "groups": {
-                "description": "Mapping groups to test instead of the saved ones, such as a draft before adding it on the Attribute Mapping tab. Omit to test the saved groups; an empty list tests none. A group without mappers uses the saved mappers of the group with the same name. SigNoz skips disabled groups, mappers, and condition keys, so set enabled to true on each.",
+                "description": "Mapping groups to test instead of the saved ones, such as a draft before adding it on the Attribute Mapping tab. Omit to test the saved groups; an empty list tests none. A group without mappers uses the saved mappers of the group with the same name. FuseScope skips disabled groups, mappers, and condition keys, so set enabled to true on each.",
                 "items": {
                   "properties": {
                     "condition": {
@@ -7994,7 +7994,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants to change an existing SigNoz alert rule; use fusescope_create_alert for a new rule. This is a full replacement: call fusescope_get_alert unless its complete result is available from the same still-current prepared operation, then preserve every unchanged field. Likewise reuse fusescope://alert/instructions, fusescope://alert/examples, and a fully paginated fusescope_list_notification_channels result only from that operation; otherwise read/call them, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If no direct channel fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never create automatically. SigNoz rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
+          "description": "Use this when the user wants to change an existing FuseScope alert rule; use fusescope_create_alert for a new rule. This is a full replacement: call fusescope_get_alert unless its complete result is available from the same still-current prepared operation, then preserve every unchanged field. Likewise reuse fusescope://alert/instructions, fusescope://alert/examples, and a fully paginated fusescope_list_notification_channels result only from that operation; otherwise read/call them, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If no direct channel fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never create automatically. FuseScope rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
           "inputSchema": {
             "properties": {
               "alert": {
@@ -8310,7 +8310,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants to change an existing SigNoz dashboard. This is a full replacement, not a partial patch: fetch it with fusescope_get_dashboard, take the \"data\" object out of that response, merge only the requested changes into it, and preserve every other field. Send that object's fields at the top level; the {status, data} response envelope is not accepted as input. For small, targeted edits prefer fusescope_patch_dashboard, which avoids re-sending the whole dashboard. Use fusescope_update_view instead for a saved Explorer query. Before composing changed panels, read fusescope://dashboard/instructions, fusescope://dashboard/widgets-instructions, and fusescope://dashboard/widgets-examples, then follow the query-specific resource linked by the widget guide.",
+          "description": "Use this when the user wants to change an existing FuseScope dashboard. This is a full replacement, not a partial patch: fetch it with fusescope_get_dashboard, take the \"data\" object out of that response, merge only the requested changes into it, and preserve every other field. Send that object's fields at the top level; the {status, data} response envelope is not accepted as input. For small, targeted edits prefer fusescope_patch_dashboard, which avoids re-sending the whole dashboard. Use fusescope_update_view instead for a saved Explorer query. Before composing changed panels, read fusescope://dashboard/instructions, fusescope://dashboard/widgets-instructions, and fusescope://dashboard/widgets-examples, then follow the query-specific resource linked by the widget guide.",
           "inputSchema": {
             "$defs": {
               "CommonJSONRef": {
@@ -12184,13 +12184,13 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants to replace one notification channel's complete config: {kind, spec}; it is a full replacement and may change the provider kind. First call fusescope_get_notification_channel and preserve every setting the user did not ask to change; send only id and config, because name and displayName are immutable. A fetched config is writable as-is; to unset an optional field, omit it, because SigNoz rejects an empty string for template-backed fields such as titles and messages. SigNoz also rejects an unknown kind and an unknown or missing spec field with the exact requirement; fusescope://notification-channel/examples lists every kind's spec fields. Set test=true only when the user wants one live test notification after the update; the default is false and the update remains committed if the test fails.",
+          "description": "Use this when the user wants to replace one notification channel's complete config: {kind, spec}; it is a full replacement and may change the provider kind. First call fusescope_get_notification_channel and preserve every setting the user did not ask to change; send only id and config, because name and displayName are immutable. A fetched config is writable as-is; to unset an optional field, omit it, because FuseScope rejects an empty string for template-backed fields such as titles and messages. FuseScope also rejects an unknown kind and an unknown or missing spec field with the exact requirement; fusescope://notification-channel/examples lists every kind's spec fields. Set test=true only when the user wants one live test notification after the update; the default is false and the update remains committed if the test fails.",
           "inputSchema": {
             "additionalProperties": false,
             "properties": {
               "config": {
                 "additionalProperties": {},
-                "description": "Provider configuration: an object with kind and spec, replacing the stored config entirely. SigNoz validates the kind and every spec field.",
+                "description": "Provider configuration: an object with kind and spec, replacing the stored config entirely. FuseScope validates the kind and every spec field.",
                 "type": "object"
               },
               "id": {

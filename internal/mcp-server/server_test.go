@@ -400,7 +400,7 @@ func TestAuthMiddlewareRejectsInstanceURLNotInAllowlist(t *testing.T) {
 		t.Fatalf("status = %d, want %d", rr.Code, http.StatusForbidden)
 	}
 	if nextCalled {
-		t.Fatalf("next handler must not run for a disallowed SigNoz URL")
+		t.Fatalf("next handler must not run for a disallowed FuseScope URL")
 	}
 }
 
@@ -585,7 +585,7 @@ func TestAuthMiddlewareRejectsInvalidOrMissingSigNozURL(t *testing.T) {
 		wantStatus int
 	}{
 		{
-			name: "invalid SigNoz URL",
+			name: "invalid FuseScope URL",
 			setup: func(req *http.Request) {
 				req.Header.Set("Authorization", "Bearer raw-api-key")
 				req.Header.Set("X-SigNoz-URL", "https://tenant.example.com/path")
@@ -593,7 +593,7 @@ func TestAuthMiddlewareRejectsInvalidOrMissingSigNozURL(t *testing.T) {
 			wantStatus: http.StatusBadRequest,
 		},
 		{
-			name: "missing SigNoz URL",
+			name: "missing FuseScope URL",
 			setup: func(req *http.Request) {
 				req.Header.Set("SIGNOZ-API-KEY", "api-key")
 			},

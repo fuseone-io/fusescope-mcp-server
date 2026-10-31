@@ -5,7 +5,7 @@ package dashboard
 // (add/edit/move/remove a panel, edit a query, rename, variables, tags) with the exact
 // JSON Pointer paths and the multi-op sequences the backend requires.
 const PatchInstructions = `
-Recipes for fusescope_patch_dashboard (RFC 6902 JSON Patch): targeted edits to a v2 dashboard without re-sending the whole payload. Every "patch" example below is an array of {op, path, value} operations verified against a live SigNoz instance. For the JSON of a panel/query/variable value, read fusescope://dashboard/widgets-examples and fusescope://dashboard/instructions; for the exact field set use the create/update tool's JSON Schema.
+Recipes for fusescope_patch_dashboard (RFC 6902 JSON Patch): targeted edits to a v2 dashboard without re-sending the whole payload. Every "patch" example below is an array of {op, path, value} operations verified against a live FuseScope instance. For the JSON of a panel/query/variable value, read fusescope://dashboard/widgets-examples and fusescope://dashboard/instructions; for the exact field set use the create/update tool's JSON Schema.
 
 Shape recap (JSON Pointers target the postable shape):
 - spec.panels is a MAP keyed by panel id: {"<id>": {"kind":"Panel","spec":{...}}}.

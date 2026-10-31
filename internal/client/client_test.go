@@ -132,7 +132,7 @@ func TestValidateCredentials(t *testing.T) {
 			},
 		},
 		{
-			name:          "HTML 404 means no SigNoz API at the instance URL",
+			name:          "HTML 404 means no FuseScope API at the instance URL",
 			saStatus:      http.StatusNotFound,
 			saBody:        expiredWorkspaceHTML,
 			expectedError: true,
@@ -520,7 +520,7 @@ func TestGetTraceDetails_LetsSigNozNarrowAWindowThatCoversAnyTrace(t *testing.T)
 	}
 	require.NoError(t, json.Unmarshal(captured, &request))
 	require.Less(t, request.Start, time.Date(2002, 1, 1, 0, 0, 0, 0, time.UTC).UnixMilli(), "the window reaches back past any stored trace")
-	require.Len(t, strconv.FormatInt(request.Start, 10), 13, "SigNoz reads only a 13-digit start as milliseconds")
+	require.Len(t, strconv.FormatInt(request.Start, 10), 13, "FuseScope reads only a 13-digit start as milliseconds")
 	require.GreaterOrEqual(t, request.End, before, "the window reaches the present")
 	require.Len(t, request.CompositeQuery.Queries, 1)
 	spec := request.CompositeQuery.Queries[0].Spec

@@ -182,7 +182,7 @@ func TestRequireArgsMap(t *testing.T) {
 func TestUpstreamError_UniformPrefix(t *testing.T) {
 	res := upstreamError(errors.New("connection refused"))
 	got := resultText(t, res)
-	want := "SigNoz API error: connection refused"
+	want := "FuseScope API error: connection refused"
 	if got != want {
 		t.Fatalf("upstreamError = %q, want %q", got, want)
 	}
@@ -278,7 +278,7 @@ func TestUpstreamError_HTTPStatusPreservesWrapperContext(t *testing.T) {
 	res := upstreamError(wrapped)
 
 	text := resultText(t, res)
-	want := `SigNoz API error: failed to auto-fetch metadata for formula query "A" (cpu.usage): unexpected status 403: only editors/admins can access this resource`
+	want := `FuseScope API error: failed to auto-fetch metadata for formula query "A" (cpu.usage): unexpected status 403: only editors/admins can access this resource`
 	if text != want {
 		t.Fatalf("text = %q, want wrapper context preserved", text)
 	}
@@ -303,14 +303,14 @@ func TestUpstreamError_UnrecognizedEnvelopeUsesBodyFreeFallback(t *testing.T) {
 			status:   http.StatusForbidden,
 			body:     `{"status":"error","error":{"type":"forbidden","code":"forbidden"}}`,
 			wantCode: CodePermissionDenied,
-			wantText: "SigNoz API error: unexpected status 403: permission denied",
+			wantText: "FuseScope API error: unexpected status 403: permission denied",
 		},
 		{
 			name:     "generic proxy envelope",
 			status:   http.StatusInternalServerError,
 			body:     `{"status":"error","message":"temporary outage"}`,
 			wantCode: CodeUpstreamError,
-			wantText: "SigNoz API error: unexpected status 500",
+			wantText: "FuseScope API error: unexpected status 500",
 		},
 	}
 	for _, tc := range cases {

@@ -159,7 +159,7 @@ func TestGetExternalURL_RefreshesConfigurationAndRetriesFallback(t *testing.T) {
 				time.Sleep(2 * time.Second)
 				got, err = client.GetExternalURL(context.Background())
 				require.NoError(t, err)
-				require.Equal(t, "https://updated.example.com", got, "refresh expired configuration so browser links converge on SigNoz's current setting")
+				require.Equal(t, "https://updated.example.com", got, "refresh expired configuration so browser links converge on FuseScope's current setting")
 			})
 		})
 	}

@@ -192,7 +192,7 @@ func notificationRoot(properties map[string]any, required ...string) map[string]
 func notificationListSchema() map[string]any {
 	return notificationRoot(map[string]any{
 		"query":  map[string]any{"type": "string", "maxLength": types.NotificationChannelMaxQueryRunes, "description": "Case-insensitive display-name search."},
-		"kind":   map[string]any{"type": "string", "description": "Return only this provider kind, for example \"slack\", \"email\", \"webhook\", or \"pagerduty\". SigNoz validates the value."},
+		"kind":   map[string]any{"type": "string", "description": "Return only this provider kind, for example \"slack\", \"email\", \"webhook\", or \"pagerduty\". FuseScope validates the value."},
 		"sort":   map[string]any{"type": "string", "enum": []string{"updated_at", "created_at", "name"}, "default": "updated_at"},
 		"order":  map[string]any{"type": "string", "enum": []string{"asc", "desc"}, "default": "desc"},
 		"limit":  map[string]any{"type": []string{"integer", "string"}, "minimum": 0, "default": types.NotificationChannelDefaultListLimit, "description": fmt.Sprintf("Page size. 0 or omitted uses %d; values above %d are clamped to %d, and pagination.limit reports the size used.", types.NotificationChannelDefaultListLimit, types.NotificationChannelMaxListLimit, types.NotificationChannelMaxListLimit)},

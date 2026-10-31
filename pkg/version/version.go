@@ -2,7 +2,7 @@ package version
 
 import "strings"
 
-const productName = "signoz-mcp-server"
+const productName = "fusescope-mcp-server"
 
 // Version is overridden at build time via ldflags.
 var Version = "dev"

@@ -98,8 +98,11 @@ func TestInstanceURLAllowlistStripsPortFromEntry(t *testing.T) {
 
 func TestInstanceURLNotPermittedMessage(t *testing.T) {
 	msg := InstanceURLNotPermittedMessage()
-	if !strings.Contains(msg, "https://mcp.<region>.signoz.cloud/mcp") {
-		t.Errorf("message should point to the regional MCP URL, got: %s", msg)
+	if strings.Contains(msg, "signoz.cloud") {
+		t.Errorf("message should not point to FuseScope Cloud, got: %s", msg)
+	}
+	if !strings.Contains(msg, "FUSESCOPE_INSTANCE_URL_ALLOWLIST") {
+		t.Errorf("message should name the allowlist setting, got: %s", msg)
 	}
 	if !strings.Contains(msg, MCPDocsURL) {
 		t.Errorf("message should include the docs link, got: %s", msg)

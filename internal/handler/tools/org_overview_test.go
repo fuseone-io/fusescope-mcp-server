@@ -394,7 +394,7 @@ func TestGetOrgOverview_FeatureFlagsFailure(t *testing.T) {
 			if group == nil || !overview.Data.Metadata.ProjectionPartial {
 				t.Fatalf("metadata = %+v, want a featureFlags incomplete group", overview.Data.Metadata)
 			}
-			if group.NextAction != "Treat every flag as unknown, not off, and check the feature in SigNoz settings before relying on it." {
+			if group.NextAction != "Treat every flag as unknown, not off, and check the feature in FuseScope settings before relying on it." {
 				t.Fatalf("nextAction = %q", group.NextAction)
 			}
 		})

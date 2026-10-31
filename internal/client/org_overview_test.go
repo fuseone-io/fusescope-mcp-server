@@ -55,7 +55,7 @@ func TestGetOrgOverview_RejectsWebPageServedAsSuccess(t *testing.T) {
 		contentType string
 		body        string
 	}{
-		{name: "web app page", contentType: "text/html; charset=utf-8", body: "<!doctype html><title>SigNoz</title>page-canary"},
+		{name: "web app page", contentType: "text/html; charset=utf-8", body: "<!doctype html><title>FuseScope</title>page-canary"},
 		{name: "login page without html content type", contentType: "text/plain", body: "\n  <html><form action=\"/oauth2/sign_in\">page-canary</form></html>"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {

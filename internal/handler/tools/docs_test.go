@@ -149,7 +149,7 @@ func TestDocsHandlers(t *testing.T) {
 		require.Len(t, contents, 1)
 		text := contents[0]
 		require.Equal(t, docsindex.DocsSitemapURI, text.URI)
-		require.Contains(t, text.Text, "Send logs to SigNoz")
+		require.Contains(t, text.Text, "Send logs to FuseScope")
 	})
 }
 
@@ -168,16 +168,16 @@ func newDocsTestHandler(t *testing.T) (*Handler, func()) {
 
 func docsHandlerSnapshot() docsindex.CorpusSnapshot {
 	now := time.Now().UTC()
-	logs := "# Send logs to SigNoz\n\n## Docker collector\n\nCollect Docker logs with the OpenTelemetry Collector and send them to SigNoz.\n"
+	logs := "# Send logs to FuseScope\n\n## Docker collector\n\nCollect Docker logs with the OpenTelemetry Collector and send them to FuseScope.\n"
 	large := "# Large Doc\n\n" + strings.Repeat("large content line\n", 20000)
 	duplicate := "# Duplicate Headings\n\n## Setup\n\nfirst setup\n\n## Setup\n\nsecond setup\n\n## Done\n\nfinished\n"
 	pages := []docsindex.PageRecord{
-		docsHandlerPage("https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs-to-signoz/", "Send logs to SigNoz", "logs-management", "Logs Management > Send logs", logs, now),
-		docsHandlerPage("https://fuseone-io.github.io/fusescope-docs/install/docker/", "Install SigNoz Using Docker", "install", "Install > Docker", "# Install SigNoz Using Docker\n\n## Start\n\nRun docker compose up.\n", now),
+		docsHandlerPage("https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs-to-signoz/", "Send logs to FuseScope", "logs-management", "Logs Management > Send logs", logs, now),
+		docsHandlerPage("https://fuseone-io.github.io/fusescope-docs/install/docker/", "Install FuseScope Using Docker", "install", "Install > Docker", "# Install FuseScope Using Docker\n\n## Start\n\nRun docker compose up.\n", now),
 		docsHandlerPage("https://fuseone-io.github.io/fusescope-docs/large/", "Large Doc", "test", "Test > Large", large, now),
 		docsHandlerPage("https://fuseone-io.github.io/fusescope-docs/duplicate-headings/", "Duplicate Headings", "test", "Test > Duplicate", duplicate, now),
 	}
-	sitemap := "- [Send logs to SigNoz](https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs-to-signoz/)\n- [Install SigNoz Using Docker](https://fuseone-io.github.io/fusescope-docs/install/docker/)\n"
+	sitemap := "- [Send logs to FuseScope](https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs-to-signoz/)\n- [Install FuseScope Using Docker](https://fuseone-io.github.io/fusescope-docs/install/docker/)\n"
 	return docsindex.CorpusSnapshot{
 		SchemaVersion: docsindex.CorpusSchemaVersion,
 		BuiltAt:       now,

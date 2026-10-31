@@ -25,7 +25,7 @@ type orgOverviewOutput struct {
 }
 
 type orgOverviewData struct {
-	SourceStats       map[string]any               `json:"sourceStats" jsonschema:"Authoritative complete flat stats bag for this response. It contains every key and value reported by SigNoz, including backend-owned and future fields. Dotted keys and value shapes can evolve; a missing key means unreported, not zero."`
+	SourceStats       map[string]any               `json:"sourceStats" jsonschema:"Authoritative complete flat stats bag for this response. It contains every key and value reported by FuseScope, including backend-owned and future fields. Dotted keys and value shapes can evolve; a missing key means unreported, not zero."`
 	Signals           orgSignalsOverview           `json:"signals"`
 	Dashboards        orgDashboardsOverview        `json:"dashboards"`
 	Alerts            orgAlertsOverview            `json:"alerts"`
@@ -38,7 +38,7 @@ type orgOverviewData struct {
 	Authorization     orgAuthorizationOverview     `json:"authorization"`
 	License           orgLicenseOverview           `json:"license"`
 	Configuration     orgConfigurationOverview     `json:"configuration"`
-	FeatureFlags      orgFeatureFlagsOverview      `json:"featureFlags" jsonschema:"Feature flags as SigNoz resolves them for this org. Some change how data is stored or queried, such as use_json_body for JSON log bodies."`
+	FeatureFlags      orgFeatureFlagsOverview      `json:"featureFlags" jsonschema:"Feature flags as FuseScope resolves them for this org. Some change how data is stored or queried, such as use_json_body for JSON log bodies."`
 	Metadata          orgOverviewMetadata          `json:"metadata"`
 }
 
@@ -51,14 +51,14 @@ type orgSignalsOverview struct {
 type orgSignalOverview struct {
 	Available            bool    `json:"available" jsonschema:"Whether the signal count was reported. A missing optional last-observed timestamp does not make the count unavailable."`
 	Count                *uint64 `json:"count,omitempty" jsonschema:"All-time telemetry row count; logs count log records and traces count span-index rows."`
-	LastObservedTime     *string `json:"lastObservedTime,omitempty" jsonschema:"Latest observed telemetry timestamp as reported by SigNoz."`
+	LastObservedTime     *string `json:"lastObservedTime,omitempty" jsonschema:"Latest observed telemetry timestamp as reported by FuseScope."`
 	LastObservedTimeUnix *int64  `json:"lastObservedTimeUnix,omitempty" jsonschema:"Latest observed telemetry timestamp in Unix seconds."`
 }
 
 type orgMetricsSignalOverview struct {
 	Available            bool                             `json:"available" jsonschema:"Whether the metric-sample count was reported. A missing optional last-observed timestamp does not make the count unavailable."`
 	Count                *uint64                          `json:"count,omitempty" jsonschema:"All-time metric sample row count, not a count of distinct metric names."`
-	LastObservedTime     *string                          `json:"lastObservedTime,omitempty" jsonschema:"Latest observed metric timestamp as reported by SigNoz."`
+	LastObservedTime     *string                          `json:"lastObservedTime,omitempty" jsonschema:"Latest observed metric timestamp as reported by FuseScope."`
 	LastObservedTimeUnix *int64                           `json:"lastObservedTimeUnix,omitempty" jsonschema:"Latest observed metric timestamp in Unix seconds."`
 	Infrastructure       orgMetricsInfrastructureOverview `json:"infrastructure"`
 }
@@ -176,7 +176,7 @@ type orgLicenseOverview struct {
 	ID        *string `json:"id,omitempty"`
 	PlanName  *string `json:"planName,omitempty"`
 	StateName *string `json:"stateName,omitempty"`
-	FreeUntil *string `json:"freeUntil,omitempty" jsonschema:"License free-until timestamp as reported by SigNoz."`
+	FreeUntil *string `json:"freeUntil,omitempty" jsonschema:"License free-until timestamp as reported by FuseScope."`
 }
 
 type orgConfigurationOverview struct {
@@ -186,8 +186,8 @@ type orgConfigurationOverview struct {
 }
 
 type orgFeatureFlagsOverview struct {
-	Available bool             `json:"available" jsonschema:"Whether SigNoz reported the feature flags. False means unknown, not that every flag is off; metadata.incompleteGroups says why."`
-	Flags     []orgFeatureFlag `json:"flags" jsonschema:"Every flag SigNoz reported, sorted by name."`
+	Available bool             `json:"available" jsonschema:"Whether FuseScope reported the feature flags. False means unknown, not that every flag is off; metadata.incompleteGroups says why."`
+	Flags     []orgFeatureFlag `json:"flags" jsonschema:"Every flag FuseScope reported, sorted by name."`
 }
 
 type orgFeatureFlag struct {
@@ -221,7 +221,7 @@ func (h *Handler) RegisterOrgOverviewHandlers(s *mcp.Server) {
 	tool := mcp.NewTool("fusescope_get_org_overview",
 		mcp.WithOutputSchema[orgOverviewOutput](),
 		withReadOnlyToolAnnotations(),
-		mcp.WithDescription("Get the current status and overall posture of the SigNoz deployment in one call. Returns typed telemetry, infrastructure, dashboard, alert, integration, access, license, and configuration summaries, the org's feature flags, plus sourceStats with every reported stats field. Use dedicated list and query tools for exact inventories or time-windowed data. Missing fields are unreported, not zero; metadata.incompleteGroups provides recovery guidance for partial projections."),
+		mcp.WithDescription("Get the current status and overall posture of the FuseScope deployment in one call. Returns typed telemetry, infrastructure, dashboard, alert, integration, access, license, and configuration summaries, the org's feature flags, plus sourceStats with every reported stats field. Use dedicated list and query tools for exact inventories or time-windowed data. Missing fields are unreported, not zero; metadata.incompleteGroups provides recovery guidance for partial projections."),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
 	)
 
@@ -242,7 +242,7 @@ func (h *Handler) handleGetOrgOverview(ctx context.Context, _ mcp.CallToolReques
 		var statusErr *signozclient.HTTPStatusError
 		routeMissing := errors.As(err, &statusErr) && statusErr.StatusCode == http.StatusNotFound
 		if routeMissing || errors.Is(err, signozclient.ErrNonJSONResponse) {
-			const recovery = "recovery: Verify that the configured SigNoz URL points to an active deployment. If the deployment is reachable but this route is unavailable, use fusescope_list_dashboards, fusescope_list_alert_rules, fusescope_list_notification_channels, fusescope_list_views, fusescope_list_metrics, fusescope_list_alerts, fusescope_search_logs, fusescope_search_traces, or fusescope_query_metrics as appropriate."
+			const recovery = "recovery: Verify that the configured FuseScope URL points to an active deployment. If the deployment is reachable but this route is unavailable, use fusescope_list_dashboards, fusescope_list_alert_rules, fusescope_list_notification_channels, fusescope_list_views, fusescope_list_metrics, fusescope_list_alerts, fusescope_search_logs, fusescope_search_traces, or fusescope_query_metrics as appropriate."
 			for i, content := range errorResult.Content {
 				if text, ok := content.(*mcp.TextContent); ok {
 					text.Text += "\n\n" + recovery
@@ -764,43 +764,43 @@ func orgOverviewRecovery(group string) (string, string, []string) {
 			[]string{"fusescope_list_views"}
 	case "logPipelines":
 		return "One or more log-pipeline stats were not reported or were invalid.",
-			"Inspect Log Pipelines in SigNoz and rerun the overview after resolving collector access.",
+			"Inspect Log Pipelines in FuseScope and rerun the overview after resolving collector access.",
 			nil
 	case "cloudIntegrations":
 		return "One or more current cloud-provider stats were not reported or were invalid.",
-			"Inspect Cloud Integrations in SigNoz for the unavailable provider, then rerun this overview after resolving provider access.",
+			"Inspect Cloud Integrations in FuseScope for the unavailable provider, then rerun this overview after resolving provider access.",
 			nil
 	case "users":
 		return "One or more user stats were not reported or were invalid.",
-			"Inspect user management in SigNoz and rerun the overview after resolving collector access.",
+			"Inspect user management in FuseScope and rerun the overview after resolving collector access.",
 			nil
 	case "authentication.tokens", "authentication.domains":
 		return "One or more authentication stats were not reported or were invalid.",
-			"Inspect authentication settings in SigNoz and rerun the overview after resolving collector access.",
+			"Inspect authentication settings in FuseScope and rerun the overview after resolving collector access.",
 			nil
 	case "serviceAccounts":
 		return "One or more service-account stats were not reported or were invalid.",
-			"Inspect service accounts in SigNoz and rerun the overview after resolving collector access.",
+			"Inspect service accounts in FuseScope and rerun the overview after resolving collector access.",
 			nil
 	case "authorization.roles":
 		return "One or more role stats were not reported or were invalid.",
-			"Inspect roles in SigNoz and rerun the overview after resolving collector access.",
+			"Inspect roles in FuseScope and rerun the overview after resolving collector access.",
 			nil
 	case "license":
 		return "One or more license stats were invalid for the typed projection.",
-			"Inspect license information in SigNoz; the original reported value remains available in sourceStats.",
+			"Inspect license information in FuseScope; the original reported value remains available in sourceStats.",
 			nil
 	case "featureFlags":
-		return "SigNoz did not report the feature flags, or reported them in an unreadable shape.",
-			"Treat every flag as unknown, not off, and check the feature in SigNoz settings before relying on it.",
+		return "FuseScope did not report the feature flags, or reported them in an unreadable shape.",
+			"Treat every flag as unknown, not off, and check the feature in FuseScope settings before relying on it.",
 			nil
 	case "configuration":
 		return "One or more deployment-configuration stats were not reported or were invalid.",
-			"Inspect the SigNoz deployment configuration and server logs, then rerun the overview after resolving the collector issue.",
+			"Inspect the FuseScope deployment configuration and server logs, then rerun the overview after resolving the collector issue.",
 			nil
 	default:
 		return "One or more deployment stats were not reported or were invalid for the typed projection.",
-			"Inspect sourceStats and the affected area in SigNoz before treating the typed group as complete.",
+			"Inspect sourceStats and the affected area in FuseScope before treating the typed group as complete.",
 			nil
 	}
 }

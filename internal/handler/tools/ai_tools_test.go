@@ -87,7 +87,7 @@ func TestGetAIPricing_RulesAssembleTheRequestedPageFromUpstreamPages(t *testing.
 		var limit int
 		_, _ = fmt.Sscan(query.Get("limit"), &limit)
 		if req.Path != "/api/v1/llm_pricing_rules" || query.Get("q") != "gpt" || limit < 1 || limit > aiPricingRulesUpstreamPageSize {
-			t.Fatalf("request %s?%s: want the rules path, q=gpt, and a limit within SigNoz's 100-rule cap", req.Path, req.Query)
+			t.Fatalf("request %s?%s: want the rules path, q=gpt, and a limit within FuseScope's 100-rule cap", req.Path, req.Query)
 		}
 	}
 	out := successJSON(t, textContent(t, result))
@@ -165,7 +165,7 @@ func TestGetAIPricing_RejectsInvalidArgumentsBeforeCallingSigNoz(t *testing.T) {
 				t.Fatalf("code = %q text = %q, want a %s validation error", got, resultText(t, result), tc.field)
 			}
 			if len(requests()) != 0 {
-				t.Fatalf("an invalid %s reached SigNoz", tc.field)
+				t.Fatalf("an invalid %s reached FuseScope", tc.field)
 			}
 		})
 	}
@@ -318,7 +318,7 @@ func TestTestAIAttributeMapping_DefaultsToTheSavedGroups(t *testing.T) {
 	}
 	mapped := out["spans"].([]any)[0].(map[string]any)["attributes"].(map[string]any)
 	if mapped["gen_ai.request.model"] != "gpt-4o" {
-		t.Fatalf("mapped span = %#v, want SigNoz's mapped attributes", mapped)
+		t.Fatalf("mapped span = %#v, want FuseScope's mapped attributes", mapped)
 	}
 }
 
@@ -361,7 +361,7 @@ func TestTestAIAttributeMapping_UpstreamRejectionKeepsSigNozGuidance(t *testing.
 		t.Fatalf("code = %q, want %q", got, CodeValidationFailed)
 	}
 	if structured := resultStructuredMap(t, result); structured["upstreamMessage"] != "'spans' must contain at least one span" {
-		t.Fatalf("structured = %#v, want SigNoz's message preserved", structured)
+		t.Fatalf("structured = %#v, want FuseScope's message preserved", structured)
 	}
 }
 

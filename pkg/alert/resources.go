@@ -1,36 +1,36 @@
 package alert
 
 // Instructions is the MCP resource content for fusescope://alert/instructions.
-const Instructions = `# SigNoz Alert Rule — Instructions
+const Instructions = `# FuseScope Alert Rule — Instructions
 
 ## Overview
 An alert rule monitors a signal (metrics, logs, traces, or exceptions) and fires when a condition is met.
 The alert is created via POST /api/v2/rules.
 
-Every rule type (threshold_rule, promql_rule, anomaly_rule) uses schemaVersion **v2alpha1**: structured thresholds + evaluation + notificationSettings. Always set schemaVersion="v2alpha1" explicitly: SigNoz treats an omitted schemaVersion as the retired v1 schema and then requires the v1 condition fields instead.
+Every rule type (threshold_rule, promql_rule, anomaly_rule) uses schemaVersion **v2alpha1**: structured thresholds + evaluation + notificationSettings. Always set schemaVersion="v2alpha1" explicitly: FuseScope treats an omitted schemaVersion as the retired v1 schema and then requires the v1 condition fields instead.
 
 ## Before Creating or Updating an Alert
 1. Read fusescope://alert/examples for complete payloads unless already read for the same prepared operation.
 2. Update is a full replacement. Reuse fusescope_get_alert only from the same still-current prepared operation; refresh if state may have changed, then preserve unchanged fields.
 3. Use fusescope_get_field_keys to discover filter/groupBy attributes, reusing results from that operation.
-4. NOTIFICATION ROUTING: Reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. The list is config-free, defaults to 20 rows, and accepts at most 200 per page; follow its filtered total. The immutable routing identity is displayName, not machine name. For v2 direct routing, every threshold tier needs an exact returned displayName: SigNoz rejects a tier with no channels and a channel name that does not exist. Top-level preferredChannels plays no part in v2 routing (SigNoz stores it unused), so omit it. If no direct channel fits, show the returned choices and ask; if none exists, offer fusescope_create_notification_channel with settings the user provides. Never guess or create automatically. Channel create and update default test to false; set test=true only when the user asks to send a test. Confirmed v2 policy routing sets notificationSettings.usePolicy=true and may omit tier channels.
+4. NOTIFICATION ROUTING: Reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. The list is config-free, defaults to 20 rows, and accepts at most 200 per page; follow its filtered total. The immutable routing identity is displayName, not machine name. For v2 direct routing, every threshold tier needs an exact returned displayName: FuseScope rejects a tier with no channels and a channel name that does not exist. Top-level preferredChannels plays no part in v2 routing (FuseScope stores it unused), so omit it. If no direct channel fits, show the returned choices and ask; if none exists, offer fusescope_create_notification_channel with settings the user provides. Never guess or create automatically. Channel create and update default test to false; set test=true only when the user asks to send a test. Confirmed v2 policy routing sets notificationSettings.usePolicy=true and may omit tier channels.
 
 ## Quick Workflow: From User Intent to Payload
 A repeatable mental model for going from a user request ("alert me when login p99 > 2s") to a valid payload:
-1. **Signal -> alertType.** CPU, memory, latency histograms, request rate -> METRIC_BASED_ALERT. Log lines or log volume -> LOGS_BASED_ALERT. Span latency or span error rate -> TRACES_BASED_ALERT. Exception counts -> EXCEPTIONS_BASED_ALERT. SigNoz validates the value.
+1. **Signal -> alertType.** CPU, memory, latency histograms, request rate -> METRIC_BASED_ALERT. Log lines or log volume -> LOGS_BASED_ALERT. Span latency or span error rate -> TRACES_BASED_ALERT. Exception counts -> EXCEPTIONS_BASED_ALERT. FuseScope validates the value.
 2. **Pick ruleType.** Default to threshold_rule. Use promql_rule only if the user provided a PromQL expression. Use anomaly_rule only for metric deviation detection; see the Anomaly Alerts section for its condition fields and signed targets.
 3. **Pick compositeQuery.queryType + matching envelope type.** See the "Query envelope type" table.
 4. **Pick the aggregation shape.** Metrics -> object {metricName, timeAggregation, spaceAggregation}. Logs/traces -> {expression: "count()" | "p99(duration_nano)" | ...}.
 5. **Write the filter.** See "Filter & Having Expressions" for the operator set. Prefer resource attributes (service.name, deployment.environment, k8s.*); the backend indexes them.
 6. **Configure thresholds.** Every rule requires tiers with name, op, matchType, and target. Direct routing uses exact displayName values from the notification-routing preflight above on every tier; confirmed policy routing sets notificationSettings.usePolicy=true and may omit tier channels.
-7. **Evaluation.** Set evaluation explicitly (SigNoz requires it for v2alpha1): kind=rolling with evalWindow=5m and frequency=1m unless the user asked for a different window.
+7. **Evaluation.** Set evaluation explicitly (FuseScope requires it for v2alpha1): kind=rolling with evalWindow=5m and frequency=1m unless the user asked for a different window.
 8. **Notification.** Set notificationSettings.groupBy on high-cardinality queries to reduce noise.
 
 The tool's input schema describes every top-level and condition field (accepted values, defaults, which schemaVersion reads each). This resource covers the fields the schema shows as plain objects (query envelopes, threshold tiers, evaluation specs) and the workflow around them.
 
 ## Composite Query Structure
 
-condition.compositeQuery uses the v5 query format. Set panelType to "graph" for alerts; SigNoz stores an empty value when omitted.
+condition.compositeQuery uses the v5 query format. Set panelType to "graph" for alerts; FuseScope stores an empty value when omitted.
 
 ### Query envelope type (queries[].type)
 The envelope type must match compositeQuery.queryType:
@@ -48,7 +48,7 @@ The envelope type must match compositeQuery.queryType:
 - aggregations: see "Aggregation shapes" below
 - filter: {expression: "service.name = 'frontend' AND http.status_code >= 500"}
 - groupBy: [{name, fieldContext: "resource" | "attribute", fieldDataType}]
-- order and limit: omit both on alert queries. On a grouped query they cap evaluation to the top-N series (SigNoz builds a top-N CTE from them), so series beyond N are silently never evaluated; a "below" alert ordered descending can miss every breaching series. Set them only when top-N alerting is the explicit intent, using Query Builder v5 wire ordering (metrics: [{key: {name: "__result"}, direction: "desc"}]), never dashboard editor orderBy.
+- order and limit: omit both on alert queries. On a grouped query they cap evaluation to the top-N series (FuseScope builds a top-N CTE from them), so series beyond N are silently never evaluated; a "below" alert ordered descending can miss every breaching series. Set them only when top-N alerting is the explicit intent, using Query Builder v5 wire ordering (metrics: [{key: {name: "__result"}, direction: "desc"}]), never dashboard editor orderBy.
 - functions: post-query transforms. Required for anomaly_rule: [{name: "anomaly", args: [{name: "z_score_threshold", value: 2}]}]
 - disabled: true when the query is used only as an input to a formula
 
@@ -59,9 +59,9 @@ The envelope type must match compositeQuery.queryType:
 - disabled: false
 
 ### PromQL for OTel dotted metric names
-Alerts with ruleType=promql_rule on OpenTelemetry metrics must use the Prometheus 3.x UTF-8 quoted-selector form for any name containing a dot. The forms that look natural but return no data in SigNoz:
+Alerts with ruleType=promql_rule on OpenTelemetry metrics must use the Prometheus 3.x UTF-8 quoted-selector form for any name containing a dot. The forms that look natural but return no data in FuseScope:
 
-- Underscored conversion: rate(payment_latency_ms_bucket[5m]). SigNoz does NOT rename dots to underscores.
+- Underscored conversion: rate(payment_latency_ms_bucket[5m]). FuseScope does NOT rename dots to underscores.
 - Bare dotted name: rate(payment_latency_ms.bucket[5m]). A dot is not a legal identifier char.
 
 Correct form (quote the name inside braces):
@@ -180,7 +180,7 @@ condition.thresholds defines one or more routing tiers. Each tier can route to d
 - **channels**: existing notification channel displayName values for this tier. Direct v2 routing requires at least one exact returned displayName from fusescope_list_notification_channels on every tier; top-level preferredChannels is not a fallback. Reuse only a same-operation, still-current list result; otherwise call the fully paginated tool, refreshing if state may have changed. With notificationSettings.usePolicy=true, tier channels may be omitted, but supplied displayName values are still validated.
 
 ### Choosing targetUnit
-- Set targetUnit when the threshold value is in a different unit from the query series. Example: the series emits nanoseconds (compositeQuery.unit="ns") but you want to threshold at "5 seconds". Set target=5, targetUnit="s". SigNoz converts during evaluation.
+- Set targetUnit when the threshold value is in a different unit from the query series. Example: the series emits nanoseconds (compositeQuery.unit="ns") but you want to threshold at "5 seconds". Set target=5, targetUnit="s". FuseScope converts during evaluation.
 - If compositeQuery.unit is empty and targetUnit is set, the validator propagates targetUnit onto compositeQuery.unit, so you can omit compositeQuery.unit on single-threshold rules.
 - Formulas that compute ratios (e.g. (A/B) * 100) already emit percent. Set compositeQuery.unit="percent" and give the threshold a bare numeric target (no targetUnit).
 
@@ -201,7 +201,7 @@ evaluation controls how the rule is evaluated:
 
 - evalWindow: how long the condition must persist (e.g. 5m, 15m, 30m, 1h, 4h, 24h).
 - frequency: how often to evaluate (e.g. 1m, 5m, 15m).
-- Required by SigNoz for threshold/promql rules (schemaVersion v2alpha1); it rejects a rule without an evaluation block. Use a 5m window with 1m frequency unless asked otherwise.
+- Required by FuseScope for threshold/promql rules (schemaVersion v2alpha1); it rejects a rule without an evaluation block. Use a 5m window with 1m frequency unless asked otherwise.
 - **Format**: Go duration strings. Both "5m" and "5m0s" are accepted; stick to one style per payload. Common values: 1m, 5m, 15m, 30m, 1h, 4h, 24h, 1d.
 - **Sizing tips**: keep evalWindow ≥ frequency. Short windows (1-5m) catch spikes; long windows (30m-1h) smooth noise. For infrequent signals (hourly batch jobs) set frequency to 5-15m to reduce evaluation cost.
 
@@ -280,7 +280,7 @@ Required fields:
 
 ### Anomaly tuning
 - **seasonality**: "hourly" for short-period patterns, "daily" for business-hours / off-hours patterns, "weekly" for weekend-vs-weekday traffic.
-- **Deviation**: how many standard deviations count as anomalous. Use it as the magnitude of each tier target, and pass the same value as z_score_threshold in spec.functions args; z_score_threshold sets the expected-range band SigNoz returns with the scores, while the tier targets decide when the rule fires.
+- **Deviation**: how many standard deviations count as anomalous. Use it as the magnitude of each tier target, and pass the same value as z_score_threshold in spec.functions args; z_score_threshold sets the expected-range band FuseScope returns with the scores, while the tier targets decide when the rule fires.
 
   | Deviation | Sensitivity | Use case |
   |-----------|-------------|----------|
@@ -295,12 +295,12 @@ Required fields:
 See fusescope://alert/examples → "metric_anomaly" for a complete payload.
 
 ## Set These Explicitly
-The payload is forwarded to SigNoz exactly as composed, and SigNoz fills in very little (version="v5" and notificationSettings.usePolicy=false). Everything else is on the author:
-- schemaVersion: always "v2alpha1"; SigNoz treats an omitted schemaVersion as the retired v1 schema and then requires the v1 condition fields.
-- evaluation and notificationSettings: SigNoz rejects a v2alpha1 rule missing either block.
-- panelType: set "graph"; SigNoz stores an empty value when omitted.
+The payload is forwarded to FuseScope exactly as composed, and FuseScope fills in very little (version="v5" and notificationSettings.usePolicy=false). Everything else is on the author:
+- schemaVersion: always "v2alpha1"; FuseScope treats an omitted schemaVersion as the retired v1 schema and then requires the v1 condition fields.
+- evaluation and notificationSettings: FuseScope rejects a v2alpha1 rule missing either block.
+- panelType: set "graph"; FuseScope stores an empty value when omitted.
 - selectedQueryName: set it on every rule to the query or formula the rule alerts on, even when there is only one query.
-- labels.severity and annotations: SigNoz adds no defaults; include them so routing tiers and notification text work.
+- labels.severity and annotations: FuseScope adds no defaults; include them so routing tiers and notification text work.
 - Omit server-populated fields (createdAt, updatedAt, createdBy, updatedBy) and the injected webUrl, also when composing an update from a fusescope_get_alert result.
 
 ## Further Reading

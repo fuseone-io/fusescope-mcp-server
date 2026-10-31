@@ -70,11 +70,11 @@ func (s *etagServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func conditionalFixture(t *testing.T) ([]SitemapEntry, CorpusSnapshot, *etagServer) {
 	t.Helper()
 	entries := []SitemapEntry{
-		{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install SigNoz Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"},
+		{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install FuseScope Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"},
 		{URL: "https://fuseone-io.github.io/fusescope-docs/logs/overview/", Title: "Logs Overview", SectionSlug: "logs", SectionBreadcrumb: "Logs > Overview"},
 	}
 	bodies := map[string]string{
-		"/fusescope-docs/install/docker/": "# Install SigNoz Using Docker\n\nDocker Compose setup.\n",
+		"/fusescope-docs/install/docker/": "# Install FuseScope Using Docker\n\nDocker Compose setup.\n",
 		"/fusescope-docs/logs/overview/":  "# Logs Overview\n\nCollect logs.\n",
 	}
 	// Build the baseline from the entries the refresher will parse out of the
@@ -121,7 +121,7 @@ func TestFetcherConditionalRequest(t *testing.T) {
 	require.Equal(t, first.ETag, same.ETag)
 	require.Empty(t, same.Body)
 
-	srv.set("/fusescope-docs/install/docker/", "# Install SigNoz Using Docker\n\nNew steps.\n", `W/"v2"`)
+	srv.set("/fusescope-docs/install/docker/", "# Install FuseScope Using Docker\n\nNew steps.\n", `W/"v2"`)
 	changed := fetcher.FetchConditional(context.Background(), url, first.ETag)
 	require.Equal(t, FetchStatusOK, changed.Status)
 	require.Equal(t, `W/"v2"`, changed.ETag)
@@ -167,7 +167,7 @@ func TestRevalidatedPageAdoptsRenamedSitemapTitle(t *testing.T) {
 	verifyNoDocsLeaks(t)
 	// A body without a level-1 heading takes its title from the sitemap link
 	// text, so a sitemap rename must surface even when the body is a 304.
-	sitemap := "# SigNoz Docs\n- [Old Name](https://fuseone-io.github.io/fusescope-docs/logs/overview/)\n"
+	sitemap := "# FuseScope Docs\n- [Old Name](https://fuseone-io.github.io/fusescope-docs/logs/overview/)\n"
 	parsed, err := ParseSitemapMarkdown(sitemap)
 	require.NoError(t, err)
 	body := "Collect logs with the OpenTelemetry Collector.\n"

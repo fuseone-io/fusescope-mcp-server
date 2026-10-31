@@ -11,10 +11,10 @@ func TestUserAgent(t *testing.T) {
 		version string
 		want    string
 	}{
-		{name: "release", version: "v0.8.1", want: "signoz-mcp-server/v0.8.1"},
-		{name: "branch", version: "main-abcdef0", want: "signoz-mcp-server/main-abcdef0"},
-		{name: "trimmed", version: "  v0.8.1  ", want: "signoz-mcp-server/v0.8.1"},
-		{name: "blank fallback", version: " ", want: "signoz-mcp-server/dev"},
+		{name: "release", version: "v0.8.1", want: "fusescope-mcp-server/v0.8.1"},
+		{name: "branch", version: "main-abcdef0", want: "fusescope-mcp-server/main-abcdef0"},
+		{name: "trimmed", version: "  v0.8.1  ", want: "fusescope-mcp-server/v0.8.1"},
+		{name: "blank fallback", version: " ", want: "fusescope-mcp-server/dev"},
 	}
 
 	for _, tt := range tests {

@@ -118,7 +118,7 @@ func (h *Handler) GetClient(ctx context.Context) (signozclient.Client, error) {
 		headers = h.customHeaders
 	}
 
-	h.logger.DebugContext(ctx, "Creating new SigNoz client for tenant")
+	h.logger.DebugContext(ctx, "Creating new FuseScope client for tenant")
 	newClient := signozclient.NewClient(h.logger, signozURL, apiKey, authHeader, headers)
 	newClient.SetMeters(h.meters)
 	h.clientCache.Add(cacheKey, newClient)
