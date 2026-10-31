@@ -1,25 +1,25 @@
 {
   "manifest_version": "0.2",
   "name": "fusescope",
-  "display_name": "SigNoz MCP Server",
+  "display_name": "FuseScope MCP Server",
   "version": "0.17.0",
-  "description": "Access SigNoz metrics, traces, logs, and dashboards.",
+  "description": "Access FuseScope metrics, traces, logs, and dashboards.",
   "author": {
-    "name": "SigNoz Team"
+    "name": "FuseOne"
   },
-  "homepage": "https://github.com/SigNoz/signoz-mcp-server",
-  "documentation": "https://signoz.io/docs/signoz-mcp-server",
-  "support": "https://github.com/SigNoz/signoz-mcp-server/issues",
-  "icon": "signoz_icon.png",
+  "homepage": "https://github.com/fuseone-io/fusescope-mcp-server",
+  "documentation": "https://github.com/fuseone-io/fusescope-mcp-server#readme",
+  "support": "https://github.com/fuseone-io/fusescope-mcp-server/issues",
+  "icon": "fusescope_icon.png",
   "server": {
     "type": "binary",
-    "entry_point": "server/signoz-mcp-server",
+    "entry_point": "server/fusescope-mcp-server",
     "mcp_config": {
-      "command": "${__dirname}/server/signoz-mcp-server",
+      "command": "${__dirname}/server/fusescope-mcp-server",
       "args": [],
       "env": {
-        "FUSESCOPE_URL": "${user_config.signoz_url}",
-        "FUSESCOPE_API_KEY": "${user_config.signoz_api_key}",
+        "FUSESCOPE_URL": "${user_config.fusescope_url}",
+        "FUSESCOPE_API_KEY": "${user_config.fusescope_api_key}",
         "LOG_LEVEL": "${user_config.log_level}"
       }
     }
@@ -370,17 +370,17 @@
     ]
   },
   "user_config": {
-    "signoz_url": {
+    "fusescope_url": {
       "type": "string",
-      "title": "SigNoz URL",
-      "description": "URL to your SigNoz instance",
+      "title": "FuseScope URL",
+      "description": "URL of your FuseScope instance",
       "required": true,
       "sensitive": false
     },
-    "signoz_api_key": {
+    "fusescope_api_key": {
       "type": "string",
-      "title": "SigNoz API Key",
-      "description": "API key for accessing SigNoz API",
+      "title": "FuseScope API Key",
+      "description": "FuseScope service-account API key",
       "required": true,
       "sensitive": true
     },
@@ -393,7 +393,7 @@
     }
   },
   "keywords": [
-    "signoz",
+    "fusescope",
     "observability",
     "metrics",
     "traces",
@@ -404,6 +404,6 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SigNoz/signoz-mcp-server"
+    "url": "https://github.com/fuseone-io/fusescope-mcp-server"
   }
 }
