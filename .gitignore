@@ -34,6 +34,8 @@ go.work.sum
 !/scripts/check-agpl.sh
 !/scripts/check-agpl_test.sh
 !/scripts/release-notes.sh
+!/scripts/check-release-tag.sh
+!/scripts/check-release-tag_test.sh
 
 # env file
 .env
