@@ -29,7 +29,7 @@ func ToolError(code, message string, extra map[string]any) *mcp.CallToolResult {
 }
 
 func OutOfScopeURLError(url string) *mcp.CallToolResult {
-	message := "URL is outside https://signoz.io/docs/ scope: " + url
+	message := "URL is outside " + DocsRootURL + " scope: " + url
 	if strings.HasPrefix(url, "fusescope://") {
 		message += ". fusescope:// URIs are MCP resources: read them with resources/read, not fusescope_fetch_doc. To find a docs page, call fusescope_search_docs and pass one of its URLs here."
 	}

@@ -1,17 +1,17 @@
 name: docs-index-refresh
 
-# Dispatch-only, mirroring pre-release.yaml: GitHub does not fire `release`
+# Dispatch-only: GitHub does not fire `release`
 # events for draft releases, and hooking to `published` would only benefit
 # the NEXT release, not the one being cut. Instead, the maintainer runs
-# this manually ahead of a release (typically right before pre-release.yaml)
+# this manually ahead of a release
 # so the bundled PR carries a freshly-rebuilt corpus blob. Also usable
-# ad-hoc whenever signoz.io/docs has drifted enough that the committed blob
+# ad-hoc whenever the FuseScope docs have drifted enough that the committed blob
 # is worth refreshing outside a release cycle.
 #
 # Rebuilds internal/docs/assets/corpus.gob.gz and corpus.manifest.json and
 # opens a PR with the diff so a reviewer can eyeball the manifest.
 #
-# The running server also refreshes from signoz.io on its own
+# The running server also refreshes from the FuseScope docs on its own
 # (6 h incremental, 24 h forced), so this CI is a cold-boot freshness
 # guarantee — not the hot path for keeping running fleets current.
 

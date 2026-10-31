@@ -66,12 +66,12 @@ func TestSchemaVersionGuard(t *testing.T) {
 
 func TestForcedRefreshBypassesUnchangedSitemapHash(t *testing.T) {
 	verifyNoDocsLeaks(t)
-	entries := []SitemapEntry{{URL: "https://signoz.io/docs/install/docker/", Title: "Install SigNoz Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"}}
+	entries := []SitemapEntry{{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install SigNoz Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"}}
 	initial := snapshotForEntries(entries, map[string]string{entries[0].URL: "# Old\n"})
 	initial.SitemapHash = SitemapHash(sitemapForEntries(entries))
 	reg := newTestRegistry(t, initial)
 	srv := docsCorpusServer(t, sitemapForEntries(entries), map[string]PageFetch{
-		"/docs/install/docker/": {Status: FetchStatusOK, Body: "# Install SigNoz Using Docker\n\nDocker Compose setup.\n"},
+		"/fusescope-docs/install/docker/": {Status: FetchStatusOK, Body: "# Install SigNoz Using Docker\n\nDocker Compose setup.\n"},
 	})
 	defer srv.Close()
 
@@ -88,14 +88,14 @@ func TestForcedRefreshBypassesUnchangedSitemapHash(t *testing.T) {
 
 func TestSingleflightSerialization(t *testing.T) {
 	verifyNoDocsLeaks(t)
-	entries := []SitemapEntry{{URL: "https://signoz.io/docs/install/docker/", Title: "Install SigNoz Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"}}
+	entries := []SitemapEntry{{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install SigNoz Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"}}
 	initial := snapshotForEntries(entries, map[string]string{entries[0].URL: "# Old\n"})
 	initial.SitemapHash = "old"
 	reg := newTestRegistry(t, initial)
 	var sitemapFetches, pageFetches atomic.Int64
 	release := make(chan struct{})
 	srv := newHTTPTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/docs/sitemap.md" {
+		if r.URL.Path == "/fusescope-docs/sitemap.md" {
 			sitemapFetches.Add(1)
 			<-release
 			_, _ = w.Write([]byte(sitemapForEntries(entries)))
@@ -166,12 +166,12 @@ func TestAtomicSwapRace(t *testing.T) {
 
 func TestShutdownSemantics(t *testing.T) {
 	verifyNoDocsLeaks(t)
-	entries := []SitemapEntry{{URL: "https://signoz.io/docs/install/docker/", Title: "Install SigNoz Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"}}
+	entries := []SitemapEntry{{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install SigNoz Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"}}
 	reg := newTestRegistry(t, snapshotForEntries(entries, map[string]string{entries[0].URL: "# Old\n"}))
 	defer reg.Close(context.Background())
 	started := make(chan struct{})
 	srv := newHTTPTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/docs/sitemap.md" {
+		if r.URL.Path == "/fusescope-docs/sitemap.md" {
 			closeOnce(started)
 			select {
 			case <-r.Context().Done():
@@ -199,21 +199,21 @@ func TestShutdownSemantics(t *testing.T) {
 func TestFetcherRetryAndRedirect(t *testing.T) {
 	var attempts atomic.Int64
 	srv := newHTTPTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.URL.Path {
-		case "/docs/retry-after/":
+		switch strings.TrimSuffix(r.URL.Path, "index.md") {
+		case "/fusescope-docs/retry-after/":
 			w.Header().Set("Retry-After", "1")
 			if attempts.Add(1) == 1 {
 				http.Error(w, "slow down", http.StatusTooManyRequests)
 				return
 			}
 			_, _ = w.Write([]byte("# Retry After\n"))
-		case "/docs/retry-500/":
+		case "/fusescope-docs/retry-500/":
 			if attempts.Add(1) <= 3 {
 				http.Error(w, "try again", http.StatusInternalServerError)
 				return
 			}
 			_, _ = w.Write([]byte("# Retry 500\n"))
-		case "/docs/redirect-out/":
+		case "/fusescope-docs/redirect-out/":
 			http.Redirect(w, r, "https://example.com/docs/out/", http.StatusFound)
 		default:
 			http.NotFound(w, r)
@@ -227,17 +227,17 @@ func TestFetcherRetryAndRedirect(t *testing.T) {
 		slept = append(slept, d)
 		return nil
 	}
-	got := fetcher.Fetch(context.Background(), "https://signoz.io/docs/retry-after/")
+	got := fetcher.Fetch(context.Background(), "https://fuseone-io.github.io/fusescope-docs/retry-after/")
 	require.Equal(t, FetchStatusOK, got.Status)
 	require.Equal(t, int64(2), attempts.Load())
 	require.Contains(t, slept, time.Second)
 
 	attempts.Store(0)
-	got = fetcher.Fetch(context.Background(), "https://signoz.io/docs/retry-500/")
+	got = fetcher.Fetch(context.Background(), "https://fuseone-io.github.io/fusescope-docs/retry-500/")
 	require.Equal(t, FetchStatusOK, got.Status)
 	require.Equal(t, int64(4), attempts.Load())
 
-	got = fetcher.Fetch(context.Background(), "https://signoz.io/docs/redirect-out/")
+	got = fetcher.Fetch(context.Background(), "https://fuseone-io.github.io/fusescope-docs/redirect-out/")
 	require.Equal(t, FetchStatusOutOfScope, got.Status)
 }
 
@@ -251,7 +251,7 @@ func TestFetcherAllowsFractionalRequestsPerSecond(t *testing.T) {
 		RequestsPerSec: 0.5,
 		Transport:      rewriteTransport{handler: srv.handler},
 	})
-	got := fetcher.Fetch(context.Background(), "https://signoz.io/docs/slow/")
+	got := fetcher.Fetch(context.Background(), "https://fuseone-io.github.io/fusescope-docs/slow/")
 
 	require.Equal(t, FetchStatusOK, got.Status)
 	require.Equal(t, "# Slow Docs\n", got.Body)
@@ -359,13 +359,13 @@ func TestTransient404Grace(t *testing.T) {
 func TestRefreshFallbackPreservesDuplicateURLSections(t *testing.T) {
 	entries := manyEntries(18)
 	duplicateLogs := SitemapEntry{
-		URL:               "https://signoz.io/docs/duplicate-deno/",
+		URL:               "https://fuseone-io.github.io/fusescope-docs/duplicate-deno/",
 		Title:             "Deno Logs",
 		SectionSlug:       "logs-management",
 		SectionBreadcrumb: "Logs Management > Deno",
 	}
 	duplicateMetrics := SitemapEntry{
-		URL:               "https://signoz.io/docs/duplicate-deno/",
+		URL:               "https://fuseone-io.github.io/fusescope-docs/duplicate-deno/",
 		Title:             "Deno Metrics",
 		SectionSlug:       "metrics",
 		SectionBreadcrumb: "Metrics > Deno",
@@ -448,11 +448,11 @@ func (t rewriteTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 func docsCorpusServer(t *testing.T, sitemap string, pages map[string]PageFetch) *localHTTPTestServer {
 	t.Helper()
 	return newHTTPTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/docs/sitemap.md" {
+		if r.URL.Path == "/fusescope-docs/sitemap.md" {
 			_, _ = w.Write([]byte(sitemap))
 			return
 		}
-		fetch, ok := pages[r.URL.Path]
+		fetch, ok := pages[strings.TrimSuffix(r.URL.Path, "index.md")]
 		if !ok {
 			http.NotFound(w, r)
 			return
@@ -499,7 +499,7 @@ func (m mapFetcher) Fetch(_ context.Context, rawURL string) PageFetch {
 func manyEntries(n int) []SitemapEntry {
 	entries := make([]SitemapEntry, 0, n)
 	for i := 0; i < n; i++ {
-		url := fmt.Sprintf("https://signoz.io/docs/page-%02d/", i)
+		url := fmt.Sprintf("https://fuseone-io.github.io/fusescope-docs/page-%02d/", i)
 		entries = append(entries, SitemapEntry{
 			URL:               url,
 			Title:             fmt.Sprintf("Page %02d", i),

@@ -125,7 +125,7 @@ cleanup-test-e2e: ## Tears down the cached e2e environment.
 	@cd tests && uv sync && uv run pytest --basetemp=./tmp/ --teardown e2e/bootstrap/setup.py::test_teardown $(E2E_FLAGS)
 
 docs-index:
-	@echo "📚 Rebuilding embedded SigNoz docs corpus (fail-loud if signoz.io/docs/sitemap.md is unreachable)..."
+	@echo "📚 Rebuilding embedded FuseScope docs corpus (fail-loud if the docs sitemap.md is unreachable)..."
 	@go run ./cmd/build-docs-index
 	@echo "✅ corpus.gob.gz + corpus.manifest.json regenerated. Diff the manifest and commit both files."
 

@@ -13,10 +13,10 @@ func TestParseSitemapMarkdownFixture(t *testing.T) {
 	entries, err := ParseSitemapMarkdown(string(raw))
 	require.NoError(t, err)
 	require.Len(t, entries, 2)
-	require.Equal(t, "https://signoz.io/docs/logs-management/overview/", entries[0].URL)
+	require.Equal(t, "https://fuseone-io.github.io/fusescope-docs/logs-management/overview/", entries[0].URL)
 	require.Equal(t, "logs-management", entries[0].SectionSlug)
 	require.Equal(t, "Logs Management > Overview", entries[0].SectionBreadcrumb)
-	require.Equal(t, "https://signoz.io/docs/install/docker/", entries[1].URL)
+	require.Equal(t, "https://fuseone-io.github.io/fusescope-docs/install/docker/", entries[1].URL)
 	require.Equal(t, "install", entries[1].SectionSlug)
 }
 
@@ -26,7 +26,7 @@ func TestParseSitemapMarkdownTopLevelOnly(t *testing.T) {
 	entries, err := ParseSitemapMarkdown(string(raw))
 	require.NoError(t, err)
 	require.Len(t, entries, 4)
-	require.Equal(t, "https://signoz.io/docs/introduction/", entries[0].URL)
+	require.Equal(t, "https://fuseone-io.github.io/fusescope-docs/introduction/", entries[0].URL)
 	require.Equal(t, "introduction", entries[0].SectionSlug)
 	require.Equal(t, "Introduction", entries[0].SectionBreadcrumb)
 }
@@ -43,9 +43,9 @@ func TestParseSitemapMarkdownEmptySection(t *testing.T) {
 	for _, e := range entries {
 		urls = append(urls, e.URL)
 	}
-	require.Contains(t, urls, "https://signoz.io/docs/logs-management/overview/")
-	require.Contains(t, urls, "https://signoz.io/docs/logs-management/send-logs/")
-	require.Contains(t, urls, "https://signoz.io/docs/install/docker/")
+	require.Contains(t, urls, "https://fuseone-io.github.io/fusescope-docs/logs-management/overview/")
+	require.Contains(t, urls, "https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs/")
+	require.Contains(t, urls, "https://fuseone-io.github.io/fusescope-docs/install/docker/")
 }
 
 func TestParseSitemapMarkdownNested(t *testing.T) {
@@ -56,7 +56,7 @@ func TestParseSitemapMarkdownNested(t *testing.T) {
 	require.Len(t, entries, 4)
 	var helm SitemapEntry
 	for _, e := range entries {
-		if e.URL == "https://signoz.io/docs/install/kubernetes/helm/" {
+		if e.URL == "https://fuseone-io.github.io/fusescope-docs/install/kubernetes/helm/" {
 			helm = e
 		}
 	}

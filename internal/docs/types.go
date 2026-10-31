@@ -4,8 +4,13 @@ import "time"
 
 const CorpusSchemaVersion = 2
 
+// The FuseScope docs site is static, so each page's Markdown is served beside its
+// HTML as index.md rather than negotiated through the Accept header.
 const (
-	DefaultSitemapURL = "https://signoz.io/docs/sitemap.md"
+	DocsHost          = "fuseone-io.github.io"
+	DocsBasePath      = "/fusescope-docs/"
+	DocsRootURL       = "https://" + DocsHost + DocsBasePath
+	DefaultSitemapURL = DocsRootURL + "sitemap.md"
 	DocsSitemapURI    = "fusescope://docs/sitemap"
 )
 

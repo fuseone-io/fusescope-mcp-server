@@ -94,11 +94,11 @@ HTTP mode listens on all interfaces by default. Set `MCP_SERVER_HOST=127.0.0.1` 
 
 #### Memory footprint
 
-The server keeps the FuseScope docs search index in memory. With stemming on titles and headings and a single standard-analyzed body field, the embedded 746-page index used 28 to 36 MiB of resident heap across eight local Go 1.26 whole-package test runs. Build peaks ranged from 97 to 134 MiB above the pre-build heap baseline, using 64-page batches. These are index measurements, not whole-process RSS or container memory guarantees; request handling and refresh work add memory.
+The server keeps the FuseScope docs search index in memory; the embedded corpus has 87 pages. The figures below were measured upstream on a 746-page corpus, so they are upper bounds here. With stemming on titles and headings and a single standard-analyzed body field, that index used 28 to 36 MiB of resident heap across eight local Go 1.26 whole-package test runs. Build peaks ranged from 97 to 134 MiB above the pre-build heap baseline, using 64-page batches. These are index measurements, not whole-process RSS or container memory guarantees; request handling and refresh work add memory.
 
 | Moment | Index memory behavior |
 | --- | --- |
-| Startup build from the embedded corpus (746 pages) | Up to 134 MiB above the pre-build heap baseline in the measured runs |
+| Startup build from the embedded corpus | Up to 134 MiB above the pre-build heap baseline in the measured runs |
 | Scheduled full rebuild | Builds a new index while the old index is still serving; combined peak has not been re-measured with this configuration |
 | Scheduled refresh that changes a few pages | Applies changed pages in one atomic batch to the live index; peak depends on the changed content and has not been re-measured with this configuration |
 | Scheduled refresh that finds no changed pages | no index work; pages are revalidated with `If-None-Match` and unchanged ones cost a 304 |
@@ -580,14 +580,12 @@ Get one saved Explorer view's complete definition by UUID. Call this before `fus
 
 #### `fusescope_search_docs`
 
-> **Docs source:** the docs tools and `fusescope://docs/sitemap` still index the SigNoz documentation at signoz.io, which matches FuseScope's SigNoz-compatible features. Indexing the [FuseScope docs](https://fuseone-io.github.io/fusescope-docs/) instead is planned.
-
-Search the official SigNoz documentation and return ranked pages with URLs and snippets for product, setup, instrumentation, configuration, API, deployment, or troubleshooting questions. Send 2 to 6 keywords for one topic and keep product and technology names as the user wrote them; split multi-intent questions into separate calls. If the top result is off-topic, retry with fewer or different terms. Do not use for live tenant data; use fusescope_fetch_doc for the full content of a selected result or exact docs URL.
+Search the official FuseScope documentation and return ranked pages with URLs and snippets for product, setup, instrumentation, configuration, API, deployment, or troubleshooting questions. Send 2 to 6 keywords for one topic and keep product and technology names as the user wrote them; split multi-intent questions into separate calls. If the top result is off-topic, retry with fewer or different terms. Do not use for live tenant data; use fusescope_fetch_doc for the full content of a selected result or exact docs URL.
 
 - **Parameters**:
   - `searchText` (required) - 2 to 6 keywords for one topic, for example "Kubernetes pod logs". Keep product and technology names as the user wrote them.
   - `limit` (optional) - Maximum results to return as a string (default: 10, max: 25; a numeric value is also accepted). The 25 ceiling is deliberate: each result hydrates document text out of the in-process docs index, so a larger limit inflates this server's resident memory.
-  - `section_slug` (optional) - Exact top-level docs section filter, such as `setup`, `logs-management`, `apm-distributed-tracing`, `metrics`, `alerts`, `dashboards`, `signoz-apis`, `querying`, or `collection-agents`. Reuse the `section_slug` from an earlier result when narrowing; an unknown slug returns zero results
+  - `section_slug` (optional) - Exact top-level docs section filter, such as `start-here`, `install`, `send-data`, `how-to-guides`, `observe`, `frontend-rum`, `respond`, `analyze`, `query-reference`, or `operate`. Reuse the `section_slug` from an earlier result when narrowing; an unknown slug returns zero results
   - `searchContext` - User's original question
 
 Docs search telemetry counts executed searches in `signoz_docs_searches_total` with
@@ -605,7 +603,7 @@ whitespace-only queries remain validation errors.
 
 #### `fusescope_fetch_doc`
 
-Fetch one known official SigNoz docs page's full Markdown or a requested heading. Use `fusescope_search_docs` to discover a page first; accepted inputs are `https://signoz.io/docs/...` URLs or `/docs/...` paths.
+Fetch one known official FuseScope docs page's full Markdown or a requested heading. Use `fusescope_search_docs` to discover a page first; accepted inputs are `https://fuseone-io.github.io/fusescope-docs/...` URLs or `/fusescope-docs/...` paths.
 
 - **Parameters**:
   - `url` (required) - Docs page URL or path. A `fusescope://` resource URI is rejected with a hint to read it with `resources/read` instead

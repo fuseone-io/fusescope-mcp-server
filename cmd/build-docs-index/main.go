@@ -142,19 +142,19 @@ func writeFallbackCorpus() error {
 	now := time.Now().UTC()
 	pages := []docs.PageRecord{
 		{
-			URL:               "https://signoz.io/docs/logs-management/overview/",
-			Title:             "Logs Management Overview",
-			SectionSlug:       "logs-management",
-			SectionBreadcrumb: "Logs Management > Overview",
-			BodyMarkdown:      "# Logs Management Overview\n\nSigNoz lets you collect, search, filter, and analyze logs with OpenTelemetry.\n",
+			URL:               "https://fuseone-io.github.io/fusescope-docs/explore/logs/",
+			Title:             "Logs Explorer",
+			SectionSlug:       "explore",
+			SectionBreadcrumb: "Explore > Logs Explorer",
+			BodyMarkdown:      "# Logs Explorer\n\nFuseScope lets you search, filter, and analyze logs collected with OpenTelemetry.\n",
 			FetchedAt:         now,
 		},
 		{
-			URL:               "https://signoz.io/docs/install/docker/",
-			Title:             "Install SigNoz Using Docker",
+			URL:               "https://fuseone-io.github.io/fusescope-docs/install/helm/",
+			Title:             "Install with Helm",
 			SectionSlug:       "install",
-			SectionBreadcrumb: "Install > Docker",
-			BodyMarkdown:      "# Install SigNoz Using Docker\n\nUse Docker Compose to run SigNoz locally for development and evaluation.\n",
+			SectionBreadcrumb: "Install > Install with Helm",
+			BodyMarkdown:      "# Install with Helm\n\nInstall FuseScope on Kubernetes with the Helm chart.\n",
 			FetchedAt:         now,
 		},
 	}
@@ -162,7 +162,7 @@ func writeFallbackCorpus() error {
 		pages[i].HeadingsJSON = jsonString(docs.ExtractHeadings(pages[i].BodyMarkdown))
 	}
 	pages = docs.NormalizePages(pages)
-	sitemapRaw := "- [Logs Management Overview](https://signoz.io/docs/logs-management/overview/)\n- [Install SigNoz Using Docker](https://signoz.io/docs/install/docker/)\n"
+	sitemapRaw := "- [Logs Explorer](https://fuseone-io.github.io/fusescope-docs/explore/logs/)\n- [Install with Helm](https://fuseone-io.github.io/fusescope-docs/install/helm/)\n"
 	snapshot := docs.CorpusSnapshot{
 		SchemaVersion: docs.CorpusSchemaVersion,
 		BuiltAt:       now,

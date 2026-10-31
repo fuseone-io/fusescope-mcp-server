@@ -837,7 +837,7 @@ func breadcrumbSearchText(sectionSlugs []string, sectionMap map[string]string) s
 }
 
 func urlSearchText(canonical string) string {
-	pathText := strings.TrimPrefix(canonical, "https://signoz.io/docs/")
+	pathText := strings.TrimPrefix(canonical, DocsRootURL)
 	pathText = strings.Trim(pathText, "/")
 	return urlSearchTokenReplacer.Replace(pathText)
 }
