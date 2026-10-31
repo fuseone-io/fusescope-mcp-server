@@ -43,7 +43,7 @@ func TestIndexSearchFetchAndSwap(t *testing.T) {
 	require.NotEmpty(t, filtered.Results)
 	require.Equal(t, "install", filtered.Results[0].SectionSlug)
 
-	doc, code, err := reg.FetchDoc(ctx, "/docs/install/docker/", "prerequisites")
+	doc, code, err := reg.FetchDoc(ctx, "/fusescope-docs/install/docker/", "prerequisites")
 	require.NoError(t, err)
 	require.Empty(t, code)
 	require.Equal(t, "prerequisites", doc.Heading)
@@ -78,7 +78,7 @@ func TestNormalizePagesPreservesURLSectionsForFiltering(t *testing.T) {
 		BuiltAt:       now,
 		Pages: []PageRecord{
 			{
-				URL:               "https://signoz.io/docs/instrumentation/opentelemetry-deno/",
+				URL:               "https://fuseone-io.github.io/fusescope-docs/instrumentation/opentelemetry-deno/",
 				Title:             "Deno OpenTelemetry Instrumentation",
 				SectionSlug:       "apm-distributed-tracing",
 				SectionBreadcrumb: "APM & Distributed Tracing > Instrument Application > Deno",
@@ -87,7 +87,7 @@ func TestNormalizePagesPreservesURLSectionsForFiltering(t *testing.T) {
 				FetchedAt:         now,
 			},
 			{
-				URL:               "https://signoz.io/docs/instrumentation/opentelemetry-deno/",
+				URL:               "https://fuseone-io.github.io/fusescope-docs/instrumentation/opentelemetry-deno/",
 				Title:             "Deno OpenTelemetry Instrumentation",
 				SectionSlug:       "logs-management",
 				SectionBreadcrumb: "Logs Management > Send Logs to SigNoz > Application Logs > Deno",
@@ -96,7 +96,7 @@ func TestNormalizePagesPreservesURLSectionsForFiltering(t *testing.T) {
 				FetchedAt:         now,
 			},
 			{
-				URL:               "https://signoz.io/docs/instrumentation/opentelemetry-deno/",
+				URL:               "https://fuseone-io.github.io/fusescope-docs/instrumentation/opentelemetry-deno/",
 				Title:             "Deno OpenTelemetry Instrumentation",
 				SectionSlug:       "metrics",
 				SectionBreadcrumb: "Metrics > Send Metrics > Application Metrics > Deno",
@@ -119,7 +119,7 @@ func TestNormalizePagesPreservesURLSectionsForFiltering(t *testing.T) {
 		result, err := reg.Search(ctx, "deno", section, 5)
 		require.NoError(t, err)
 		require.Len(t, result.Results, 1)
-		require.Equal(t, "https://signoz.io/docs/instrumentation/opentelemetry-deno/", result.Results[0].URL)
+		require.Equal(t, "https://fuseone-io.github.io/fusescope-docs/instrumentation/opentelemetry-deno/", result.Results[0].URL)
 		require.Equal(t, section, result.Results[0].SectionSlug)
 		require.Contains(t, result.Results[0].SectionBreadcrumb, "Deno")
 	}
@@ -144,7 +144,7 @@ func TestNormalizePagesUsesFreshestPayloadAndStablePrimarySection(t *testing.T) 
 		BuiltAt:       newFetchedAt,
 		Pages: []PageRecord{
 			{
-				URL:               "https://signoz.io/docs/duplicate/",
+				URL:               "https://fuseone-io.github.io/fusescope-docs/duplicate/",
 				Title:             "Duplicate Doc",
 				SectionSlug:       "logs-management",
 				SectionBreadcrumb: "Logs Management > Duplicate",
@@ -153,7 +153,7 @@ func TestNormalizePagesUsesFreshestPayloadAndStablePrimarySection(t *testing.T) 
 				FetchedAt:         oldFetchedAt,
 			},
 			{
-				URL:               "https://signoz.io/docs/duplicate/",
+				URL:               "https://fuseone-io.github.io/fusescope-docs/duplicate/",
 				Title:             "Duplicate Doc",
 				SectionSlug:       "metrics",
 				SectionBreadcrumb: "Metrics > Duplicate",
@@ -171,7 +171,7 @@ func TestNormalizePagesUsesFreshestPayloadAndStablePrimarySection(t *testing.T) 
 	require.NoError(t, err)
 	defer reg.Close(context.Background())
 
-	doc, code, err := reg.FetchDoc(ctx, "https://signoz.io/docs/duplicate/", "")
+	doc, code, err := reg.FetchDoc(ctx, "https://fuseone-io.github.io/fusescope-docs/duplicate/", "")
 	require.NoError(t, err)
 	require.Empty(t, code)
 	require.Contains(t, doc.Content, "fresh successful body")
@@ -213,11 +213,11 @@ func testSnapshot() CorpusSnapshot {
 	return CorpusSnapshot{
 		SchemaVersion: CorpusSchemaVersion,
 		BuiltAt:       now,
-		SitemapRaw:    "- [Logs Management Overview](https://signoz.io/docs/logs-management/overview/)\n- [Install SigNoz Using Docker](https://signoz.io/docs/install/docker/)\n",
+		SitemapRaw:    "- [Logs Management Overview](https://fuseone-io.github.io/fusescope-docs/logs-management/overview/)\n- [Install SigNoz Using Docker](https://fuseone-io.github.io/fusescope-docs/install/docker/)\n",
 		SitemapHash:   "test",
 		Pages: []PageRecord{
 			{
-				URL:               "https://signoz.io/docs/logs-management/overview/",
+				URL:               "https://fuseone-io.github.io/fusescope-docs/logs-management/overview/",
 				Title:             "Logs Management Overview",
 				SectionSlug:       "logs-management",
 				SectionBreadcrumb: "Logs Management > Overview",
@@ -226,7 +226,7 @@ func testSnapshot() CorpusSnapshot {
 				FetchedAt:         now,
 			},
 			{
-				URL:               "https://signoz.io/docs/install/docker/",
+				URL:               "https://fuseone-io.github.io/fusescope-docs/install/docker/",
 				Title:             "Install SigNoz Using Docker",
 				SectionSlug:       "install",
 				SectionBreadcrumb: "Install > Docker",
@@ -255,9 +255,9 @@ func TestSearchStemsTitleAndHeadingsOnly(t *testing.T) {
 	body := strings.Repeat("Unrelated introduction. ", 60) + " Instrumentation connects Python services to tracing."
 	snapshot := EmptyCorpus()
 	snapshot.Pages = []PageRecord{
-		{URL: "https://signoz.io/docs/title-match/", Title: "Instrumentation guide", BodyMarkdown: body},
-		{URL: "https://signoz.io/docs/heading-match/", Title: "Telemetry guide", HeadingsJSON: mustJSON([]Heading{{Text: "Instrumentation"}}), BodyMarkdown: body},
-		{URL: "https://signoz.io/docs/body-only/", Title: "Telemetry guide", BodyMarkdown: body},
+		{URL: "https://fuseone-io.github.io/fusescope-docs/title-match/", Title: "Instrumentation guide", BodyMarkdown: body},
+		{URL: "https://fuseone-io.github.io/fusescope-docs/heading-match/", Title: "Telemetry guide", HeadingsJSON: mustJSON([]Heading{{Text: "Instrumentation"}}), BodyMarkdown: body},
+		{URL: "https://fuseone-io.github.io/fusescope-docs/body-only/", Title: "Telemetry guide", BodyMarkdown: body},
 	}
 	reg, err := NewIndexRegistry(ctx, snapshot)
 	require.NoError(t, err)
@@ -279,7 +279,7 @@ func TestSearchStemsTitleAndHeadingsOnly(t *testing.T) {
 		require.NotEmpty(t, hit.Snippet)
 		require.LessOrEqual(t, len([]rune(hit.Snippet)), snippetRuneLimit)
 	}
-	require.ElementsMatch(t, []string{"https://signoz.io/docs/title-match/", "https://signoz.io/docs/heading-match/"}, urls)
+	require.ElementsMatch(t, []string{"https://fuseone-io.github.io/fusescope-docs/title-match/", "https://fuseone-io.github.io/fusescope-docs/heading-match/"}, urls)
 }
 
 func TestChooseSnippetPrefersMatchedBodyFragment(t *testing.T) {

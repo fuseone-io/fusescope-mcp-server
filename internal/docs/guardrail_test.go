@@ -21,7 +21,7 @@ func TestGuardrail_DocsIndexBuildPeakHeap(t *testing.T) {
 
 	snapshot, err := LoadEmbeddedCorpus()
 	require.NoError(t, err)
-	require.Greater(t, len(snapshot.Pages), 500, "guardrail assumes the full embedded corpus")
+	require.Greater(t, len(snapshot.Pages), 50, "guardrail assumes the full embedded corpus, not the two-page fallback")
 
 	baseline := settledHeapInuse()
 	var stop atomic.Bool

@@ -93,7 +93,7 @@ func TestGuardrail_WireCatalogGoldens(t *testing.T) {
 		}
 		sort.Slice(inventory, func(i, j int) bool { return inventory[i].Identity < inventory[j].Identity })
 		assertWireGolden(t, "resources-content-inventory.json", inventory)
-		sitemap := o.capture("resources/read", `{"uri":"fusescope://docs/sitemap"}`)
+		sitemap := o.capture("resources/read", `{"uri":"fusescope://fusescope-docs/sitemap"}`)
 		assertWireGolden(t, "resource-sitemap-literal.json", sitemap)
 	})
 
@@ -181,15 +181,15 @@ func (o *wireOracle) serveUpstream(w http.ResponseWriter, r *http.Request) {
 
 func wireDocsSnapshot() docsindex.CorpusSnapshot {
 	builtAt := time.Date(2026, 1, 2, 3, 4, 5, 0, time.UTC)
-	sitemap := "- [Send logs](https://signoz.io/docs/logs-management/send-logs/)\n- [Install Docker](https://signoz.io/docs/install/docker/)\n"
+	sitemap := "- [Send logs](https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs/)\n- [Install Docker](https://fuseone-io.github.io/fusescope-docs/install/docker/)\n"
 	return docsindex.CorpusSnapshot{
 		SchemaVersion: docsindex.CorpusSchemaVersion,
 		BuiltAt:       builtAt,
 		SitemapRaw:    sitemap,
 		SitemapHash:   docsindex.SitemapHash(sitemap),
 		Pages: []docsindex.PageRecord{
-			{URL: "https://signoz.io/docs/logs-management/send-logs/", Title: "Send logs", SectionSlug: "logs-management", SectionBreadcrumb: "Logs > Send logs", HeadingsJSON: `[]`, BodyMarkdown: "# Send logs\n\nUse OpenTelemetry.\n", FetchedAt: builtAt},
-			{URL: "https://signoz.io/docs/install/docker/", Title: "Install Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker", HeadingsJSON: `[]`, BodyMarkdown: "# Install Docker\n\nRun Docker Compose.\n", FetchedAt: builtAt},
+			{URL: "https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs/", Title: "Send logs", SectionSlug: "logs-management", SectionBreadcrumb: "Logs > Send logs", HeadingsJSON: `[]`, BodyMarkdown: "# Send logs\n\nUse OpenTelemetry.\n", FetchedAt: builtAt},
+			{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker", HeadingsJSON: `[]`, BodyMarkdown: "# Install Docker\n\nRun Docker Compose.\n", FetchedAt: builtAt},
 		},
 	}
 }

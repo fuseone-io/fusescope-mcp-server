@@ -1,6 +1,6 @@
 # SigNoz Docs
 
 - Logs Management
-  - [Overview](https://signoz.io/docs/logs-management/overview/)
+  - [Overview](https://fuseone-io.github.io/fusescope-docs/logs-management/overview/)
 - Install
-  - [Docker](/docs/install/docker/)
+  - [Docker](/fusescope-docs/install/docker/)

@@ -101,7 +101,7 @@ func TestDocsHandlers(t *testing.T) {
 		expiredCtx, cancel := context.WithDeadline(ctx, time.Now().Add(-time.Second))
 		defer cancel()
 		result, err := h.handleFetchDoc(expiredCtx, makeToolRequest("fusescope_fetch_doc", map[string]any{
-			"url": "/docs/install/docker/",
+			"url": "/fusescope-docs/install/docker/",
 		}))
 		require.NoError(t, err)
 		require.Equal(t, CodeTimeout, resultCode(t, result))
@@ -117,25 +117,25 @@ func TestDocsHandlers(t *testing.T) {
 		require.Equal(t, docsindex.CodeOutOfScopeURL, result.StructuredContent.(map[string]any)["code"])
 		require.Contains(t, result.Content[0].(*mcp.TextContent).Text, "fusescope:// URIs are MCP resources: read them with resources/read, not fusescope_fetch_doc.")
 
-		result, err = h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "https://signoz.io/docs/missing/"}))
+		result, err = h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "https://fuseone-io.github.io/fusescope-docs/missing/"}))
 		require.NoError(t, err)
 		require.Equal(t, docsindex.CodeDocNotFound, result.StructuredContent.(map[string]any)["code"])
 
-		result, err = h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "/docs/logs-management/send-logs-to-signoz/", "heading": "missing-heading"}))
+		result, err = h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "/fusescope-docs/logs-management/send-logs-to-signoz/", "heading": "missing-heading"}))
 		require.NoError(t, err)
 		require.Equal(t, docsindex.CodeHeadingMissing, result.StructuredContent.(map[string]any)["code"])
 		require.NotEmpty(t, result.StructuredContent.(map[string]any)["available_headings"])
 	})
 
 	t.Run("fetch truncation and duplicate heading disambiguation", func(t *testing.T) {
-		result, err := h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "/docs/large/"}))
+		result, err := h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "/fusescope-docs/large/"}))
 		require.NoError(t, err)
 		require.False(t, result.IsError)
 		fetched := result.StructuredContent.(docsindex.FetchResult)
 		require.Equal(t, "size", fetched.TruncationReason)
 		require.LessOrEqual(t, len(fetched.Content), 256*1024)
 
-		result, err = h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "/docs/duplicate-headings/", "heading": "setup-2"}))
+		result, err = h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "/fusescope-docs/duplicate-headings/", "heading": "setup-2"}))
 		require.NoError(t, err)
 		fetched = result.StructuredContent.(docsindex.FetchResult)
 		require.Equal(t, "setup-2", fetched.Heading)
@@ -172,12 +172,12 @@ func docsHandlerSnapshot() docsindex.CorpusSnapshot {
 	large := "# Large Doc\n\n" + strings.Repeat("large content line\n", 20000)
 	duplicate := "# Duplicate Headings\n\n## Setup\n\nfirst setup\n\n## Setup\n\nsecond setup\n\n## Done\n\nfinished\n"
 	pages := []docsindex.PageRecord{
-		docsHandlerPage("https://signoz.io/docs/logs-management/send-logs-to-signoz/", "Send logs to SigNoz", "logs-management", "Logs Management > Send logs", logs, now),
-		docsHandlerPage("https://signoz.io/docs/install/docker/", "Install SigNoz Using Docker", "install", "Install > Docker", "# Install SigNoz Using Docker\n\n## Start\n\nRun docker compose up.\n", now),
-		docsHandlerPage("https://signoz.io/docs/large/", "Large Doc", "test", "Test > Large", large, now),
-		docsHandlerPage("https://signoz.io/docs/duplicate-headings/", "Duplicate Headings", "test", "Test > Duplicate", duplicate, now),
+		docsHandlerPage("https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs-to-signoz/", "Send logs to SigNoz", "logs-management", "Logs Management > Send logs", logs, now),
+		docsHandlerPage("https://fuseone-io.github.io/fusescope-docs/install/docker/", "Install SigNoz Using Docker", "install", "Install > Docker", "# Install SigNoz Using Docker\n\n## Start\n\nRun docker compose up.\n", now),
+		docsHandlerPage("https://fuseone-io.github.io/fusescope-docs/large/", "Large Doc", "test", "Test > Large", large, now),
+		docsHandlerPage("https://fuseone-io.github.io/fusescope-docs/duplicate-headings/", "Duplicate Headings", "test", "Test > Duplicate", duplicate, now),
 	}
-	sitemap := "- [Send logs to SigNoz](https://signoz.io/docs/logs-management/send-logs-to-signoz/)\n- [Install SigNoz Using Docker](https://signoz.io/docs/install/docker/)\n"
+	sitemap := "- [Send logs to SigNoz](https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs-to-signoz/)\n- [Install SigNoz Using Docker](https://fuseone-io.github.io/fusescope-docs/install/docker/)\n"
 	return docsindex.CorpusSnapshot{
 		SchemaVersion: docsindex.CorpusSchemaVersion,
 		BuiltAt:       now,

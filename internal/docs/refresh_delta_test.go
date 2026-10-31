@@ -60,7 +60,7 @@ func TestApplyDeltaUpdatesLiveIndex(t *testing.T) {
 	reg := newTestRegistry(t, current)
 	handle := reg.currentHandle(t)
 
-	added := SitemapEntry{URL: "https://signoz.io/docs/page-new/", Title: "Page New", SectionSlug: "test", SectionBreadcrumb: "Test > Page New"}
+	added := SitemapEntry{URL: "https://fuseone-io.github.io/fusescope-docs/page-new/", Title: "Page New", SectionSlug: "test", SectionBreadcrumb: "Test > Page New"}
 	nextEntries := []SitemapEntry{entries[0], entries[1], entries[2], added}
 	nextBodies := map[string]string{}
 	for url, body := range bodies {

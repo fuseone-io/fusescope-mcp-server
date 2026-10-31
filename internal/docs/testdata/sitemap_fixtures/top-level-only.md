@@ -1,6 +1,6 @@
 # SigNoz Docs
 
-- [Introduction](https://signoz.io/docs/introduction/)
-- [Install on Docker](https://signoz.io/docs/install/docker/)
-- [Logs Management](https://signoz.io/docs/logs-management/)
-- [Traces](https://signoz.io/docs/traces/)
+- [Introduction](https://fuseone-io.github.io/fusescope-docs/introduction/)
+- [Install on Docker](https://fuseone-io.github.io/fusescope-docs/install/docker/)
+- [Logs Management](https://fuseone-io.github.io/fusescope-docs/logs-management/)
+- [Traces](https://fuseone-io.github.io/fusescope-docs/traces/)

@@ -106,7 +106,7 @@ func (f *Fetcher) FetchConditional(ctx context.Context, rawURL, etag string) Pag
 	}
 	var lastErr error
 	for attempt := 0; attempt < 4; attempt++ {
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, canonical, nil)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, MarkdownURL(canonical), nil)
 		if err != nil {
 			return PageFetch{Status: FetchStatusError, URL: canonical, Err: err}
 		}

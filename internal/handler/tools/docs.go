@@ -24,7 +24,7 @@ func (h *Handler) RegisterDocsHandlers(s *mcp.Server) {
 		mcp.WithOutputSchema[docsindex.SearchResponse](),
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Search official SigNoz documentation and return ranked pages with URLs and snippets for product, setup, instrumentation, configuration, API, deployment, or troubleshooting questions. Send 2 to 6 keywords for one topic and keep product and technology names as the user wrote them; split multi-intent questions into separate calls. If the top result is off-topic, retry with fewer or different terms. Do not use for live tenant data; use fusescope_fetch_doc for the full content of a selected result or exact docs URL."),
+		mcp.WithDescription("Search the official FuseScope documentation and return ranked pages with URLs and snippets for product, setup, instrumentation, configuration, API, deployment, or troubleshooting questions. Send 2 to 6 keywords for one topic and keep product and technology names as the user wrote them; split multi-intent questions into separate calls. If the top result is off-topic, retry with fewer or different terms. Do not use for live tenant data; use fusescope_fetch_doc for the full content of a selected result or exact docs URL."),
 		// Not Required() so the legacy "query" alias (#367) stays valid for
 		// schema-validating clients; the handler still enforces "is required".
 		mcp.WithString("searchText", mcp.Description(`Required. 2 to 6 keywords for one topic, for example "Kubernetes pod logs". Keep product and technology names as the user wrote them.`)),
@@ -33,7 +33,7 @@ func (h *Handler) RegisterDocsHandlers(s *mcp.Server) {
 		// {"limit": 3} must not be rejected. The 25 ceiling bounds the in-process bleve
 		// index's per-result memory hydration on the shared multi-tenant pod.
 		mcp.WithString("limit", mcp.DefaultString("10"), intOrStringType(), mcp.Description("Maximum results to return. Default: 10, max: 25 (capped to bound the docs index's memory footprint).")),
-		mcp.WithString("section_slug", mcp.Description(`Optional exact top-level docs section filter, for example "setup", "logs-management", "apm-distributed-tracing", "metrics", "alerts", "dashboards", "signoz-apis", "querying", or "collection-agents". Reuse the section_slug from an earlier result when narrowing; an unknown slug returns zero results.`)),
+		mcp.WithString("section_slug", mcp.Description(`Optional exact top-level docs section filter, for example "start-here", "install", "send-data", "how-to-guides", "observe", "frontend-rum", "respond", "analyze", "query-reference", or "operate". Reuse the section_slug from an earlier result when narrowing; an unknown slug returns zero results.`)),
 	)
 	h.addTool(s, searchTool, h.handleSearchDocs)
 
@@ -41,16 +41,16 @@ func (h *Handler) RegisterDocsHandlers(s *mcp.Server) {
 		mcp.WithOutputSchema[docsindex.FetchResult](),
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this after fusescope_search_docs, or when an exact official SigNoz docs URL or /docs/... path is known, to return one page's full Markdown or a requested heading. Do not use it to discover pages or query live tenant data; use fusescope_search_docs for topical discovery."),
-		mcp.WithString("url", mcp.Required(), mcp.Description("Full https://signoz.io/docs/... URL or /docs/... path.")),
+		mcp.WithDescription("Use this after fusescope_search_docs, or when an exact official FuseScope docs URL or /fusescope-docs/... path is known, to return one page's full Markdown or a requested heading. Do not use it to discover pages or query live tenant data; use fusescope_search_docs for topical discovery."),
+		mcp.WithString("url", mcp.Required(), mcp.Description("Full https://fuseone-io.github.io/fusescope-docs/... URL or /fusescope-docs/... path.")),
 		mcp.WithString("heading", mcp.Description(`Optional heading anchor ID or heading text, for example "prerequisites" or "## Prerequisites".`)),
 	)
 	h.addTool(s, fetchTool, h.handleFetchDoc)
 
 	sitemap := mcp.NewResource(
 		docsindex.DocsSitemapURI,
-		"SigNoz Docs Sitemap",
-		mcp.WithResourceDescription("Use this resource when an MCP client needs the indexed official SigNoz documentation catalog and page URLs. Use fusescope_search_docs for topical discovery and fusescope_fetch_doc for page content."),
+		"FuseScope Docs Sitemap",
+		mcp.WithResourceDescription("Use this resource when an MCP client needs the indexed official FuseScope documentation catalog and page URLs. Use fusescope_search_docs for topical discovery and fusescope_fetch_doc for page content."),
 		mcp.WithMIMEType("text/markdown"),
 	)
 	h.addResource(s, sitemap, h.handleDocsSitemap)

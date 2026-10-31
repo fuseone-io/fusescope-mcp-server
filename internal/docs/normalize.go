@@ -16,18 +16,18 @@ func CanonicalDocURL(raw string) (string, bool) {
 	if raw == "" {
 		return "", false
 	}
-	if strings.HasPrefix(raw, "/docs/") {
-		raw = "https://signoz.io" + raw
+	if strings.HasPrefix(raw, DocsBasePath) {
+		raw = "https://" + DocsHost + raw
 	}
 	u, err := url.Parse(raw)
-	if err != nil || u.Scheme != "https" || !strings.EqualFold(u.Host, "signoz.io") {
+	if err != nil || u.Scheme != "https" || !strings.EqualFold(u.Host, DocsHost) {
 		return "", false
 	}
 	cleanPath := path.Clean(u.Path)
 	if cleanPath == "." || cleanPath == "/" {
 		cleanPath = "/"
 	}
-	if !strings.HasPrefix(cleanPath, "/docs/") {
+	if !strings.HasPrefix(cleanPath+"/", DocsBasePath) {
 		return "", false
 	}
 	if !strings.HasSuffix(cleanPath, "/") && path.Ext(cleanPath) == "" {
@@ -37,6 +37,14 @@ func CanonicalDocURL(raw string) (string, bool) {
 	u.RawQuery = ""
 	u.Fragment = ""
 	return u.String(), true
+}
+
+// MarkdownURL is where the docs site serves a canonical page as Markdown.
+func MarkdownURL(canonical string) string {
+	if strings.HasSuffix(canonical, "/") {
+		return canonical + "index.md"
+	}
+	return canonical
 }
 
 func IsDocURL(raw string) bool {
