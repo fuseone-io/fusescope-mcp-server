@@ -19,6 +19,8 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+      - name: check the tag is SemVer
+        run: scripts/check-release-tag.sh "$GITHUB_REF_NAME"
       - name: check the tag is on main
         run: |
           if ! git merge-base --is-ancestor "$(git rev-parse "${GITHUB_SHA}^{commit}")" origin/main; then
@@ -51,9 +53,17 @@ jobs:
           done
           scripts/release-notes.sh "$version" >/dev/null
 
-  binaries:
+  # The release environment's reviewers approve once, before anything is published.
+  approve-release:
     needs: preflight
+    runs-on: ubuntu-24.04
     environment: release
+    permissions: {}
+    steps:
+      - run: echo "Approved ${GITHUB_REF_NAME}."
+
+  binaries:
+    needs: approve-release
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -81,8 +91,7 @@ jobs:
           subject-checksums: dist/checksums.txt
 
   image:
-    needs: preflight
-    environment: release
+    needs: approve-release
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -120,7 +129,6 @@ jobs:
 
   sign:
     needs: [binaries, image]
-    environment: release
     runs-on: ubuntu-24.04
     permissions:
       contents: write

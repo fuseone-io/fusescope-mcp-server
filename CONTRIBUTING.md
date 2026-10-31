@@ -11,10 +11,10 @@ Thanks for contributing to SigNoz MCP Server.
 
 ## Releases
 
-Pushing a `vX.Y.Z` tag runs `.github/workflows/release.yaml`. The tagged commit must be on `main`;
-set the version in `manifest.json` and `server.json` and add its `CHANGELOG.md` section first. The
-workflow reruns `make ci` and fails otherwise, and its publishing jobs wait for approval in the
-`release` environment.
+Pushing a `vX.Y.Z` tag runs `.github/workflows/release.yaml`. The tag must be `v` + a SemVer 2.0.0
+version and the tagged commit must be on `main`; set the version in `manifest.json` and
+`server.json` and add its `CHANGELOG.md` section first. The workflow reruns `make ci` and fails
+otherwise, then waits for one approval in the `release` environment before publishing.
 It publishes:
 
 - GoReleaser binaries for Linux, macOS and Windows (amd64, arm64) with SPDX SBOMs, a

@@ -45,7 +45,7 @@ test:
 ##@ CI
 
 # Everything the PR gate runs except the live e2e suite. Needs Node, uv, and goimports.
-ci: check-fmt lint check-deps check-agpl check-build test-race check-guardrails check-protocol check-conformance check-e2e-style check-repo-docs
+ci: check-fmt lint check-deps check-agpl check-release-tag check-build test-race check-guardrails check-protocol check-conformance check-e2e-style check-repo-docs
 	@echo "✅ All PR-gate checks passed."
 
 # Read-only: lists files that fmt or goimports would rewrite.
@@ -148,6 +148,11 @@ gen-chschema:
 	done && \
 	go run ./tools/chschema -url "http://$$($(CHSCHEMA_COMPOSE) port clickhouse 8123)" \
 		-migrator-version $(SCHEMA_MIGRATOR_VERSION) -out pkg/dashboard/clickhouse_schema.json
+
+.PHONY: check-release-tag
+check-release-tag:
+	@echo "🏷️  Checking the release tag validator..."
+	@scripts/check-release-tag_test.sh
 
 # The server is Apache-2.0 and must not link the AGPL-3.0 collector or schema migrator.
 check-agpl:
