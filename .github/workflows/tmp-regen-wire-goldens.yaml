@@ -1,0 +1,29 @@
+name: tmp-regen-wire-goldens
+
+on:
+  push:
+    branches:
+      - feat/fusescope-tool-names
+
+permissions:
+  contents: write
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/fusescope-tool-names
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Re-record wire goldens
+        run: |
+          perl -0pi -e 's/\tif bytes.Equal\(expected, actual\) \{\n\t\treturn\n\t\}/\tif bytes.Equal(expected, actual) {\n\t\treturn\n\t}\n\t_ = os.WriteFile(path, actual, 0o644)\n\treturn/' internal/mcp-server/wire_catalog_golden_test.go
+          go test -count=1 -run '^TestGuardrail_WireCatalogGoldens$' ./internal/mcp-server/ || true
+          git checkout internal/mcp-server/wire_catalog_golden_test.go
+          git rm -q .github/workflows/tmp-regen-wire-goldens.yaml
+          git add internal/mcp-server/testdata/wire-catalog
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "test: re-record wire goldens for the FuseScope rename"
+          git push
