@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/metricsrules"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/metricsrules"
 	"github.com/stretchr/testify/require"
 )
 

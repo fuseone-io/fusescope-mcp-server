@@ -9,8 +9,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 )
 
 // SigNoz exhausts its memory on a raw query whose start is missing or 0

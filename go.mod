@@ -1,4 +1,4 @@
-module github.com/SigNoz/signoz-mcp-server
+module github.com/fuseone-io/fusescope-mcp-server
 
 go 1.26.0
 

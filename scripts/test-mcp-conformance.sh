@@ -161,7 +161,7 @@ if ! node -e '
 fi
 
 CURRENT_PHASE="build production server"
-go build -o "$CONFORMANCE_TMP_DIR/signoz-mcp-server" ./cmd/server >"$CURRENT_STDOUT" 2>"$CURRENT_STDERR"
+go build -o "$CONFORMANCE_TMP_DIR/fusescope-mcp-server" ./cmd/server >"$CURRENT_STDOUT" 2>"$CURRENT_STDERR"
 
 env \
   TRANSPORT_MODE=http \
@@ -173,7 +173,7 @@ env \
   ANALYTICS_ENABLED=false \
   OTEL_TRACES_EXPORTER=none \
   OTEL_METRICS_EXPORTER=none \
-  "$CONFORMANCE_TMP_DIR/signoz-mcp-server" >"$SERVER_LOG" 2>&1 &
+  "$CONFORMANCE_TMP_DIR/fusescope-mcp-server" >"$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
 
 CURRENT_PHASE="server readiness"

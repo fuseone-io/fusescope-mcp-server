@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"testing"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 	official "github.com/modelcontextprotocol/go-sdk/mcp"
 
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
 )
 
 type registeredTool struct{ Tool mcp.Tool }

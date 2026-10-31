@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 )
 
 func (h *Handler) RegisterMetricUsageHandlers(s *mcp.Server) {

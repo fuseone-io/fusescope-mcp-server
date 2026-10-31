@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/querybuilder"
 )
 
 const metricsLegacyQueryAliasError = `parameter validation failed: "query" is not accepted by fusescope_query_metrics; use "filter" with a Query Builder filter expression (see fusescope://metrics-aggregation-guide)`

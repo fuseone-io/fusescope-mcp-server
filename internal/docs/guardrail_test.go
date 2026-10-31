@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/guardrails"
+	"github.com/fuseone-io/fusescope-mcp-server/guardrails"
 	"github.com/stretchr/testify/require"
 )
 

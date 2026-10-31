@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/querybuilder"
 )
 
 // Shared descriptions for the result-shaping parameters the query tools expose.

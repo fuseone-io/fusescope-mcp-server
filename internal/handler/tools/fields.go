@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"log/slog"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/querybuilder"
 )
 
 const fieldContextParamDesc = "Restrict results to a single field context (optional). Valid values: " +

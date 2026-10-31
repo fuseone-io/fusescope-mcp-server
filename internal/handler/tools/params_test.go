@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 )
 
 // TestParseLimit_NumberAndString pins that the shared docs-limit parser accepts

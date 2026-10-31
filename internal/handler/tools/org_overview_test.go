@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 )
 
 func TestBuildOrgOverview_MissingCountsStayUnknown(t *testing.T) {

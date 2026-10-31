@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/jsonschema-go/jsonschema"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/dashboard"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/dashboard"
 )
 
 // TestWidgetExamplesValidateAgainstCreateSchema is the cross-contract guard tying

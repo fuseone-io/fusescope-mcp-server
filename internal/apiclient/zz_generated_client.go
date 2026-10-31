@@ -13,7 +13,7 @@ import (
 	"net/url"
 	"strings"
 
-	apitypes "github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
+	apitypes "github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
 	"github.com/oapi-codegen/runtime"
 )
 

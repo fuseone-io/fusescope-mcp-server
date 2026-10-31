@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/config"
-	"github.com/SigNoz/signoz-mcp-server/internal/handler/tools"
-	"github.com/SigNoz/signoz-mcp-server/pkg/analytics/noopanalytics"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/handler/tools"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics/noopanalytics"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 )
 
 func TestProductionHTTPDeclaredBodyLimitPrecedesAuthentication(t *testing.T) {

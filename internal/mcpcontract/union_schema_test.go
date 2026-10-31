@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
 )
 
 // A generated union hides its variants behind an unexported json.RawMessage,

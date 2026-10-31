@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
 )
 
 // Result bounds this server applies to the Query Builder requests it builds or

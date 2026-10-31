@@ -8,9 +8,9 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient"
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
-	"github.com/SigNoz/signoz-mcp-server/pkg/types"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/types"
 )
 
 // notificationChannelWrite is the single-attempt boundary for every channel

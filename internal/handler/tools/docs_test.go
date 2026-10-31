@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	docsindex "github.com/SigNoz/signoz-mcp-server/internal/docs"
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	docsindex "github.com/fuseone-io/fusescope-mcp-server/internal/docs"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 	"github.com/stretchr/testify/require"
 )
 

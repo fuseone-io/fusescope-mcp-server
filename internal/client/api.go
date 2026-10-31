@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient"
 )
 
 // ErrNonJSONResponse means SigNoz answered a 2xx with a web page instead of an

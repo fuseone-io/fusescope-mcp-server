@@ -14,9 +14,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/config"
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 )
 
 func TestGuardrail_DuplicateRegistrationsRejectedBeforeSDKOverwrite(t *testing.T) {

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient"
 )
 
 const (

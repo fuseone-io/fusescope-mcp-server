@@ -10,8 +10,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 )
 
 const emptyQueryRangeResponse = `{"status":"success","data":{"type":"raw","data":{"results":[{"queryName":"A","rows":[]}]}}}`

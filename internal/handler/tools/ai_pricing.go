@@ -6,11 +6,11 @@ import (
 	"log/slog"
 	"strings"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
-	"github.com/SigNoz/signoz-mcp-server/pkg/paginate"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/paginate"
 )
 
 const (

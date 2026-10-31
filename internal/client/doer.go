@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 )
 
 // replaySafeKey carries the retry decision for one call into the transport. The

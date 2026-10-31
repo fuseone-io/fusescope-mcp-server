@@ -5,10 +5,10 @@ import (
 	"log/slog"
 	"strconv"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/metricsrules"
-	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/metricsrules"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/querybuilder"
 )
 
 func (h *Handler) RegisterMetricsHandlers(s *mcp.Server) {

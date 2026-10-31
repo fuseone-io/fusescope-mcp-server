@@ -9,12 +9,12 @@ import (
 
 	expirable "github.com/hashicorp/golang-lru/v2/expirable"
 
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
-	"github.com/SigNoz/signoz-mcp-server/internal/config"
-	docsindex "github.com/SigNoz/signoz-mcp-server/internal/docs"
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	otelpkg "github.com/SigNoz/signoz-mcp-server/pkg/otel"
-	"github.com/SigNoz/signoz-mcp-server/pkg/util"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
+	docsindex "github.com/fuseone-io/fusescope-mcp-server/internal/docs"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	otelpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/otel"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
 )
 
 type Handler struct {

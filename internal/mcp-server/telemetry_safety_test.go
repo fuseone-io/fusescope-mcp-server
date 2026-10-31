@@ -23,14 +23,14 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/sdk/trace/tracetest"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/config"
-	"github.com/SigNoz/signoz-mcp-server/internal/handler/tools"
-	mcpcontract "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	"github.com/SigNoz/signoz-mcp-server/internal/testutil/oteltest"
-	"github.com/SigNoz/signoz-mcp-server/pkg/analytics/noopanalytics"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
-	otelpkg "github.com/SigNoz/signoz-mcp-server/pkg/otel"
-	"github.com/SigNoz/signoz-mcp-server/pkg/util"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/handler/tools"
+	mcpcontract "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/testutil/oteltest"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics/noopanalytics"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
+	otelpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/otel"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
 )
 
 func testServerWithTelemetry(t *testing.T, logger *slog.Logger) (*MCPServer, *sdkmetric.ManualReader, *tracetest.InMemoryExporter) {

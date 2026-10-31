@@ -10,8 +10,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
-	"github.com/SigNoz/signoz-mcp-server/pkg/types"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/types"
 	"github.com/stretchr/testify/require"
 )
 

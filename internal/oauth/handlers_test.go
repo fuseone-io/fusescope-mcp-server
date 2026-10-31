@@ -13,10 +13,10 @@ import (
 	"testing"
 	"time"
 
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/config"
-	"github.com/SigNoz/signoz-mcp-server/pkg/util"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
 )
 
 func TestOAuthAuthorizationFlow(t *testing.T) {

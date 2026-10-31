@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/docs"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/docs"
 )
 
 const (

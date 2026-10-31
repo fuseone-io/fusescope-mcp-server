@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
 )
 
 // Current-generation QB v5 envelope: bare summary in error.message, per-term

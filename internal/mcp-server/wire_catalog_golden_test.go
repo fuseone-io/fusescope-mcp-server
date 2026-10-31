@@ -16,11 +16,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/config"
-	docsindex "github.com/SigNoz/signoz-mcp-server/internal/docs"
-	"github.com/SigNoz/signoz-mcp-server/internal/handler/tools"
-	"github.com/SigNoz/signoz-mcp-server/pkg/dashboard"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
+	docsindex "github.com/fuseone-io/fusescope-mcp-server/internal/docs"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/handler/tools"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/dashboard"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 )
 
 const (

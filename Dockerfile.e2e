@@ -16,17 +16,17 @@ RUN go mod download
 COPY . .
 
 RUN CGO_ENABLED=0 go build \
-    -ldflags="-w -s -X github.com/SigNoz/signoz-mcp-server/pkg/version.Version=${VERSION}" \
-    -o /usr/local/bin/signoz-mcp-server \
+    -ldflags="-w -s -X github.com/fuseone-io/fusescope-mcp-server/pkg/version.Version=${VERSION}" \
+    -o /usr/local/bin/fusescope-mcp-server \
     ./cmd/server/
 
 # Final stage — same base as the production multi-arch image.
 FROM gcr.io/distroless/base
 
-WORKDIR /usr/local/signoz-mcp-server
+WORKDIR /usr/local/fusescope-mcp-server
 
-COPY --from=builder /usr/local/bin/signoz-mcp-server /usr/local/bin/signoz-mcp-server
+COPY --from=builder /usr/local/bin/fusescope-mcp-server /usr/local/bin/fusescope-mcp-server
 
 EXPOSE 8000
 
-ENTRYPOINT ["/usr/local/bin/signoz-mcp-server"]
+ENTRYPOINT ["/usr/local/bin/fusescope-mcp-server"]

@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 )
 
 func TestInputMismatchServedBestEffortWithNoticeAndNoLeakedValues(t *testing.T) {

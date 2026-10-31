@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 	"github.com/modelcontextprotocol/go-sdk/jsonrpc"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"go.opentelemetry.io/otel"
@@ -24,15 +24,15 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/sdk/trace/tracetest"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/config"
-	"github.com/SigNoz/signoz-mcp-server/internal/handler/tools"
-	"github.com/SigNoz/signoz-mcp-server/internal/oauth"
-	"github.com/SigNoz/signoz-mcp-server/internal/testutil/oteltest"
-	"github.com/SigNoz/signoz-mcp-server/pkg/analytics"
-	"github.com/SigNoz/signoz-mcp-server/pkg/analytics/noopanalytics"
-	otelpkg "github.com/SigNoz/signoz-mcp-server/pkg/otel"
-	"github.com/SigNoz/signoz-mcp-server/pkg/types/analyticstypes"
-	"github.com/SigNoz/signoz-mcp-server/pkg/util"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/handler/tools"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/oauth"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/testutil/oteltest"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics/noopanalytics"
+	otelpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/otel"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/types/analyticstypes"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
 )
 
 type analyticsCall struct {

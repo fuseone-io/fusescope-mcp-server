@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 )
 
 func (h *Handler) RegisterMetricCardinalityHandlers(s *mcp.Server) {

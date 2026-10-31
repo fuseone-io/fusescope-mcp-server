@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/config"
-	docsindex "github.com/SigNoz/signoz-mcp-server/internal/docs"
-	"github.com/SigNoz/signoz-mcp-server/internal/handler/tools"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
+	docsindex "github.com/fuseone-io/fusescope-mcp-server/internal/docs"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/handler/tools"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 	"github.com/stretchr/testify/require"
 )
 

@@ -12,7 +12,7 @@ import (
 	"time"
 	"unicode"
 
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 )
 
 const (

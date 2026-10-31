@@ -19,13 +19,13 @@ COPY . .
 
 # Build the application with optimizations
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
-    -ldflags="-w -s -extldflags=-static -X github.com/SigNoz/signoz-mcp-server/pkg/version.Version=${VERSION}" \
+    -ldflags="-w -s -extldflags=-static -X github.com/fuseone-io/fusescope-mcp-server/pkg/version.Version=${VERSION}" \
     -a -installsuffix cgo \
-    -o signoz-mcp-server \
+    -o fusescope-mcp-server \
     ./cmd/server/
 
 # Add MCP registry label
-LABEL io.modelcontextprotocol.server.name="io.github.SigNoz/signoz-mcp-server"
+LABEL io.modelcontextprotocol.server.name="io.github.fuseone-io/fusescope-mcp-server"
 
 # Final stage
 FROM alpine:latest
@@ -40,7 +40,7 @@ RUN addgroup -g 1001 -S appgroup && \
 WORKDIR /app
 
 # Copy the binary from builder stage
-COPY --from=builder /app/signoz-mcp-server .
+COPY --from=builder /app/fusescope-mcp-server .
 
 # Change ownership to non-root user
 RUN chown -R appuser:appgroup /app
@@ -52,4 +52,4 @@ USER appuser
 EXPOSE 8000
 
 # Run the application
-CMD ["./signoz-mcp-server"]
+CMD ["./fusescope-mcp-server"]

@@ -15,7 +15,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/dashboard"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/dashboard"
 )
 
 func main() {

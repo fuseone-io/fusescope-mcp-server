@@ -1,7 +1,7 @@
 package types
 
 import (
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
 )
 
 // ExecuteBuilderQueryInput is the fusescope_execute_builder_query input schema: the

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/util"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
 )
 
 type Config struct {

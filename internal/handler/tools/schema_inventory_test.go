@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/querybuilder"
 )
 
 func registeredTestTools(t *testing.T) map[string]*registeredTool {

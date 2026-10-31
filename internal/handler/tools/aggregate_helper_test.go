@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/querybuilder"
 )
 
 func TestResolveTimestampsEndOnlyUsesDefaultRange(t *testing.T) {

@@ -11,7 +11,7 @@ const donePlan = `# Plan: Example
 
 Status: Done
 Issue:
-PR: https://github.com/SigNoz/signoz-mcp-server/pull/1
+PR: https://github.com/fuseone-io/fusescope-mcp-server/pull/1
 
 ## Context
 
@@ -101,7 +101,7 @@ func TestPlanStructureErrors(t *testing.T) {
 }
 
 func TestDonePlanNeedsFilledSections(t *testing.T) {
-	plan := strings.Replace(donePlan, "PR: https://github.com/SigNoz/signoz-mcp-server/pull/1", "PR:", 1)
+	plan := strings.Replace(donePlan, "PR: https://github.com/fuseone-io/fusescope-mcp-server/pull/1", "PR:", 1)
 	plan = strings.Replace(plan, "go test ./... passed.", "<Commands, results, and gaps.>", 1)
 	plan = strings.Replace(plan, "- `cmd/server/main.go` — wiring", "- `path/to/file.go` — change", 1)
 	root := writeRepo(t, map[string]string{"plans/2026-09-23-example.md": plan})

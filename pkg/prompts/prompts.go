@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 )
 
 // RegisterPrompts registers all MCP prompts on the server.

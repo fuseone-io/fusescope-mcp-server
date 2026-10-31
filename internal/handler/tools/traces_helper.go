@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/querybuilder"
 )
 
 const tracesLegacyQueryAliasError = `parameter validation failed: "query" is not accepted by trace tools; use "filter" with a Query Builder filter expression (see fusescope://traces/query-builder-guide)`
