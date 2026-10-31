@@ -5,7 +5,7 @@ GOPATH ?= $(shell go env GOPATH)
 GO_BIN_DIR ?= $(if $(GOBIN),$(GOBIN),$(GOPATH)/bin)
 GOIMPORTS ?= $(shell command -v goimports 2>/dev/null || echo $(GO_BIN_DIR)/goimports)
 GOIMPORTS_VERSION ?= v0.48.0
-# Keep in sync with GO_LINT in signoz/primus src/make/cmd/go.mk, which the ci / lint job uses.
+# The ci / lint job runs this target, so this pin is the CI version.
 GOLANGCI_LINT_VERSION ?= v2.12.2
 GOLANGCI_LINT ?= go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 BASE ?= origin/main

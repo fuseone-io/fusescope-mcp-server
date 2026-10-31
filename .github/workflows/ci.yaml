@@ -4,59 +4,42 @@ on:
   pull_request:
     branches:
       - main
-  pull_request_target:
-    types:
-      - labeled
+
+permissions:
+  contents: read
 
 jobs:
-  fmt:
-    if: |
-      (github.event_name == 'pull_request' && ! github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && ! contains(github.event.pull_request.labels.*.name, 'safe-to-test')) ||
-      (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe-to-test'))
-    uses: signoz/primus.workflows/.github/workflows/go-fmt.yaml@main
-    secrets: inherit
-    with:
-      PRIMUS_REF: main
-      GO_VERSION: 1.26
-  lint:
-    if: |
-      (github.event_name == 'pull_request' && ! github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && ! contains(github.event.pull_request.labels.*.name, 'safe-to-test')) ||
-      (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe-to-test'))
-    uses: signoz/primus.workflows/.github/workflows/go-lint.yaml@main
-    secrets: inherit
-    with:
-      PRIMUS_REF: main
-      GO_VERSION: 1.26
-  test:
-    if: |
-      (github.event_name == 'pull_request' && ! github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && ! contains(github.event.pull_request.labels.*.name, 'safe-to-test')) ||
-      (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe-to-test'))
-    uses: signoz/primus.workflows/.github/workflows/go-test.yaml@main
-    secrets: inherit
-    with:
-      PRIMUS_REF: main
-      GO_TEST_CONTEXT: ./...
-      GO_VERSION: 1.26
-  deps:
-    if: |
-      (github.event_name == 'pull_request' && ! github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && ! contains(github.event.pull_request.labels.*.name, 'safe-to-test')) ||
-      (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe-to-test'))
-    uses: signoz/primus.workflows/.github/workflows/go-deps.yaml@main
-    secrets: inherit
-    with:
-      PRIMUS_REF: main
-      GO_VERSION: 1.26
-  build:
-    if: |
-      (github.event_name == 'pull_request' && ! github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && ! contains(github.event.pull_request.labels.*.name, 'safe-to-test')) ||
-      (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe-to-test'))
-    uses: signoz/primus.workflows/.github/workflows/go-build.yaml@main
-    secrets: inherit
-    with:
-      PRIMUS_REF: main
-      GO_BUILD_CONTEXT: ./cmd/server
-      GO_VERSION: 1.26
-      GO_BUILD_FLAGS: ""
-      DOCKER_BASE_IMAGES: '{"distroless":"gcr.io/distroless/base:latest"}'
-      DOCKER_DOCKERFILE_PATH: Dockerfile.multi-arch
-      DOCKER_MANIFEST: false
+  go:
+    name: ${{ matrix.check }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [lint, check-deps, check-build, test-race]
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+          cache: true
+
+      - name: Run make ${{ matrix.check }}
+        run: make ${{ matrix.check }}
+
+  e2e-style:
+    name: e2e-style
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+
+      - name: Check e2e Python style
+        run: make check-e2e-style
