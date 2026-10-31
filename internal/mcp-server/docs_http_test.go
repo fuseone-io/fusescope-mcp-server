@@ -145,10 +145,10 @@ func docsSnapshot() docsindex.CorpusSnapshot {
 	docker := "# Install FuseScope Using Docker\n\nDocker Compose installation.\n"
 	logs := "# Send logs to FuseScope\n\nDocker logs and OpenTelemetry logs.\n"
 	pages := []docsindex.PageRecord{
-		docsPage("https://fuseone-io.github.io/fusescope-docs/install/docker/", "Install FuseScope Using Docker", "install", "Install > Docker", docker, now),
-		docsPage("https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs-to-signoz/", "Send logs to FuseScope", "logs-management", "Logs Management > Send Logs", logs, now),
+		docsPage("https://docs.fusescope.fuseone.io/install/docker/", "Install FuseScope Using Docker", "install", "Install > Docker", docker, now),
+		docsPage("https://docs.fusescope.fuseone.io/logs-management/send-logs-to-signoz/", "Send logs to FuseScope", "logs-management", "Logs Management > Send Logs", logs, now),
 	}
-	sitemap := "- [Install FuseScope Using Docker](https://fuseone-io.github.io/fusescope-docs/install/docker/)\n- [Send logs to FuseScope](https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs-to-signoz/)\n"
+	sitemap := "- [Install FuseScope Using Docker](https://docs.fusescope.fuseone.io/install/docker/)\n- [Send logs to FuseScope](https://docs.fusescope.fuseone.io/logs-management/send-logs-to-signoz/)\n"
 	return docsindex.CorpusSnapshot{
 		SchemaVersion: docsindex.CorpusSchemaVersion,
 		BuiltAt:       now,

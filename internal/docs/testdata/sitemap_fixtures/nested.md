@@ -1,9 +1,9 @@
 # SigNoz Docs
 
 - Install
-  - [Docker](https://fuseone-io.github.io/fusescope-docs/install/docker/)
+  - [Docker](https://docs.fusescope.fuseone.io/install/docker/)
   - Kubernetes
-    - [Helm](https://fuseone-io.github.io/fusescope-docs/install/kubernetes/helm/)
-    - [Operator](https://fuseone-io.github.io/fusescope-docs/install/kubernetes/operator/)
+    - [Helm](https://docs.fusescope.fuseone.io/install/kubernetes/helm/)
+    - [Operator](https://docs.fusescope.fuseone.io/install/kubernetes/operator/)
 - Logs Management
-  - [Overview](https://fuseone-io.github.io/fusescope-docs/logs-management/overview/)
+  - [Overview](https://docs.fusescope.fuseone.io/logs-management/overview/)

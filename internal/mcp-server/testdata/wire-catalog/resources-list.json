@@ -34,14 +34,14 @@
           "description": "Read this before creating or updating an alert unless its current content was already read for the same prepared operation. It explains the query envelopes, threshold tiers, and evaluation specs the input schema does not describe, and when to reuse or call fusescope_list_notification_channels. Read fusescope://alert/examples only when examples are still needed.",
           "mimeType": "text/markdown",
           "name": "Alert Rule Instructions",
-          "size": 18424,
+          "size": 18394,
           "uri": "fusescope://alert/instructions"
         },
         {
           "description": "Read this after fusescope://dashboard/clickhouse-schema-for-logs when composing a raw ClickHouse logs widget. It covers timestamp and attribute filters, resource CTEs, variables, timeseries/value shapes, and performance patterns.",
           "mimeType": "text/markdown",
           "name": "ClickHouse Logs Examples",
-          "size": 7551,
+          "size": 7541,
           "uri": "fusescope://dashboard/clickhouse-logs-example"
         },
         {
@@ -55,7 +55,7 @@
           "description": "Read this after fusescope://dashboard/clickhouse-schema-for-metrics when composing a raw ClickHouse metrics widget. It covers counter rates, error ratios, histogram quantiles, time-series tables, variables, and performance patterns.",
           "mimeType": "text/markdown",
           "name": "ClickHouse Metrics Examples",
-          "size": 11235,
+          "size": 11225,
           "uri": "fusescope://dashboard/clickhouse-metrics-example"
         },
         {
@@ -69,7 +69,7 @@
           "description": "Read this after fusescope://dashboard/clickhouse-schema-for-traces when composing a raw ClickHouse traces widget. It covers resource filters, timeseries/value/table result shapes, span events, latency analysis, and performance patterns.",
           "mimeType": "text/markdown",
           "name": "ClickHouse Traces Examples",
-          "size": 8435,
+          "size": 8425,
           "uri": "fusescope://dashboard/clickhouse-traces-example"
         },
         {
@@ -83,7 +83,7 @@
           "description": "Read this before creating or fully replacing a dashboard. It explains dashboard fields, metadata, variables, variable chaining, and layout. Also read fusescope://dashboard/widgets-instructions for widget and query choices.",
           "mimeType": "text/markdown",
           "name": "Dashboard Basic Instructions",
-          "size": 7640,
+          "size": 7620,
           "uri": "fusescope://dashboard/instructions"
         },
         {
@@ -152,7 +152,7 @@
           "description": "Read this when composing a PromQL dashboard widget or promql_rule alert. It explains FuseScope's Prometheus 3.x quoted-selector form for dotted OTel metric names, resource labels, examples, and query checks; do not use it for Query Builder or ClickHouse SQL.",
           "mimeType": "text/markdown",
           "name": "PromQL Instructions",
-          "size": 10489,
+          "size": 10479,
           "uri": "fusescope://promql/instructions"
         },
         {
@@ -180,7 +180,7 @@
           "description": "Read this before creating or updating a saved view. It explains view fields, source, the typed spec (schemaVersion v2), Cost Meter views, and how to read a view before replacing it. It does not describe dashboards.",
           "mimeType": "text/markdown",
           "name": "Saved View Instructions",
-          "size": 5649,
+          "size": 5639,
           "uri": "fusescope://view/instructions"
         },
         {

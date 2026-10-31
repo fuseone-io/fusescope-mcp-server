@@ -8,7 +8,7 @@ A Model Context Protocol (MCP) server that gives AI assistants and LLMs access t
 
 This is FuseOne's independent fork of [SigNoz MCP Server](https://github.com/SigNoz/signoz-mcp-server) (Apache-2.0). It does not track upstream; attribution is in [NOTICE](NOTICE). FuseScope keeps SigNoz-compatible APIs, so the `SIGNOZ-API-KEY` and `X-SigNoz-URL` headers keep their SigNoz names; the server's own environment variables use `FUSESCOPE_*`.
 
-**[📖 FuseScope documentation](https://fuseone-io.github.io/fusescope-docs/)**
+**[📖 FuseScope documentation](https://docs.fusescope.fuseone.io/)**
 
 ## Table of Contents
 
@@ -62,8 +62,8 @@ docker run -p 8000:8000 \
 
 ### Prerequisites
 
-- A running FuseScope instance. See [Install with Helm](https://fuseone-io.github.io/fusescope-docs/install/helm/).
-- A FuseScope API key from a service account. See [Service accounts](https://fuseone-io.github.io/fusescope-docs/administration/service-accounts/).
+- A running FuseScope instance. See [Install with Helm](https://docs.fusescope.fuseone.io/install/helm/).
+- A FuseScope API key from a service account. See [Service accounts](https://docs.fusescope.fuseone.io/administration/service-accounts/).
 - The server binary or image (see [Installation](#installation)).
 
 FuseScope's **Settings → MCP Server** page shows the connection details and client snippets once the FuseScope deployment sets `global.mcp_url` to this server's URL.
@@ -603,7 +603,7 @@ whitespace-only queries remain validation errors.
 
 #### `fusescope_fetch_doc`
 
-Fetch one known official FuseScope docs page's full Markdown or a requested heading. Use `fusescope_search_docs` to discover a page first; accepted inputs are `https://fuseone-io.github.io/fusescope-docs/...` URLs or `/fusescope-docs/...` paths.
+Fetch one known official FuseScope docs page's full Markdown or a requested heading. Use `fusescope_search_docs` to discover a page first; accepted inputs are `https://docs.fusescope.fuseone.io/...` URLs or site-relative `/...` paths such as `/install/helm/`.
 
 - **Parameters**:
   - `url` (required) - Docs page URL or path. A `fusescope://` resource URI is rejected with a hint to read it with `resources/read` instead
@@ -928,7 +928,7 @@ Runs a FuseScope Query Builder v5 request that the dedicated tools cannot expres
 - **Time-series ranking caveat**: top-N groups are ranked over the entire requested window. A short-lived spike can be omitted even when it dominates one bucket; narrow the window or adjust the limit when that matters.
 - **Backend warnings**: non-fatal warnings the backend returns (e.g. ambiguous-key resolution) are surfaced as a note alongside the raw response and WARN-logged, matching the search/aggregate/query_metrics tools (previously the body was returned verbatim and warnings were dropped).
 - **Key-not-found errors**: a filter referencing a key absent from the workspace's metadata for the queried signal fails with recovery guidance in the error text plus a machine-readable `missingKeys` array in the structured error content
-- **Documentation**: See [Query Builder](https://fuseone-io.github.io/fusescope-docs/querying/query-builder/) in the FuseScope docs
+- **Documentation**: See [Query Builder](https://docs.fusescope.fuseone.io/querying/query-builder/) in the FuseScope docs
 
 </details>
 

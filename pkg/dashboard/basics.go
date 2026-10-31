@@ -94,6 +94,6 @@ Applying Variables to Panels [Critical — MUST prompt the user]:
 - This applies to both fusescope_create_dashboard (introducing a variable at creation time) and fusescope_update_dashboard (adding a variable to an existing dashboard).
 
 Links:
-- Dashboard: https://fuseone-io.github.io/fusescope-docs/dashboards/dashboards/
-- Variables: https://fuseone-io.github.io/fusescope-docs/dashboards/variables/
+- Dashboard: https://docs.fusescope.fuseone.io/dashboards/dashboards/
+- Variables: https://docs.fusescope.fuseone.io/dashboards/variables/
 `

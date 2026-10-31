@@ -41,8 +41,8 @@ func (h *Handler) RegisterDocsHandlers(s *mcp.Server) {
 		mcp.WithOutputSchema[docsindex.FetchResult](),
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this after fusescope_search_docs, or when an exact official FuseScope docs URL or /fusescope-docs/... path is known, to return one page's full Markdown or a requested heading. Do not use it to discover pages or query live tenant data; use fusescope_search_docs for topical discovery."),
-		mcp.WithString("url", mcp.Required(), mcp.Description("Full https://fuseone-io.github.io/fusescope-docs/... URL or /fusescope-docs/... path.")),
+		mcp.WithDescription("Use this after fusescope_search_docs, or when an exact official FuseScope docs URL or site-relative /... path is known, to return one page's full Markdown or a requested heading. Do not use it to discover pages or query live tenant data; use fusescope_search_docs for topical discovery."),
+		mcp.WithString("url", mcp.Required(), mcp.Description("Full https://docs.fusescope.fuseone.io/... URL or site-relative /... path.")),
 		mcp.WithString("heading", mcp.Description(`Optional heading anchor ID or heading text, for example "prerequisites" or "## Prerequisites".`)),
 	)
 	h.addTool(s, fetchTool, h.handleFetchDoc)

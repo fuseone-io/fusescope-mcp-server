@@ -2,7 +2,7 @@ package dashboard
 
 const ClickhouseSqlQueryForMetrics = `
 FuseScope Metrics ClickHouse Query Examples
-Reference: https://fuseone-io.github.io/fusescope-docs/querying/clickhouse-promql/
+Reference: https://docs.fusescope.fuseone.io/querying/clickhouse-promql/
 
 ================================================================================
 BASIC QUERIES
@@ -264,7 +264,7 @@ Legend Formatting:
 
 const ClickhouseSqlQueryForLogs = `
 	FuseScope Logs ClickHouse Query Examples
-Reference: https://fuseone-io.github.io/fusescope-docs/querying/clickhouse-promql/
+Reference: https://docs.fusescope.fuseone.io/querying/clickhouse-promql/
 
 ================================================================================
 ESSENTIAL PATTERNS
@@ -456,7 +456,7 @@ Indexed vs Non-Indexed Attributes:
 
 const ClickhouseSqlQueryForTraces = `
 	FuseScope Traces ClickHouse Query Examples
-Reference: https://fuseone-io.github.io/fusescope-docs/querying/clickhouse-promql/
+Reference: https://docs.fusescope.fuseone.io/querying/clickhouse-promql/
 
 ================================================================================
 ESSENTIAL PATTERNS

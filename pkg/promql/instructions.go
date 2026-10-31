@@ -10,7 +10,7 @@ package promql
 // tool descriptions, and the dashboard widgets-instructions resource.
 const Instructions = `
 FuseScope PromQL Guide
-Reference: https://fuseone-io.github.io/fusescope-docs/querying/clickhouse-promql/
+Reference: https://docs.fusescope.fuseone.io/querying/clickhouse-promql/
 ================================================================================
 CRITICAL RULES
 ================================================================================
