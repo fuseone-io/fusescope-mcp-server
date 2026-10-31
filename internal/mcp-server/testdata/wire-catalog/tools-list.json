@@ -5098,7 +5098,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this after fusescope_search_docs, or when an exact official FuseScope docs URL or /fusescope-docs/... path is known, to return one page's full Markdown or a requested heading. Do not use it to discover pages or query live tenant data; use fusescope_search_docs for topical discovery.",
+          "description": "Use this after fusescope_search_docs, or when an exact official FuseScope docs URL or site-relative /... path is known, to return one page's full Markdown or a requested heading. Do not use it to discover pages or query live tenant data; use fusescope_search_docs for topical discovery.",
           "inputSchema": {
             "properties": {
               "heading": {
@@ -5110,7 +5110,7 @@
                 "type": "string"
               },
               "url": {
-                "description": "Full https://fuseone-io.github.io/fusescope-docs/... URL or /fusescope-docs/... path.",
+                "description": "Full https://docs.fusescope.fuseone.io/... URL or site-relative /... path.",
                 "type": "string"
               }
             },

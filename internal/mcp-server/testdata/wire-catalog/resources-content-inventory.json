@@ -33,8 +33,8 @@
         "kind": "text",
         "uri": "fusescope://alert/instructions",
         "mimeType": "text/markdown",
-        "serializedLength": 19162,
-        "sha256": "1c34b94831a1a6fc0f6859259153e0de77a790aca4f3ca217bbd61a0598ce01e"
+        "serializedLength": 19132,
+        "sha256": "e63c230fa63e131a8abfd067c7779a6117d14a36d4d6135ee06be296923a3bb2"
       }
     ]
   },
@@ -46,8 +46,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/clickhouse-logs-example",
         "mimeType": "text/markdown",
-        "serializedLength": 7919,
-        "sha256": "97e66aaccb28a5d0e30638687f8cc482f7ece7c38370cb705ad0a1dd4478ebc6"
+        "serializedLength": 7909,
+        "sha256": "051b597e95a690519c7899e3a40678501459c5f78e62210489c004af483d6746"
       }
     ]
   },
@@ -59,8 +59,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/clickhouse-metrics-example",
         "mimeType": "text/markdown",
-        "serializedLength": 11760,
-        "sha256": "47f4a962a56b8aa7d9fe2935dc211f7233274cc768353db286043b9946b07910"
+        "serializedLength": 11750,
+        "sha256": "e38d21428d0b3c167ed6593f669cebbca879ffb9e7a8a2bc358ce15046d2a313"
       }
     ]
   },
@@ -111,8 +111,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/clickhouse-traces-example",
         "mimeType": "text/markdown",
-        "serializedLength": 8789,
-        "sha256": "4f9b5b2854b93bc6e23d2e9548c411871b7789fab3127c20797b354777b3ab5e"
+        "serializedLength": 8779,
+        "sha256": "b1d34f103b385883bd578e24e89527ba1fee34eaa0d27abe1eafa4102da6beb6"
       }
     ]
   },
@@ -137,8 +137,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/instructions",
         "mimeType": "text/markdown",
-        "serializedLength": 7851,
-        "sha256": "28ff24e06a296e499b9970a8d043406a1d32600e97f50e3989f05f86c63901e6"
+        "serializedLength": 7831,
+        "sha256": "165fba6a7612cf7769d42d8e31113a17fdd6b55078dedc0d10c62c239c6dde20"
       }
     ]
   },
@@ -215,8 +215,8 @@
         "kind": "text",
         "uri": "fusescope://docs/sitemap",
         "mimeType": "text/markdown",
-        "serializedLength": 239,
-        "sha256": "d1a4ea49d991df7ca6d8878b5ca191e1047e595a4acaeb3cd5283273464ed4df"
+        "serializedLength": 219,
+        "sha256": "600d6dcb91f861efe9a0be44fc6984cfe324fca242c39f79bab6c34015caef01"
       }
     ]
   },
@@ -267,8 +267,8 @@
         "kind": "text",
         "uri": "fusescope://promql/instructions",
         "mimeType": "text/markdown",
-        "serializedLength": 10945,
-        "sha256": "0dd23e54d0591586139ff414a8eec25c6a93cea8b88ea7ac9bac036c9f43ead0"
+        "serializedLength": 10935,
+        "sha256": "601f7dd082618b7baa88201f4bd72c21d64c1d980a09f0b5682392f51b7e18b4"
       }
     ]
   },
@@ -319,8 +319,8 @@
         "kind": "text",
         "uri": "fusescope://view/instructions",
         "mimeType": "text/markdown",
-        "serializedLength": 6074,
-        "sha256": "981ab3eeca2e6636989c0815894a3da36e873f9fba3ad2aabc68783bf0b5b616"
+        "serializedLength": 6064,
+        "sha256": "e2fade06eb78cc16dab1d1b313d2c43c5d8bcda7c442b2a32ba692d5b7e21fe8"
       }
     ]
   }

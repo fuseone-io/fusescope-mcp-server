@@ -181,15 +181,15 @@ func (o *wireOracle) serveUpstream(w http.ResponseWriter, r *http.Request) {
 
 func wireDocsSnapshot() docsindex.CorpusSnapshot {
 	builtAt := time.Date(2026, 1, 2, 3, 4, 5, 0, time.UTC)
-	sitemap := "- [Send logs](https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs/)\n- [Install Docker](https://fuseone-io.github.io/fusescope-docs/install/docker/)\n"
+	sitemap := "- [Send logs](https://docs.fusescope.fuseone.io/logs-management/send-logs/)\n- [Install Docker](https://docs.fusescope.fuseone.io/install/docker/)\n"
 	return docsindex.CorpusSnapshot{
 		SchemaVersion: docsindex.CorpusSchemaVersion,
 		BuiltAt:       builtAt,
 		SitemapRaw:    sitemap,
 		SitemapHash:   docsindex.SitemapHash(sitemap),
 		Pages: []docsindex.PageRecord{
-			{URL: "https://fuseone-io.github.io/fusescope-docs/logs-management/send-logs/", Title: "Send logs", SectionSlug: "logs-management", SectionBreadcrumb: "Logs > Send logs", HeadingsJSON: `[]`, BodyMarkdown: "# Send logs\n\nUse OpenTelemetry.\n", FetchedAt: builtAt},
-			{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker", HeadingsJSON: `[]`, BodyMarkdown: "# Install Docker\n\nRun Docker Compose.\n", FetchedAt: builtAt},
+			{URL: "https://docs.fusescope.fuseone.io/logs-management/send-logs/", Title: "Send logs", SectionSlug: "logs-management", SectionBreadcrumb: "Logs > Send logs", HeadingsJSON: `[]`, BodyMarkdown: "# Send logs\n\nUse OpenTelemetry.\n", FetchedAt: builtAt},
+			{URL: "https://docs.fusescope.fuseone.io/install/docker/", Title: "Install Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker", HeadingsJSON: `[]`, BodyMarkdown: "# Install Docker\n\nRun Docker Compose.\n", FetchedAt: builtAt},
 		},
 	}
 }

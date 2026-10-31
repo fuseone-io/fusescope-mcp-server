@@ -11,10 +11,22 @@ import (
 
 var nonSlugChars = regexp.MustCompile(`[^a-z0-9\-]+`)
 
+// The docs used to live on GitHub Pages; links to that address still resolve to the
+// same page on the current site.
+const (
+	legacyDocsRootURL  = "https://fuseone-io.github.io/fusescope-docs/"
+	legacyDocsBasePath = "/fusescope-docs/"
+)
+
 func CanonicalDocURL(raw string) (string, bool) {
 	raw = strings.TrimSpace(raw)
 	if raw == "" {
 		return "", false
+	}
+	if rest, ok := strings.CutPrefix(raw, legacyDocsRootURL); ok {
+		raw = DocsBasePath + rest
+	} else if rest, ok := strings.CutPrefix(raw, legacyDocsBasePath); ok {
+		raw = DocsBasePath + rest
 	}
 	if strings.HasPrefix(raw, DocsBasePath) {
 		raw = "https://" + DocsHost + raw

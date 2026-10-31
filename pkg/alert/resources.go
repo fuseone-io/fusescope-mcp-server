@@ -277,7 +277,7 @@ The payload is forwarded to FuseScope exactly as composed, and FuseScope fills i
 
 ## Further Reading
 User-facing docs. Cite these back to the user when they want to understand a concept in depth:
-- Alert rules: https://fuseone-io.github.io/fusescope-docs/alerts/alert-rules/
-- Routing policies and planned downtime: https://fuseone-io.github.io/fusescope-docs/alerts/routing-and-downtime/
-- Notification channels: https://fuseone-io.github.io/fusescope-docs/alerts/notification-channels/
+- Alert rules: https://docs.fusescope.fuseone.io/alerts/alert-rules/
+- Routing policies and planned downtime: https://docs.fusescope.fuseone.io/alerts/routing-and-downtime/
+- Notification channels: https://docs.fusescope.fuseone.io/alerts/notification-channels/
 `

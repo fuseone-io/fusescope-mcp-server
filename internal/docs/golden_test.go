@@ -129,31 +129,31 @@ func TestEmbeddedCorpusSectionFilters(t *testing.T) {
 			name:    "install docs",
 			query:   "helm",
 			section: "install",
-			wantURL: "https://fuseone-io.github.io/fusescope-docs/install/helm/",
+			wantURL: "https://docs.fusescope.fuseone.io/install/helm/",
 		},
 		{
 			name:    "send data docs",
 			query:   "kubernetes logs",
 			section: "send-data",
-			wantURL: "https://fuseone-io.github.io/fusescope-docs/sending-data/logs-kubernetes/",
+			wantURL: "https://docs.fusescope.fuseone.io/sending-data/logs-kubernetes/",
 		},
 		{
 			name:    "alerts docs",
 			query:   "notification channel",
 			section: "respond",
-			wantURL: "https://fuseone-io.github.io/fusescope-docs/alerts/notification-channels/",
+			wantURL: "https://docs.fusescope.fuseone.io/alerts/notification-channels/",
 		},
 		{
 			name:    "frontend docs",
 			query:   "source maps",
 			section: "frontend-rum",
-			wantURL: "https://fuseone-io.github.io/fusescope-docs/frontend/source-maps/",
+			wantURL: "https://docs.fusescope.fuseone.io/frontend/source-maps/",
 		},
 		{
 			name:    "operate docs",
 			query:   "service accounts",
 			section: "operate",
-			wantURL: "https://fuseone-io.github.io/fusescope-docs/administration/service-accounts/",
+			wantURL: "https://docs.fusescope.fuseone.io/administration/service-accounts/",
 		},
 	}
 

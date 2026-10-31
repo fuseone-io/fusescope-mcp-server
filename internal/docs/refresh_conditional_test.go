@@ -41,7 +41,7 @@ func (s *etagServer) set(path, body, etag string) {
 }
 
 func (s *etagServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/fusescope-docs/sitemap.md" {
+	if r.URL.Path == "/sitemap.md" {
 		_, _ = w.Write([]byte(s.sitemap))
 		return
 	}
@@ -70,12 +70,12 @@ func (s *etagServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func conditionalFixture(t *testing.T) ([]SitemapEntry, CorpusSnapshot, *etagServer) {
 	t.Helper()
 	entries := []SitemapEntry{
-		{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install FuseScope Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"},
-		{URL: "https://fuseone-io.github.io/fusescope-docs/logs/overview/", Title: "Logs Overview", SectionSlug: "logs", SectionBreadcrumb: "Logs > Overview"},
+		{URL: "https://docs.fusescope.fuseone.io/install/docker/", Title: "Install FuseScope Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"},
+		{URL: "https://docs.fusescope.fuseone.io/logs/overview/", Title: "Logs Overview", SectionSlug: "logs", SectionBreadcrumb: "Logs > Overview"},
 	}
 	bodies := map[string]string{
-		"/fusescope-docs/install/docker/": "# Install FuseScope Using Docker\n\nDocker Compose setup.\n",
-		"/fusescope-docs/logs/overview/":  "# Logs Overview\n\nCollect logs.\n",
+		"/install/docker/": "# Install FuseScope Using Docker\n\nDocker Compose setup.\n",
+		"/logs/overview/":  "# Logs Overview\n\nCollect logs.\n",
 	}
 	// Build the baseline from the entries the refresher will parse out of the
 	// served sitemap so section metadata matches what a live fetch produces;
@@ -85,11 +85,11 @@ func conditionalFixture(t *testing.T) ([]SitemapEntry, CorpusSnapshot, *etagServ
 	require.NoError(t, err)
 	require.Len(t, parsed, len(entries))
 	initial := snapshotForEntries(parsed, map[string]string{
-		entries[0].URL: bodies["/fusescope-docs/install/docker/"],
-		entries[1].URL: bodies["/fusescope-docs/logs/overview/"],
+		entries[0].URL: bodies["/install/docker/"],
+		entries[1].URL: bodies["/logs/overview/"],
 	})
 	for i := range initial.Pages {
-		initial.Pages[i].SourceETag = `W/"` + "/fusescope-docs" + initial.Pages[i].URL[len("https://fuseone-io.github.io/fusescope-docs"):] + `-v1"`
+		initial.Pages[i].SourceETag = `W/"` + initial.Pages[i].URL[len("https://docs.fusescope.fuseone.io"):] + `-v1"`
 		initial.Pages[i].FetchedAt = time.Now().UTC().Add(-48 * time.Hour)
 	}
 	// The embedded corpus never matches the live sitemap; model that so the
@@ -109,11 +109,11 @@ func (r *IndexRegistry) currentHandle(t *testing.T) *indexHandle {
 func TestFetcherConditionalRequest(t *testing.T) {
 	_, _, srv := conditionalFixture(t)
 	fetcher := newRewriteFetcher(newHTTPTestServer(t, srv))
-	url := "https://fuseone-io.github.io/fusescope-docs/install/docker/"
+	url := "https://docs.fusescope.fuseone.io/install/docker/"
 
 	first := fetcher.Fetch(context.Background(), url)
 	require.Equal(t, FetchStatusOK, first.Status)
-	require.Equal(t, `W/"/fusescope-docs/install/docker/-v1"`, first.ETag)
+	require.Equal(t, `W/"/install/docker/-v1"`, first.ETag)
 	require.Contains(t, first.Body, "Docker Compose")
 
 	same := fetcher.FetchConditional(context.Background(), url, first.ETag)
@@ -121,7 +121,7 @@ func TestFetcherConditionalRequest(t *testing.T) {
 	require.Equal(t, first.ETag, same.ETag)
 	require.Empty(t, same.Body)
 
-	srv.set("/fusescope-docs/install/docker/", "# Install FuseScope Using Docker\n\nNew steps.\n", `W/"v2"`)
+	srv.set("/install/docker/", "# Install FuseScope Using Docker\n\nNew steps.\n", `W/"v2"`)
 	changed := fetcher.FetchConditional(context.Background(), url, first.ETag)
 	require.Equal(t, FetchStatusOK, changed.Status)
 	require.Equal(t, `W/"v2"`, changed.ETag)
@@ -154,7 +154,7 @@ func TestRefreshRevalidatesWithETagAndKeepsIndex(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, search.Results)
 
-	doc, code, err := reg.FetchDoc(context.Background(), "https://fuseone-io.github.io/fusescope-docs/install/docker/", "")
+	doc, code, err := reg.FetchDoc(context.Background(), "https://docs.fusescope.fuseone.io/install/docker/", "")
 	require.NoError(t, err)
 	require.Empty(t, code)
 	fetchedAt, err := time.Parse(time.RFC3339, doc.LastFetchedAt)
@@ -167,17 +167,17 @@ func TestRevalidatedPageAdoptsRenamedSitemapTitle(t *testing.T) {
 	verifyNoDocsLeaks(t)
 	// A body without a level-1 heading takes its title from the sitemap link
 	// text, so a sitemap rename must surface even when the body is a 304.
-	sitemap := "# FuseScope Docs\n- [Old Name](https://fuseone-io.github.io/fusescope-docs/logs/overview/)\n"
+	sitemap := "# FuseScope Docs\n- [Old Name](https://docs.fusescope.fuseone.io/logs/overview/)\n"
 	parsed, err := ParseSitemapMarkdown(sitemap)
 	require.NoError(t, err)
 	body := "Collect logs with the OpenTelemetry Collector.\n"
 	initial := snapshotForEntries(parsed, map[string]string{parsed[0].URL: body})
 	initial.Pages[0].Title = FirstHeadingTitle(body, "Old Name")
-	initial.Pages[0].SourceETag = `W/"/fusescope-docs/logs/overview/-v1"`
+	initial.Pages[0].SourceETag = `W/"/logs/overview/-v1"`
 	initial.SitemapHash = "stale"
 	require.Equal(t, "Old Name", initial.Pages[0].Title)
 
-	srv := newETagServer(strings.Replace(sitemap, "Old Name", "New Name", 1), map[string]string{"/fusescope-docs/logs/overview/": body})
+	srv := newETagServer(strings.Replace(sitemap, "Old Name", "New Name", 1), map[string]string{"/logs/overview/": body})
 	reg := newTestRegistry(t, initial)
 	refresher := NewRefresher(slog.Default(), reg, newRewriteFetcher(newHTTPTestServer(t, srv)), RefreshConfig{SitemapURL: DefaultSitemapURL})
 
@@ -201,7 +201,7 @@ func TestForcedRefreshRefetchesWithoutRevalidation(t *testing.T) {
 	require.Equal(t, int64(2), srv.served200.Load())
 	require.Same(t, before, reg.currentHandle(t), "identical bodies must not rebuild even when forced")
 
-	doc, code, err := reg.FetchDoc(context.Background(), "https://fuseone-io.github.io/fusescope-docs/install/docker/", "")
+	doc, code, err := reg.FetchDoc(context.Background(), "https://docs.fusescope.fuseone.io/install/docker/", "")
 	require.NoError(t, err)
 	require.Empty(t, code)
 	fetchedAt, err := time.Parse(time.RFC3339, doc.LastFetchedAt)
@@ -213,7 +213,7 @@ func TestForcedRefreshRefetchesWithoutRevalidation(t *testing.T) {
 func TestRefreshRebuildsWhenContentChanges(t *testing.T) {
 	verifyNoDocsLeaks(t)
 	_, initial, srv := conditionalFixture(t)
-	srv.set("/fusescope-docs/logs/overview/", "# Logs Overview\n\nCollect logs with the OpenTelemetry Collector.\n", `W/"v2"`)
+	srv.set("/logs/overview/", "# Logs Overview\n\nCollect logs with the OpenTelemetry Collector.\n", `W/"v2"`)
 	reg := newTestRegistry(t, initial)
 	before := reg.currentHandle(t)
 	refresher := NewRefresher(slog.Default(), reg, newRewriteFetcher(newHTTPTestServer(t, srv)), RefreshConfig{SitemapURL: DefaultSitemapURL})
@@ -223,13 +223,13 @@ func TestRefreshRebuildsWhenContentChanges(t *testing.T) {
 	require.Equal(t, int64(1), srv.served200.Load(), "the changed page downloads a body")
 	require.NotSame(t, before, reg.currentHandle(t))
 
-	doc, code, err := reg.FetchDoc(context.Background(), "https://fuseone-io.github.io/fusescope-docs/logs/overview/", "")
+	doc, code, err := reg.FetchDoc(context.Background(), "https://docs.fusescope.fuseone.io/logs/overview/", "")
 	require.NoError(t, err)
 	require.Empty(t, code)
 	require.Contains(t, doc.Content, "OpenTelemetry Collector")
 	snapshot, _ := reg.Snapshot()
 	for _, page := range snapshot.Pages {
-		if page.URL == "https://fuseone-io.github.io/fusescope-docs/logs/overview/" {
+		if page.URL == "https://docs.fusescope.fuseone.io/logs/overview/" {
 			require.Equal(t, `W/"v2"`, page.SourceETag, "new ETag is stored for the next revalidation")
 		}
 	}
@@ -255,7 +255,7 @@ func TestDiffSnapshots(t *testing.T) {
 		changedBodies[k] = v
 	}
 	changedBodies[entries[1].URL] = "# Page 01\n\nRewritten.\n"
-	extra := SitemapEntry{URL: "https://fuseone-io.github.io/fusescope-docs/page-new/", Title: "New", SectionSlug: "test", SectionBreadcrumb: "Test > New"}
+	extra := SitemapEntry{URL: "https://docs.fusescope.fuseone.io/page-new/", Title: "New", SectionSlug: "test", SectionBreadcrumb: "Test > New"}
 	changedBodies[extra.URL] = "# New\n"
 	next = snapshotForEntries(append([]SitemapEntry{entries[0], entries[1], entries[2]}, extra), changedBodies)
 	delta := diffSnapshots(current, next)

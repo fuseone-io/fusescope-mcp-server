@@ -2,7 +2,7 @@
   {
     "query": "install helm kubernetes",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/install/helm/"
+      "https://docs.fusescope.fuseone.io/install/helm/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -10,7 +10,7 @@
   {
     "query": "otlp endpoints",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/otlp/"
+      "https://docs.fusescope.fuseone.io/sending-data/otlp/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -18,7 +18,7 @@
   {
     "query": "instrument java application",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/instrumentation/java/"
+      "https://docs.fusescope.fuseone.io/sending-data/instrumentation/java/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -26,7 +26,7 @@
   {
     "query": "instrument python opentelemetry",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/instrumentation/python/"
+      "https://docs.fusescope.fuseone.io/sending-data/instrumentation/python/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -34,7 +34,7 @@
   {
     "query": "nodejs instrumentation",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/instrumentation/nodejs/"
+      "https://docs.fusescope.fuseone.io/sending-data/instrumentation/nodejs/"
     ],
     "style": "keyword",
     "baseline_rank": 2
@@ -42,7 +42,7 @@
   {
     "query": "collector docker",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/collector-docker/"
+      "https://docs.fusescope.fuseone.io/sending-data/collector-docker/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -50,7 +50,7 @@
   {
     "query": "kubernetes logs",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/logs-kubernetes/"
+      "https://docs.fusescope.fuseone.io/sending-data/logs-kubernetes/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -58,7 +58,7 @@
   {
     "query": "syslog",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/logs-syslog/"
+      "https://docs.fusescope.fuseone.io/sending-data/logs-syslog/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -66,7 +66,7 @@
   {
     "query": "log pipelines",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/log-pipelines/"
+      "https://docs.fusescope.fuseone.io/sending-data/log-pipelines/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -74,7 +74,7 @@
   {
     "query": "postgresql integration",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/integrations/postgresql/"
+      "https://docs.fusescope.fuseone.io/sending-data/integrations/postgresql/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -82,8 +82,8 @@
   {
     "query": "redis metrics",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/integrations/redis/",
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/integrations/aws-elasticache-redis/"
+      "https://docs.fusescope.fuseone.io/sending-data/integrations/redis/",
+      "https://docs.fusescope.fuseone.io/sending-data/integrations/aws-elasticache-redis/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -91,7 +91,7 @@
   {
     "query": "dashboard variables",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/dashboards/variables/"
+      "https://docs.fusescope.fuseone.io/dashboards/variables/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -99,7 +99,7 @@
   {
     "query": "notification channels",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/alerts/notification-channels/"
+      "https://docs.fusescope.fuseone.io/alerts/notification-channels/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -107,7 +107,7 @@
   {
     "query": "service accounts api key",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/administration/service-accounts/"
+      "https://docs.fusescope.fuseone.io/administration/service-accounts/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -115,7 +115,7 @@
   {
     "query": "data retention",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/administration/retention/"
+      "https://docs.fusescope.fuseone.io/administration/retention/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -123,7 +123,7 @@
   {
     "query": "source maps",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/frontend/source-maps/"
+      "https://docs.fusescope.fuseone.io/frontend/source-maps/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -131,7 +131,7 @@
   {
     "query": "search syntax",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/querying/search-syntax/"
+      "https://docs.fusescope.fuseone.io/querying/search-syntax/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -139,7 +139,7 @@
   {
     "query": "single sign-on",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/configuration/sso/"
+      "https://docs.fusescope.fuseone.io/configuration/sso/"
     ],
     "style": "keyword",
     "baseline_rank": 1
@@ -147,7 +147,7 @@
   {
     "query": "how do I find why a service is failing",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/guides/failing-service/"
+      "https://docs.fusescope.fuseone.io/guides/failing-service/"
     ],
     "style": "sentence",
     "baseline_rank": 1
@@ -155,7 +155,7 @@
   {
     "query": "how to investigate a slow endpoint",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/guides/slow-endpoint/"
+      "https://docs.fusescope.fuseone.io/guides/slow-endpoint/"
     ],
     "style": "sentence",
     "baseline_rank": 1
@@ -163,7 +163,7 @@
   {
     "query": "how can I see the logs for one request",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/guides/logs-for-a-request/"
+      "https://docs.fusescope.fuseone.io/guides/logs-for-a-request/"
     ],
     "style": "sentence",
     "baseline_rank": 1
@@ -171,8 +171,8 @@
   {
     "query": "how do I create my first alert",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/guides/first-alert/",
-      "https://fuseone-io.github.io/fusescope-docs/alerts/alert-rules/"
+      "https://docs.fusescope.fuseone.io/guides/first-alert/",
+      "https://docs.fusescope.fuseone.io/alerts/alert-rules/"
     ],
     "style": "sentence",
     "baseline_rank": 1
@@ -180,8 +180,8 @@
   {
     "query": "how do I build a dashboard",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/guides/first-dashboard/",
-      "https://fuseone-io.github.io/fusescope-docs/dashboards/dashboards/"
+      "https://docs.fusescope.fuseone.io/guides/first-dashboard/",
+      "https://docs.fusescope.fuseone.io/dashboards/dashboards/"
     ],
     "style": "sentence",
     "baseline_rank": 1
@@ -189,7 +189,7 @@
   {
     "query": "how do I silence alerts during planned maintenance",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/alerts/routing-and-downtime/"
+      "https://docs.fusescope.fuseone.io/alerts/routing-and-downtime/"
     ],
     "style": "sentence",
     "baseline_rank": 1
@@ -197,7 +197,7 @@
   {
     "query": "rum",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/frontend/real-user-monitoring/"
+      "https://docs.fusescope.fuseone.io/frontend/real-user-monitoring/"
     ],
     "style": "abbreviation",
     "baseline_rank": 0
@@ -205,7 +205,7 @@
   {
     "query": "sso",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/configuration/sso/"
+      "https://docs.fusescope.fuseone.io/configuration/sso/"
     ],
     "style": "abbreviation",
     "baseline_rank": 1
@@ -213,7 +213,7 @@
   {
     "query": "k8s logs",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/logs-kubernetes/"
+      "https://docs.fusescope.fuseone.io/sending-data/logs-kubernetes/"
     ],
     "style": "abbreviation",
     "baseline_rank": 1
@@ -221,7 +221,7 @@
   {
     "query": "apm services",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/apm/services/"
+      "https://docs.fusescope.fuseone.io/apm/services/"
     ],
     "style": "abbreviation",
     "baseline_rank": 1
@@ -229,8 +229,8 @@
   {
     "query": "llm observability",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/analyze/ai-observability/",
-      "https://fuseone-io.github.io/fusescope-docs/analyze/ai-observability-python/"
+      "https://docs.fusescope.fuseone.io/analyze/ai-observability/",
+      "https://docs.fusescope.fuseone.io/analyze/ai-observability-python/"
     ],
     "style": "abbreviation",
     "baseline_rank": 1
@@ -238,7 +238,7 @@
   {
     "query": "rds postgres",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/integrations/aws-rds-postgresql/"
+      "https://docs.fusescope.fuseone.io/sending-data/integrations/aws-rds-postgresql/"
     ],
     "style": "abbreviation",
     "baseline_rank": 1
@@ -246,7 +246,7 @@
   {
     "query": "traces explorer filter spans",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/explore/traces/"
+      "https://docs.fusescope.fuseone.io/explore/traces/"
     ],
     "style": "production-raw",
     "baseline_rank": 1
@@ -254,7 +254,7 @@
   {
     "query": "trace details waterfall",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/explore/trace-details/"
+      "https://docs.fusescope.fuseone.io/explore/trace-details/"
     ],
     "style": "production-raw",
     "baseline_rank": 1
@@ -262,7 +262,7 @@
   {
     "query": "logs explorer",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/explore/logs/"
+      "https://docs.fusescope.fuseone.io/explore/logs/"
     ],
     "style": "production-raw",
     "baseline_rank": 1
@@ -270,7 +270,7 @@
   {
     "query": "metrics explorer",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/explore/metrics/"
+      "https://docs.fusescope.fuseone.io/explore/metrics/"
     ],
     "style": "production-raw",
     "baseline_rank": 1
@@ -278,7 +278,7 @@
   {
     "query": "clickhouse sql promql panel",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/querying/clickhouse-promql/"
+      "https://docs.fusescope.fuseone.io/querying/clickhouse-promql/"
     ],
     "style": "production-raw",
     "baseline_rank": 1
@@ -286,7 +286,7 @@
   {
     "query": "service map",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/apm/service-map/"
+      "https://docs.fusescope.fuseone.io/apm/service-map/"
     ],
     "style": "production-keyword",
     "baseline_rank": 1
@@ -294,7 +294,7 @@
   {
     "query": "exceptions",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/apm/exceptions/"
+      "https://docs.fusescope.fuseone.io/apm/exceptions/"
     ],
     "style": "production-keyword",
     "baseline_rank": 1
@@ -302,7 +302,7 @@
   {
     "query": "messaging queues kafka",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/analyze/messaging-queues/"
+      "https://docs.fusescope.fuseone.io/analyze/messaging-queues/"
     ],
     "style": "production-keyword",
     "baseline_rank": 1
@@ -310,7 +310,7 @@
   {
     "query": "external apis",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/analyze/external-apis/"
+      "https://docs.fusescope.fuseone.io/analyze/external-apis/"
     ],
     "style": "production-keyword",
     "baseline_rank": 1
@@ -318,7 +318,7 @@
   {
     "query": "cost meter",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/analyze/cost-meter/"
+      "https://docs.fusescope.fuseone.io/analyze/cost-meter/"
     ],
     "style": "production-keyword",
     "baseline_rank": 1
@@ -326,7 +326,7 @@
   {
     "query": "send logs from files with the collector",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/logs-files/"
+      "https://docs.fusescope.fuseone.io/sending-data/logs-files/"
     ],
     "style": "production-real",
     "baseline_rank": 1
@@ -334,7 +334,7 @@
   {
     "query": "set up android app monitoring",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/frontend/set-up-android/"
+      "https://docs.fusescope.fuseone.io/frontend/set-up-android/"
     ],
     "style": "production-real",
     "baseline_rank": 1
@@ -342,7 +342,7 @@
   {
     "query": "upload r8 mapping files",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/frontend/r8-mappings/"
+      "https://docs.fusescope.fuseone.io/frontend/r8-mappings/"
     ],
     "style": "production-real",
     "baseline_rank": 1
@@ -350,7 +350,7 @@
   {
     "query": "query builder aggregation group by",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/querying/query-builder/"
+      "https://docs.fusescope.fuseone.io/querying/query-builder/"
     ],
     "style": "production-real",
     "baseline_rank": 1
@@ -358,7 +358,7 @@
   {
     "query": "users and roles permissions",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/administration/users-and-roles/"
+      "https://docs.fusescope.fuseone.io/administration/users-and-roles/"
     ],
     "style": "production-real",
     "baseline_rank": 1
@@ -366,7 +366,7 @@
   {
     "query": "prometheus scrape metrics",
     "expected_top_pages": [
-      "https://fuseone-io.github.io/fusescope-docs/sending-data/prometheus/"
+      "https://docs.fusescope.fuseone.io/sending-data/prometheus/"
     ],
     "style": "production-real",
     "baseline_rank": 1

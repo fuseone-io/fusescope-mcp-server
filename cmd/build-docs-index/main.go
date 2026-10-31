@@ -142,7 +142,7 @@ func writeFallbackCorpus() error {
 	now := time.Now().UTC()
 	pages := []docs.PageRecord{
 		{
-			URL:               "https://fuseone-io.github.io/fusescope-docs/explore/logs/",
+			URL:               "https://docs.fusescope.fuseone.io/explore/logs/",
 			Title:             "Logs Explorer",
 			SectionSlug:       "explore",
 			SectionBreadcrumb: "Explore > Logs Explorer",
@@ -150,7 +150,7 @@ func writeFallbackCorpus() error {
 			FetchedAt:         now,
 		},
 		{
-			URL:               "https://fuseone-io.github.io/fusescope-docs/install/helm/",
+			URL:               "https://docs.fusescope.fuseone.io/install/helm/",
 			Title:             "Install with Helm",
 			SectionSlug:       "install",
 			SectionBreadcrumb: "Install > Install with Helm",
@@ -162,7 +162,7 @@ func writeFallbackCorpus() error {
 		pages[i].HeadingsJSON = jsonString(docs.ExtractHeadings(pages[i].BodyMarkdown))
 	}
 	pages = docs.NormalizePages(pages)
-	sitemapRaw := "- [Logs Explorer](https://fuseone-io.github.io/fusescope-docs/explore/logs/)\n- [Install with Helm](https://fuseone-io.github.io/fusescope-docs/install/helm/)\n"
+	sitemapRaw := "- [Logs Explorer](https://docs.fusescope.fuseone.io/explore/logs/)\n- [Install with Helm](https://docs.fusescope.fuseone.io/install/helm/)\n"
 	snapshot := docs.CorpusSnapshot{
 		SchemaVersion: docs.CorpusSchemaVersion,
 		BuiltAt:       now,
