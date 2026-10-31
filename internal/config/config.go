@@ -86,6 +86,8 @@ const (
 )
 
 func LoadConfig() (*Config, error) {
+	warnLegacyEnv()
+
 	// Trim trailing slash from URL to prevent double-slash issues in API paths
 	url := strings.TrimSuffix(getEnv(FuseScopeURL, ""), "/")
 
@@ -149,7 +151,7 @@ func LoadConfig() (*Config, error) {
 }
 
 func getEnv(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
+	if value := lookupEnv(key); value != "" {
 		return value
 	}
 	return defaultValue
@@ -178,7 +180,7 @@ func getEnvBool(key string, defaultValue bool) bool {
 // returns (default, true) so callers still have a sane interval for any
 // non-scheduled use. Invalid values warn and fall back to the default.
 func getEnvRefreshInterval(key string, defaultValue time.Duration) (time.Duration, bool) {
-	value := strings.TrimSpace(os.Getenv(key))
+	value := strings.TrimSpace(lookupEnv(key))
 	if value == "" {
 		return defaultValue, false
 	}

@@ -961,6 +961,8 @@ Runs a FuseScope Query Builder v5 request that the dedicated tools cannot expres
 | `OTEL_TRACES_EXPORTER` | Set to `none` to disable internal trace export even when an OTLP endpoint is configured. | No |
 | `OTEL_METRICS_EXPORTER` | Set to `none` to disable internal metrics export and runtime metrics even when an OTLP endpoint is configured. | No |
 
+The former `SIGNOZ_URL`, `SIGNOZ_API_KEY`, `SIGNOZ_CUSTOM_HEADERS`, `SIGNOZ_INSTANCE_URL_ALLOWLIST`, `SIGNOZ_DOCS_REFRESH_INTERVAL` and `SIGNOZ_DOCS_FULL_REFRESH_INTERVAL` are still read when their `FUSESCOPE_*` counterpart is unset, with a deprecation warning at startup. They will be removed in a future release.
+
 The MCP server does not run an OTLP log exporter; logs are emitted as JSON to stderr. `OTEL_LOGS_EXPORTER` is therefore not used.
 
 ### Browser links for FuseScope
