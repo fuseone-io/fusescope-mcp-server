@@ -13,7 +13,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -235,57 +234,6 @@ func TestEvaluateValidationResponse_DoesNotLogOrReturnRawBody(t *testing.T) {
 			assert.NotContains(t, logBuf.String(), "validation-secret-canary")
 		})
 	}
-}
-
-func TestGetAnalyticsIdentity_CachesResult(t *testing.T) {
-	requests := 0
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requests++
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte(`{"status":"success","data":{"id":"user-1","email":"u@example.com","orgId":"org-1"}}`))
-	}))
-	defer server.Close()
-
-	logger := logpkg.New("debug")
-	client := NewClient(logger, server.URL, "Bearer jwt", "Authorization", nil)
-
-	for i := 0; i < 5; i++ {
-		identity, err := client.GetAnalyticsIdentity(context.Background())
-		require.NoError(t, err)
-		assert.Equal(t, "user-1", identity.UserID)
-	}
-
-	assert.Equal(t, 1, requests, "expected identity cache to serve repeated lookups")
-}
-
-func TestGetAnalyticsIdentity_ConcurrentCallsDedupe(t *testing.T) {
-	var requests atomic.Int32
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requests.Add(1)
-		time.Sleep(20 * time.Millisecond)
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte(`{"status":"success","data":{"id":"user-1","email":"u@example.com","orgId":"org-1"}}`))
-	}))
-	defer server.Close()
-
-	logger := logpkg.New("debug")
-	client := NewClient(logger, server.URL, "Bearer jwt", "Authorization", nil)
-
-	const callers = 10
-	var wg sync.WaitGroup
-	wg.Add(callers)
-	for i := 0; i < callers; i++ {
-		go func() {
-			defer wg.Done()
-			_, err := client.GetAnalyticsIdentity(context.Background())
-			assert.NoError(t, err)
-		}()
-	}
-	wg.Wait()
-
-	// The mutex serializes lookups; the first request populates the cache
-	// and every other caller observes the cached result.
-	assert.Equal(t, int32(1), requests.Load(), "expected concurrent callers to share a single upstream request")
 }
 
 func TestDoRequest_RetriedDriftWarnsOnceWithoutLeakingCredentials(t *testing.T) {

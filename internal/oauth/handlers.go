@@ -17,7 +17,6 @@ import (
 
 	"github.com/fuseone-io/fusescope-mcp-server/internal/client"
 	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
-	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics"
 	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 	otelpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/otel"
 	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
@@ -27,10 +26,15 @@ import (
 
 const csrfCookieName = "signoz_mcp_oauth_csrf"
 
-// AnalyticsEmitter publishes OAuth flow events. apiKey and signozURL are
-// the validated tenant credentials the emitter needs to resolve identity
-// (orgId) for the event. Nil disables OAuth analytics.
-type AnalyticsEmitter func(ctx context.Context, event, apiKey, signozURL string, props map[string]any)
+// OAuth flow events, recorded as the event attribute of the OAuth events metric.
+const (
+	EventAuthorizationSubmitted = "MCP OAuth: Authorization submitted"
+	EventTokenIssued            = "MCP OAuth: Token issued"
+)
+
+// EventEmitter records an OAuth flow event for the tenant at signozURL. Nil
+// disables it.
+type EventEmitter func(ctx context.Context, event, signozURL string)
 
 //go:embed static/authorize.html
 var authorizeTemplateFS embed.FS
@@ -42,7 +46,7 @@ type Handler struct {
 	config            *config.Config
 	tokenSecret       []byte
 	authorizeTemplate *template.Template
-	emitEvent         AnalyticsEmitter
+	emitEvent         EventEmitter
 	meters            *otelpkg.Meters
 }
 
@@ -97,7 +101,7 @@ type tokenResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-func NewHandler(logger *slog.Logger, cfg *config.Config, emitEvent AnalyticsEmitter, meters *otelpkg.Meters) *Handler {
+func NewHandler(logger *slog.Logger, cfg *config.Config, emitEvent EventEmitter, meters *otelpkg.Meters) *Handler {
 	return &Handler{
 		logger:            logger,
 		config:            cfg,
@@ -108,11 +112,11 @@ func NewHandler(logger *slog.Logger, cfg *config.Config, emitEvent AnalyticsEmit
 	}
 }
 
-func (h *Handler) emit(ctx context.Context, event, apiKey, signozURL string, props map[string]any) {
+func (h *Handler) emit(ctx context.Context, event, signozURL string) {
 	if h.emitEvent == nil {
 		return
 	}
-	h.emitEvent(ctx, event, apiKey, signozURL, props)
+	h.emitEvent(ctx, event, signozURL)
 }
 
 func (h *Handler) HandleProtectedResourceMetadata(w http.ResponseWriter, r *http.Request) {
@@ -338,9 +342,7 @@ func (h *Handler) HandleAuthorizeSubmit(w http.ResponseWriter, r *http.Request) 
 		MaxAge:   -1,
 	})
 
-	h.emit(r.Context(), analytics.EventOAuthAuthorizationSubmitted, apiKey, normalizedURL, map[string]any{
-		analytics.AttrTenantURL: normalizedURL,
-	})
+	h.emit(r.Context(), EventAuthorizationSubmitted, normalizedURL)
 
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
@@ -506,10 +508,7 @@ func (h *Handler) issueTokenPair(w http.ResponseWriter, r *http.Request, clientI
 		RefreshToken: refreshTokenValue,
 	})
 
-	h.emit(r.Context(), analytics.EventOAuthTokenIssued, apiKey, signozURL, map[string]any{
-		analytics.AttrTenantURL: signozURL,
-		analytics.AttrGrantType: grantType,
-	})
+	h.emit(r.Context(), EventTokenIssued, signozURL)
 }
 
 func (h *Handler) validateAuthorizeRequest(values url.Values) (authorizeTemplateData, error) {

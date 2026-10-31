@@ -19,7 +19,7 @@ func TestProductionHTTPModernRequestCancellationReachesHandler(t *testing.T) {
 	logger := logpkg.New("error")
 	cfg := &config.Config{URL: "https://tenant.example.com", APIKey: "test-key", ClientCacheSize: 1, ClientCacheTTL: time.Minute, MaxRequestBytes: 1 << 20}
 	h := tools.NewHandler(logger, cfg)
-	m := NewMCPServer(logger, h, cfg, nil, nil)
+	m := NewMCPServer(logger, h, cfg, nil)
 	server := m.newSDKServer()
 
 	started := make(chan struct{})
@@ -80,7 +80,7 @@ func TestProductionHTTPModernRequestCancellationReachesHandler(t *testing.T) {
 func TestProductionServerRunCancellationIsNormalizedByStdioWrapper(t *testing.T) {
 	logger := logpkg.New("error")
 	cfg := &config.Config{URL: "https://tenant.example.com", APIKey: "test-key", ClientCacheSize: 1, ClientCacheTTL: time.Minute}
-	m := NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, nil, nil)
+	m := NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, nil)
 	server := m.newSDKServer()
 
 	clientToServerReader, clientToServerWriter := io.Pipe()

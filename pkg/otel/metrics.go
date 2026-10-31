@@ -12,8 +12,6 @@ type Meters struct {
 	AuthFailures                       metric.Int64Counter
 	OAuthEvents                        metric.Int64Counter
 	OAuthFailures                      metric.Int64Counter
-	IdentityCacheHits                  metric.Int64Counter
-	IdentityCacheMisses                metric.Int64Counter
 	DocsSearches                       metric.Int64Counter
 	DocsSearchDuration                 metric.Float64Histogram
 	DocsSearchTopScore                 metric.Float64Histogram
@@ -85,22 +83,6 @@ func NewMeters(mp metric.MeterProvider) (*Meters, error) {
 	oauthFailures, err := meter.Int64Counter(
 		"mcp.oauth.failures",
 		metric.WithDescription("Count of OAuth failures emitted by the MCP server"),
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	identityCacheHits, err := meter.Int64Counter(
-		"mcp.identity_cache.hit",
-		metric.WithDescription("Count of analytics identity cache hits"),
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	identityCacheMisses, err := meter.Int64Counter(
-		"mcp.identity_cache.miss",
-		metric.WithDescription("Count of analytics identity cache misses"),
 	)
 	if err != nil {
 		return nil, err
@@ -188,8 +170,6 @@ func NewMeters(mp metric.MeterProvider) (*Meters, error) {
 		AuthFailures:                       authFailures,
 		OAuthEvents:                        oauthEvents,
 		OAuthFailures:                      oauthFailures,
-		IdentityCacheHits:                  identityCacheHits,
-		IdentityCacheMisses:                identityCacheMisses,
 		DocsSearches:                       docsSearches,
 		DocsSearchDuration:                 docsSearchDuration,
 		DocsSearchTopScore:                 docsSearchTopScore,

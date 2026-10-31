@@ -8,9 +8,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"net/http/httptest"
 	"strings"
-	"sync/atomic"
 	"testing"
 	"time"
 
@@ -27,7 +25,6 @@ import (
 	"github.com/fuseone-io/fusescope-mcp-server/internal/handler/tools"
 	mcpcontract "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 	"github.com/fuseone-io/fusescope-mcp-server/internal/testutil/oteltest"
-	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics/noopanalytics"
 	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 	otelpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/otel"
 	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
@@ -54,7 +51,7 @@ func testServerWithTelemetry(t *testing.T, logger *slog.Logger) (*MCPServer, *sd
 	})
 
 	cfg := &config.Config{ClientCacheSize: 1, ClientCacheTTL: time.Minute}
-	return NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, noopanalytics.New(), meters), reader, exporter
+	return NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, meters), reader, exporter
 }
 
 func assertToolResultBytes(t *testing.T, result *mcp.CallToolResult) {
@@ -154,7 +151,7 @@ func TestReceivingMiddlewareErrorLogsAreRedactedAndBounded(t *testing.T) {
 			var logs bytes.Buffer
 			logger := newBufferedLogger(&logs, slog.LevelDebug)
 			cfg := &config.Config{ClientCacheSize: 1, ClientCacheTTL: time.Minute}
-			server := NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, noopanalytics.New(), nil)
+			server := NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, nil)
 			arguments, err := json.Marshal(map[string]any{
 				"apiKey": "secret-canary",
 				"filter": strings.Repeat("x", 1024*1024+128),
@@ -215,7 +212,7 @@ func TestProductionHTTPFailureLogsOmitArgumentAndHeaderSecrets(t *testing.T) {
 				MaxRequestBytes: 1 << 20,
 			}
 			handler := tools.NewHandler(logger, cfg)
-			server := NewMCPServer(logger, handler, cfg, noopanalytics.New(), nil)
+			server := NewMCPServer(logger, handler, cfg, nil)
 			sdkServer := server.newSDKServer()
 			handler.AddTool(sdkServer, mcpcontract.NewTool("http_failure_probe"), tt.handler)
 
@@ -241,95 +238,6 @@ func TestProductionHTTPFailureLogsOmitArgumentAndHeaderSecrets(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestAnalyticsIsOptInAsyncAndOmitsSearchContext(t *testing.T) {
-	t.Run("disabled skips identity lookup", func(t *testing.T) {
-		var requests atomic.Int32
-		identity := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) { requests.Add(1) }))
-		defer identity.Close()
-		cfg := &config.Config{URL: identity.URL, ClientCacheSize: 1, ClientCacheTTL: time.Minute}
-		spy := &spyAnalytics{enabled: false}
-		server := NewMCPServer(logpkg.New("error"), tools.NewHandler(logpkg.New("error"), cfg), cfg, spy, nil)
-		ctx := util.SetSigNozURL(context.Background(), identity.URL)
-		_, _ = callReceiving(t, server, ctx, "tools/call", toolRequest("probe", `{}`), &mcp.CallToolResult{}, nil)
-		if requests.Load() != 0 {
-			t.Fatalf("identity requests = %d, want 0", requests.Load())
-		}
-	})
-
-	t.Run("identity lookup does not block tool completion", func(t *testing.T) {
-		started := make(chan struct{})
-		release := make(chan struct{})
-		identity := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-			close(started)
-			<-release
-			_, _ = w.Write([]byte(`{"status":"success","data":{"id":"sa-1","orgId":"org-1"}}`))
-		}))
-		defer identity.Close()
-		cfg := &config.Config{URL: identity.URL, ClientCacheSize: 1, ClientCacheTTL: time.Minute}
-		spy := &spyAnalytics{enabled: true}
-		server := NewMCPServer(logpkg.New("error"), tools.NewHandler(logpkg.New("error"), cfg), cfg, spy, nil)
-		ctx := util.SetAPIKey(context.Background(), "key")
-		ctx = util.SetAuthHeader(ctx, "SIGNOZ-API-KEY")
-		ctx = util.SetSigNozURL(ctx, identity.URL)
-
-		done := make(chan error, 1)
-		go func() {
-			_, err := callReceiving(t, server, ctx, "tools/call", toolRequest("probe", `{}`), &mcp.CallToolResult{}, nil)
-			done <- err
-		}()
-		select {
-		case err := <-done:
-			if err != nil {
-				t.Fatal(err)
-			}
-		case <-started:
-			select {
-			case err := <-done:
-				if err != nil {
-					t.Fatal(err)
-				}
-			case <-time.After(time.Second):
-				close(release)
-				t.Fatal("tool completion waited for analytics identity lookup")
-			}
-		case <-time.After(time.Second):
-			close(release)
-			t.Fatal("analytics identity lookup did not start")
-		}
-		close(release)
-		if err := server.WaitForAnalytics(context.Background()); err != nil {
-			t.Fatal(err)
-		}
-	})
-
-	t.Run("tool events omit the caller's searchContext", func(t *testing.T) {
-		identity := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-			_, _ = w.Write([]byte(`{"status":"success","data":{"id":"sa-1","orgId":"org-1"}}`))
-		}))
-		defer identity.Close()
-		cfg := &config.Config{URL: identity.URL, ClientCacheSize: 1, ClientCacheTTL: time.Minute}
-		spy := &spyAnalytics{enabled: true}
-		server := NewMCPServer(logpkg.New("error"), tools.NewHandler(logpkg.New("error"), cfg), cfg, spy, nil)
-		ctx := util.SetAPIKey(context.Background(), "key")
-		ctx = util.SetAuthHeader(ctx, "SIGNOZ-API-KEY")
-		ctx = util.SetSigNozURL(ctx, identity.URL)
-		if _, err := callReceiving(t, server, ctx, "tools/call", toolRequest("probe", `{"searchContext":"search-context-canary"}`), &mcp.CallToolResult{}, nil); err != nil {
-			t.Fatal(err)
-		}
-		if err := server.WaitForAnalytics(context.Background()); err != nil {
-			t.Fatal(err)
-		}
-
-		_, tracked := spy.snapshot()
-		if len(tracked) != 1 {
-			t.Fatalf("analytics calls = %d, want 1", len(tracked))
-		}
-		if encoded, err := json.Marshal(tracked[0].attrs); err != nil || bytes.Contains(encoded, []byte("search-context-canary")) {
-			t.Fatalf("analytics event carried the searchContext: %s (err=%v)", encoded, err)
-		}
-	})
 }
 
 func TestTelemetryMetricsExcludeHighCardinalityCorrelation(t *testing.T) {
@@ -374,20 +282,13 @@ func TestSecretBearingToolTelemetryScrubsSearchContextAndErrorText(t *testing.T)
 	const secret = "https://hooks.example.test/credential-url-canary"
 	for _, toolName := range []string{"fusescope_create_notification_channel", "fusescope_update_notification_channel"} {
 		t.Run(toolName, func(t *testing.T) {
-			identity := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-				_, _ = w.Write([]byte(`{"status":"success","data":{"id":"sa-1","orgId":"org-1"}}`))
-			}))
-			defer identity.Close()
-
 			var logs bytes.Buffer
 			logger := newBufferedLogger(&logs, slog.LevelDebug)
 			server, _, exporter := testServerWithTelemetry(t, logger)
-			spy := &spyAnalytics{enabled: true}
-			server.analytics = spy
 
 			ctx := util.SetAPIKey(context.Background(), "test-key")
 			ctx = util.SetAuthHeader(ctx, "SIGNOZ-API-KEY")
-			ctx = util.SetSigNozURL(ctx, identity.URL)
+			ctx = util.SetSigNozURL(ctx, "https://tenant.example.com")
 			result := &mcp.CallToolResult{
 				IsError:           true,
 				Content:           []mcp.Content{&mcp.TextContent{Text: "upstream rejected " + secret}},
@@ -400,10 +301,6 @@ func TestSecretBearingToolTelemetryScrubsSearchContextAndErrorText(t *testing.T)
 			if err != nil || got != result {
 				t.Fatalf("tool observation changed result: got=%v err=%v", got, err)
 			}
-			if err := server.WaitForAnalytics(context.Background()); err != nil {
-				t.Fatal(err)
-			}
-
 			if strings.Contains(logs.String(), secret) {
 				t.Fatalf("logs leaked secret-bearing tool text: %s", logs.String())
 			}
@@ -417,14 +314,6 @@ func TestSecretBearingToolTelemetryScrubsSearchContextAndErrorText(t *testing.T)
 			}
 			if strings.Contains(fmt.Sprintf("%#v", spans[0]), secret) {
 				t.Fatal("span events or status leaked secret-bearing error text")
-			}
-
-			_, tracked := spy.snapshot()
-			if len(tracked) != 1 {
-				t.Fatalf("analytics calls = %#v", tracked)
-			}
-			if encoded, marshalErr := json.Marshal(tracked[0].attrs); marshalErr != nil || bytes.Contains(encoded, []byte(secret)) {
-				t.Fatalf("analytics leaked secret-bearing text: %s (err=%v)", encoded, marshalErr)
 			}
 		})
 	}

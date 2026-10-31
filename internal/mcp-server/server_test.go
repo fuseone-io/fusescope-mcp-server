@@ -28,61 +28,9 @@ import (
 	"github.com/fuseone-io/fusescope-mcp-server/internal/handler/tools"
 	"github.com/fuseone-io/fusescope-mcp-server/internal/oauth"
 	"github.com/fuseone-io/fusescope-mcp-server/internal/testutil/oteltest"
-	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics"
-	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics/noopanalytics"
 	otelpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/otel"
-	"github.com/fuseone-io/fusescope-mcp-server/pkg/types/analyticstypes"
 	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
 )
-
-type analyticsCall struct {
-	groupID string
-	userID  string
-	event   string
-	attrs   map[string]any
-}
-
-type spyAnalytics struct {
-	mu            sync.Mutex
-	enabled       bool
-	identifyCalls []analyticsCall
-	trackCalls    []analyticsCall
-}
-
-func (s *spyAnalytics) Enabled() bool                                   { return s.enabled }
-func (s *spyAnalytics) Start(context.Context) error                     { return nil }
-func (s *spyAnalytics) Stop(context.Context) error                      { return nil }
-func (s *spyAnalytics) Send(context.Context, ...analyticstypes.Message) {}
-func (s *spyAnalytics) TrackUser(_ context.Context, groupID, userID, event string, attrs map[string]any) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.trackCalls = append(s.trackCalls, analyticsCall{
-		groupID: groupID,
-		userID:  userID,
-		event:   event,
-		attrs:   attrs,
-	})
-}
-func (s *spyAnalytics) IdentifyUser(_ context.Context, groupID, userID string, attrs map[string]any) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.identifyCalls = append(s.identifyCalls, analyticsCall{
-		groupID: groupID,
-		userID:  userID,
-		attrs:   attrs,
-	})
-}
-
-func (s *spyAnalytics) snapshot() (identify []analyticsCall, track []analyticsCall) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	identify = append([]analyticsCall(nil), s.identifyCalls...)
-	track = append([]analyticsCall(nil), s.trackCalls...)
-	return identify, track
-}
-
-var _ analytics.Analytics = (*spyAnalytics)(nil)
 
 func waitForCondition(t *testing.T, timeout time.Duration, condition func() bool, failureMessage string) {
 	t.Helper()
@@ -212,7 +160,7 @@ func TestAuthMiddlewareOAuthBearerIgnoresCustomURL(t *testing.T) {
 
 	for _, customURL := range []string{"", "https://oauth.example.com", "https://other.example.com", "://malformed"} {
 		t.Run(customURL, func(t *testing.T) {
-			server := &MCPServer{logger: logpkg.New("error"), config: cfg, analytics: noopanalytics.New()}
+			server := &MCPServer{logger: logpkg.New("error"), config: cfg}
 			req := httptest.NewRequest(http.MethodPost, "/mcp", nil)
 			req.Header.Set("Authorization", "Bearer "+token)
 			if customURL != "" {
@@ -263,7 +211,7 @@ func TestAuthMiddlewareExpiredOAuthBearerDoesNotDowngradeWithCustomURL(t *testin
 		t.Fatalf("EncryptToken() error = %v", err)
 	}
 
-	server := &MCPServer{logger: logpkg.New("error"), config: cfg, analytics: noopanalytics.New()}
+	server := &MCPServer{logger: logpkg.New("error"), config: cfg}
 	req := httptest.NewRequest(http.MethodPost, "/mcp", nil)
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("X-SigNoz-URL", "https://other.example.com")
@@ -300,7 +248,7 @@ func TestAuthMiddlewareOAuthBearerEnforcesEmbeddedURLAllowlist(t *testing.T) {
 		t.Fatalf("EncryptToken() error = %v", err)
 	}
 
-	server := &MCPServer{logger: logpkg.New("error"), config: cfg, analytics: noopanalytics.New()}
+	server := &MCPServer{logger: logpkg.New("error"), config: cfg}
 	req := httptest.NewRequest(http.MethodPost, "/mcp", nil)
 	req.Header.Set("Authorization", "Bearer "+token)
 	// A caller-supplied allowed tenant cannot override the tenant encrypted in
@@ -345,7 +293,7 @@ func TestAuthMiddlewareHonorsAuthorizationIngress(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			server := &MCPServer{logger: logpkg.New("error"), config: cfg, analytics: noopanalytics.New()}
+			server := &MCPServer{logger: logpkg.New("error"), config: cfg}
 			req := httptest.NewRequest(http.MethodPost, "/mcp", nil)
 			req.Header.Set("Authorization", tc.authHeader)
 			req.Header.Set("X-SigNoz-URL", "https://1.1.1.1")
@@ -404,7 +352,7 @@ func TestAuthMiddlewareHonorsAuthorizationWithConfigURL(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			cfg := tc.cfg
-			server := &MCPServer{logger: logpkg.New("error"), config: &cfg, analytics: noopanalytics.New()}
+			server := &MCPServer{logger: logpkg.New("error"), config: &cfg}
 			req := httptest.NewRequest(http.MethodPost, "/mcp", nil)
 			req.Header.Set("Authorization", "Bearer opaque-session-token")
 			// No X-SigNoz-URL: forces the config-URL branches.
@@ -436,7 +384,7 @@ func TestAuthMiddlewareRejectsInstanceURLNotInAllowlist(t *testing.T) {
 		InstanceURLAllowlist: util.ParseInstanceURLAllowlist("*.us.signoz.cloud"),
 	}
 
-	server := &MCPServer{logger: logpkg.New("error"), config: cfg, analytics: noopanalytics.New()}
+	server := &MCPServer{logger: logpkg.New("error"), config: cfg}
 	req := httptest.NewRequest(http.MethodPost, "/mcp", nil)
 	req.Header.Set("SIGNOZ-API-KEY", "pat-token")
 	req.Header.Set("X-SigNoz-URL", "https://1.1.1.1")
@@ -461,7 +409,7 @@ func TestAuthMiddlewareAllowsInstanceURLInAllowlist(t *testing.T) {
 		InstanceURLAllowlist: util.ParseInstanceURLAllowlist("*.us.signoz.cloud"),
 	}
 
-	server := &MCPServer{logger: logpkg.New("error"), config: cfg, analytics: noopanalytics.New()}
+	server := &MCPServer{logger: logpkg.New("error"), config: cfg}
 	req := httptest.NewRequest(http.MethodPost, "/mcp", nil)
 	req.Header.Set("SIGNOZ-API-KEY", "pat-token")
 	req.Header.Set("X-SigNoz-URL", "https://demo.us.signoz.cloud")
@@ -488,7 +436,7 @@ func TestAuthMiddlewareRejectsInvalidOAuthBearerWithoutSigNozURL(t *testing.T) {
 		OAuthIssuerURL:   "https://mcp.example.com",
 	}
 
-	server := &MCPServer{logger: logpkg.New("error"), config: cfg, analytics: noopanalytics.New()}
+	server := &MCPServer{logger: logpkg.New("error"), config: cfg}
 	req := httptest.NewRequest(http.MethodPost, "/mcp", nil)
 	req.Header.Set("Authorization", "Bearer stale-token")
 
@@ -509,7 +457,7 @@ func TestAuthMiddlewareRejectsInvalidOAuthBearerWithoutSigNozURL(t *testing.T) {
 
 func TestAuthMiddlewarePropagatesAssistantCorrelationHeaders(t *testing.T) {
 	cfg := &config.Config{}
-	server := &MCPServer{logger: logpkg.New("error"), config: cfg, analytics: noopanalytics.New()}
+	server := &MCPServer{logger: logpkg.New("error"), config: cfg}
 
 	cases := []struct {
 		name              string
@@ -612,7 +560,7 @@ func TestAuthMiddlewareReturnsOAuthChallengeWhenMissingAuth(t *testing.T) {
 		OAuthIssuerURL: "https://mcp.example.com",
 	}
 
-	server := &MCPServer{logger: logpkg.New("error"), config: cfg, analytics: noopanalytics.New()}
+	server := &MCPServer{logger: logpkg.New("error"), config: cfg}
 	req := httptest.NewRequest(http.MethodPost, "/mcp", nil)
 	rr := httptest.NewRecorder()
 
@@ -655,7 +603,7 @@ func TestAuthMiddlewareRejectsInvalidOrMissingSigNozURL(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			server := &MCPServer{logger: logpkg.New("error"), config: &config.Config{}, analytics: noopanalytics.New()}
+			server := &MCPServer{logger: logpkg.New("error"), config: &config.Config{}}
 			req := httptest.NewRequest(http.MethodPost, "https://mcp.example.com/mcp", nil)
 			tt.setup(req)
 			rr := httptest.NewRecorder()
@@ -680,7 +628,7 @@ func TestRun_HTTPCanceledBeforeListen(t *testing.T) {
 	}
 	logger := logpkg.New("error")
 	handler := tools.NewHandler(logger, cfg)
-	srv := NewMCPServer(logger, handler, cfg, noopanalytics.New(), nil)
+	srv := NewMCPServer(logger, handler, cfg, nil)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel() // pre-cancel so Run should short-circuit before ListenAndServe
@@ -719,7 +667,7 @@ func TestReceivingMiddlewarePassesToolOutcomesThroughAndRecoversPanics(t *testin
 			var logs bytes.Buffer
 			logger := newBufferedLogger(&logs, slog.LevelDebug)
 			cfg := &config.Config{ClientCacheSize: 1, ClientCacheTTL: time.Minute}
-			server := NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, noopanalytics.New(), nil)
+			server := NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, nil)
 			request := toolRequest("probe", `{"searchContext":"find services"}`)
 			next := func(context.Context, string, mcp.Request) (mcp.Result, error) {
 				if tt.panicValue != nil {
@@ -765,7 +713,7 @@ func TestReceivingMiddlewareKeepsUnknownToolNamesOutOfMetricsAndSpans(t *testing
 	}
 	logger := logpkg.New("error")
 	cfg := &config.Config{ClientCacheSize: 1, ClientCacheTTL: time.Minute}
-	server := NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, noopanalytics.New(), meters)
+	server := NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, meters)
 	requestedName := "attacker-" + strings.Repeat("x", 16*1024)
 	// Deliberately avoid the official SDK's current display wording: bounded
 	// telemetry classification must come from checked registration state.
@@ -815,7 +763,7 @@ func TestReceivingMiddlewareUnknownMethodUsesBoundedDimensionsOnce(t *testing.T)
 	}
 	logger := logpkg.New("error")
 	cfg := &config.Config{ClientCacheSize: 1, ClientCacheTTL: time.Minute}
-	server := NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, noopanalytics.New(), meters)
+	server := NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, meters)
 	requestedMethod := "attacker/" + strings.Repeat("method", 2048)
 	rpcErr := &jsonrpc.Error{Code: jsonrpc.CodeMethodNotFound, Message: "method not found"}
 	ctx := util.SetClientSource(context.Background(), "ai-assistant")
@@ -874,7 +822,7 @@ func TestRun_HTTPShutdownRaceDuringStartup(t *testing.T) {
 	}
 	logger := logpkg.New("error")
 	handler := tools.NewHandler(logger, cfg)
-	srv := NewMCPServer(logger, handler, cfg, noopanalytics.New(), nil)
+	srv := NewMCPServer(logger, handler, cfg, nil)
 
 	runCtx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -909,7 +857,7 @@ func TestRun_HTTPShutdownRaceDuringStartup(t *testing.T) {
 // MaxBytesReader so the downstream read fails; an under-cap body is readable in
 // full.
 func TestMaxBytesMiddlewareRejectsOversizeBody(t *testing.T) {
-	server := &MCPServer{logger: logpkg.New("error"), config: &config.Config{MaxRequestBytes: 16}, analytics: noopanalytics.New()}
+	server := &MCPServer{logger: logpkg.New("error"), config: &config.Config{MaxRequestBytes: 16}}
 
 	var innerCalled bool
 	var readErr error
@@ -958,7 +906,7 @@ func TestMaxBytesMiddlewareRejectsOversizeBody(t *testing.T) {
 // TestMaxBytesMiddlewareDisabledWhenZero verifies a zero/unset cap is a no-op
 // (so tests / configs that don't set MaxRequestBytes are not silently capped).
 func TestMaxBytesMiddlewareDisabledWhenZero(t *testing.T) {
-	server := &MCPServer{logger: logpkg.New("error"), config: &config.Config{MaxRequestBytes: 0}, analytics: noopanalytics.New()}
+	server := &MCPServer{logger: logpkg.New("error"), config: &config.Config{MaxRequestBytes: 0}}
 
 	var readErr error
 	inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

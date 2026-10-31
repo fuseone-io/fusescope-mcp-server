@@ -79,7 +79,6 @@ func TestValidPlanAndLegacyFilesPass(t *testing.T) {
 		"plans/2026-09-23-example.md":  donePlan,
 		"plans/old-feature.plan.md":    "free-form legacy plan",
 		"plans/old-feature.context.md": "free-form legacy log",
-		"plans/analytics.md":           "free-form",
 		"cmd/server/main.go":           "package main",
 	})
 	assertErrors(t, validateRepository(root, options{changed: []string{"plans/2026-09-23-example.md"}}))

@@ -36,10 +36,6 @@ type Config struct {
 	// (multi-tenant) server will proxy to. Empty => every host is allowed.
 	InstanceURLAllowlist util.InstanceURLAllowlist
 
-	// Analytics settings
-	AnalyticsEnabled bool
-	SegmentKey       string
-
 	DocsRefreshInterval     time.Duration
 	DocsFullRefreshInterval time.Duration
 	// DocsRefreshDisabled / DocsFullRefreshDisabled are set when the matching
@@ -53,20 +49,17 @@ type Config struct {
 }
 
 const (
-	FuseScopeURL     = "FUSESCOPE_URL"
-	FuseScopeAPIKey  = "FUSESCOPE_API_KEY"
-	LogLevel      = "LOG_LEVEL"
-	TransportMode = "TRANSPORT_MODE"
-	MCPHost       = "MCP_SERVER_HOST"
-	MCPPort       = "MCP_SERVER_PORT"
+	FuseScopeURL    = "FUSESCOPE_URL"
+	FuseScopeAPIKey = "FUSESCOPE_API_KEY"
+	LogLevel        = "LOG_LEVEL"
+	TransportMode   = "TRANSPORT_MODE"
+	MCPHost         = "MCP_SERVER_HOST"
+	MCPPort         = "MCP_SERVER_PORT"
 
-	FuseScopeCustomHeaders     = "FUSESCOPE_CUSTOM_HEADERS"
+	FuseScopeCustomHeaders  = "FUSESCOPE_CUSTOM_HEADERS"
 	InstanceURLAllowlistEnv = "FUSESCOPE_INSTANCE_URL_ALLOWLIST"
 	ClientCacheSize         = "CLIENT_CACHE_SIZE"
 	ClientCacheTTL          = "CLIENT_CACHE_TTL_MINUTES"
-
-	AnalyticsEnabledEnv = "ANALYTICS_ENABLED"
-	SegmentKeyEnv       = "SEGMENT_KEY"
 
 	OAuthEnabledEnv         = "OAUTH_ENABLED"
 	OAuthTokenSecretEnv     = "OAUTH_TOKEN_SECRET"
@@ -147,8 +140,6 @@ func LoadConfig() (*Config, error) {
 		ClientCacheTTL:          time.Duration(cacheTTLMinutes) * time.Minute,
 		CustomHeaders:           customHeaders,
 		InstanceURLAllowlist:    instanceURLAllowlist,
-		AnalyticsEnabled:        getEnvBool(AnalyticsEnabledEnv, false),
-		SegmentKey:              getEnv(SegmentKeyEnv, ""),
 		DocsRefreshInterval:     docsRefreshInterval,
 		DocsFullRefreshInterval: docsFullRefreshInterval,
 		DocsRefreshDisabled:     docsRefreshDisabled,

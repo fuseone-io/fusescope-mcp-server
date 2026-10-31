@@ -78,7 +78,7 @@ func TestProductionHTTPUpstreamErrorGuidanceWire(t *testing.T) {
 				MaxRequestBytes: 1 << 20,
 			}
 			handler := tools.NewHandler(logger, cfg)
-			server := NewMCPServer(logger, handler, cfg, nil, nil)
+			server := NewMCPServer(logger, handler, cfg, nil)
 			sdkServer := server.newSDKServer()
 			handler.RegisterServiceHandlers(sdkServer)
 			httpHandler := server.buildHTTP(sdkServer).Handler

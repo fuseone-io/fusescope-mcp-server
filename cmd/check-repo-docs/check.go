@@ -16,7 +16,7 @@ var (
 	doneSubstantiveSection = []string{"Context", "Approach", "Files to Modify", "Key Decisions", "Verification", "Outcome"}
 
 	// Files in plans/ that predate the dated-plan convention.
-	nonPlanFiles  = map[string]bool{"README.md": true, "TEMPLATES.md": true, "analytics.md": true}
+	nonPlanFiles  = map[string]bool{"README.md": true, "TEMPLATES.md": true}
 	legacySuffix  = []string{".context.md", ".plan.md"}
 	planNameRE    = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}-[a-z0-9][a-z0-9-]*\.md$`)
 	placeholderRE = regexp.MustCompile(`(?is)^(<.*>|TBD)$`)

@@ -142,7 +142,7 @@ func newWireOracle(t *testing.T) *wireOracle {
 	h := tools.NewHandler(logger, cfg)
 	o.docs = newWireDocsRegistry(t)
 	h.SetDocsIndex(o.docs)
-	m := NewMCPServer(logger, h, cfg, nil, nil)
+	m := NewMCPServer(logger, h, cfg, nil)
 	s := m.newSDKServer()
 	m.registerHandlers(s)
 	o.handler = m.buildHTTP(s).Handler

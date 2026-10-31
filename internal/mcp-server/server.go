@@ -10,17 +10,14 @@ import (
 	"net/http"
 	"runtime/debug"
 	"strings"
-	"sync"
 	"sync/atomic"
 	"time"
 
-	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
 	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
 	docsindex "github.com/fuseone-io/fusescope-mcp-server/internal/docs"
 	"github.com/fuseone-io/fusescope-mcp-server/internal/handler/tools"
 	mcpcontract "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 	"github.com/fuseone-io/fusescope-mcp-server/internal/oauth"
-	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics"
 	"github.com/fuseone-io/fusescope-mcp-server/pkg/instructions"
 	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 	otelpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/otel"
@@ -44,16 +41,14 @@ const (
 )
 
 type MCPServer struct {
-	logger    *slog.Logger
-	handler   *tools.Handler
-	config    *config.Config
-	analytics analytics.Analytics
-	meters    *otelpkg.Meters
+	logger  *slog.Logger
+	handler *tools.Handler
+	config  *config.Config
+	meters  *otelpkg.Meters
 	// httpServer is published via atomic.Pointer so Shutdown (on the main
 	// goroutine) can safely race Run's publication (on the errgroup
 	// goroutine) when SIGTERM lands mid-startup.
-	httpServer  atomic.Pointer[http.Server]
-	analyticsWG sync.WaitGroup
+	httpServer atomic.Pointer[http.Server]
 }
 
 type sdkLogHandler struct {
@@ -134,161 +129,27 @@ func (h *sdkLogHandler) WithGroup(name string) slog.Handler {
 	return &sdkLogHandler{next: h.next.WithGroup(name)}
 }
 
-// attachCallerCorrelation copies caller-correlation values from ctx onto an
-// analytics property map. clientSource is always set; the assistant IDs may
-// be empty.
-func attachCallerCorrelation(ctx context.Context, props map[string]any) {
-	if source, ok := util.GetClientSource(ctx); ok && source != "" {
-		props[analytics.AttrClientSource] = source
-	}
-	if threadID, ok := util.GetAssistantThreadID(ctx); ok && threadID != "" {
-		props[analytics.AttrAssistantThreadID] = threadID
-	}
-	if executionID, ok := util.GetAssistantExecutionID(ctx); ok && executionID != "" {
-		props[analytics.AttrAssistantExecutionID] = executionID
-	}
-}
-
-const analyticsAsyncTimeout = 5 * time.Second
-
-func (m *MCPServer) analyticsEnabled() bool {
-	return m.analytics != nil && m.analytics.Enabled()
-}
-
-func cloneAttrs(src map[string]any) map[string]any {
-	if len(src) == 0 {
-		return map[string]any{}
-	}
-	dst := make(map[string]any, len(src))
-	for k, v := range src {
-		dst[k] = v
-	}
-	return dst
-}
-
-func (m *MCPServer) mergeIdentityAttrs(identity *signozclient.AnalyticsIdentity, attrs map[string]any) map[string]any {
-	merged := cloneAttrs(attrs)
-	if identity == nil {
-		return merged
-	}
-	merged[analytics.AttrOrgID] = identity.OrgID
-	merged[analytics.AttrPrincipal] = identity.Principal
-	// name and email are Segment reserved traits; user vs service_account is
-	// disambiguated via the principal attr rather than key prefixes.
-	if identity.Name != "" {
-		merged[analytics.AttrName] = identity.Name
-	}
-	if identity.Email != "" {
-		merged[analytics.AttrEmail] = identity.Email
-	}
-	return merged
-}
-
-func (m *MCPServer) resolveIdentity(ctx context.Context) (*signozclient.AnalyticsIdentity, error) {
-	if m.handler == nil {
-		return nil, errors.New("analytics identity resolution requires a handler")
-	}
-
-	client, err := m.handler.GetClient(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return client.GetAnalyticsIdentity(ctx)
-}
-
-func (m *MCPServer) trackEventAsync(ctx context.Context, event string, properties map[string]any) {
-	if !m.analyticsEnabled() {
+func (m *MCPServer) recordOAuthEvent(ctx context.Context, event, signozURL string) {
+	if m.meters == nil {
 		return
-	}
-
-	properties = cloneAttrs(properties)
-	m.dispatchAnalytics(ctx, func(detachedCtx context.Context) {
-		identity, err := m.resolveIdentity(detachedCtx)
-		if err != nil {
-			m.logger.WarnContext(detachedCtx, "analytics identity resolution failed; skipping track",
-				slog.String("event", event),
-				logpkg.ErrAttr(err))
-			return
-		}
-
-		m.analytics.TrackUser(detachedCtx, identity.OrgID, identity.UserID, event, m.mergeIdentityAttrs(identity, properties))
-	})
-}
-
-// trackOAuthEvent seeds tenant credentials on ctx so the async identity
-// lookup can run even though the OAuth HTTP request carried them in form
-// fields or an encrypted grant, not in util-context.
-func (m *MCPServer) trackOAuthEvent(ctx context.Context, event, apiKey, signozURL string, props map[string]any) {
-	if apiKey != "" {
-		ctx = util.SetAPIKey(ctx, apiKey)
-		ctx = util.SetAuthHeader(ctx, "SIGNOZ-API-KEY")
 	}
 	if signozURL != "" {
 		ctx = util.SetSigNozURL(ctx, signozURL)
 	}
-	if m.meters != nil {
-		attrs := []attribute.KeyValue{attribute.String("event", event)}
-		attrs = otelpkg.AppendTenantURL(ctx, attrs)
-		m.meters.OAuthEvents.Add(ctx, 1, metric.WithAttributes(attrs...))
-	}
-	m.trackEventAsync(ctx, event, props)
+	attrs := []attribute.KeyValue{attribute.String("event", event)}
+	attrs = otelpkg.AppendTenantURL(ctx, attrs)
+	m.meters.OAuthEvents.Add(ctx, 1, metric.WithAttributes(attrs...))
 }
 
-// detachedAnalyticsContext roots the async goroutine off context.Background
-// (so it survives the parent request) while copying forward the credentials,
-// tenant/session fields, and span context the identity lookup needs.
-func (m *MCPServer) detachedAnalyticsContext(parent context.Context) (context.Context, context.CancelFunc) {
-	ctx, cancel := context.WithTimeout(context.Background(), analyticsAsyncTimeout)
-
-	if apiKey, ok := util.GetAPIKey(parent); ok && apiKey != "" {
-		ctx = util.SetAPIKey(ctx, apiKey)
-	}
-	if authHeader, ok := util.GetAuthHeader(parent); ok && authHeader != "" {
-		ctx = util.SetAuthHeader(ctx, authHeader)
-	}
-	if signozURL, ok := util.GetSigNozURL(parent); ok && signozURL != "" {
-		ctx = util.SetSigNozURL(ctx, signozURL)
-	}
-	if searchContext, ok := util.GetSearchContext(parent); ok && searchContext != "" {
-		ctx = util.SetSearchContext(ctx, searchContext)
-	}
-	if clientSource, ok := util.GetClientSource(parent); ok && clientSource != "" {
-		ctx = util.SetClientSource(ctx, clientSource)
-	}
-	if threadID, ok := util.GetAssistantThreadID(parent); ok && threadID != "" {
-		ctx = util.SetAssistantThreadID(ctx, threadID)
-	}
-	if executionID, ok := util.GetAssistantExecutionID(parent); ok && executionID != "" {
-		ctx = util.SetAssistantExecutionID(ctx, executionID)
-	}
-	if spanCtx := trace.SpanContextFromContext(parent); spanCtx.IsValid() {
-		ctx = trace.ContextWithSpanContext(ctx, spanCtx)
-	}
-
-	return ctx, cancel
-}
-
-func (m *MCPServer) dispatchAnalytics(parent context.Context, fn func(context.Context)) {
-	ctx, cancel := m.detachedAnalyticsContext(parent)
-	m.analyticsWG.Add(1)
-	go func() {
-		defer m.analyticsWG.Done()
-		defer cancel()
-		fn(ctx)
-	}()
-}
-
-func NewMCPServer(log *slog.Logger, handler *tools.Handler, cfg *config.Config, a analytics.Analytics, meters *otelpkg.Meters) *MCPServer {
+func NewMCPServer(log *slog.Logger, handler *tools.Handler, cfg *config.Config, meters *otelpkg.Meters) *MCPServer {
 	if handler != nil {
 		handler.SetMeters(meters)
 	}
 	return &MCPServer{
-		logger:    log,
-		handler:   handler,
-		config:    cfg,
-		analytics: a,
-		meters:    meters,
+		logger:  log,
+		handler: handler,
+		config:  cfg,
+		meters:  meters,
 	}
 }
 
@@ -435,21 +296,6 @@ func (m *MCPServer) Shutdown(ctx context.Context) error {
 	return srv.Shutdown(ctx)
 }
 
-func (m *MCPServer) WaitForAnalytics(ctx context.Context) error {
-	done := make(chan struct{})
-	go func() {
-		m.analyticsWG.Wait()
-		close(done)
-	}()
-
-	select {
-	case <-done:
-		return nil
-	case <-ctx.Done():
-		return ctx.Err()
-	}
-}
-
 func shouldObserveMethod(method string) bool {
 	return method != "tools/call" && !strings.HasPrefix(method, "notifications/")
 }
@@ -577,7 +423,6 @@ func (m *MCPServer) receivingMiddleware(isRegisteredTool func(string) bool) mcp.
 					span.RecordError(err)
 					span.SetStatus(codes.Error, err.Error())
 				}
-				m.trackMethodAnalytics(ctx, method, request, result, err)
 				span.End()
 			}()
 
@@ -629,27 +474,6 @@ func requestTelemetryAttrs(request mcp.Request) []attribute.KeyValue {
 		)
 	}
 	return attrs
-}
-
-func attachRequestAnalytics(request mcp.Request, props map[string]any) {
-	serverRequest, ok := request.(interface {
-		ProtocolVersion() string
-		ClientInfo() *mcp.Implementation
-	})
-	if !ok {
-		return
-	}
-	if protocolVersion := serverRequest.ProtocolVersion(); protocolVersion != "" {
-		props[analytics.AttrProtocolVersion] = protocolVersion
-	}
-	if clientInfo := serverRequest.ClientInfo(); clientInfo != nil {
-		if clientInfo.Name != "" {
-			props[analytics.AttrClientName] = util.NormalizeCallerCorrelationValue(clientInfo.Name)
-		}
-		if clientInfo.Version != "" {
-			props[analytics.AttrClientVersion] = util.NormalizeCallerCorrelationValue(clientInfo.Version)
-		}
-	}
 }
 
 func observedToolName(request mcp.Request, isRegisteredTool func(string) bool) string {
@@ -753,52 +577,10 @@ func (m *MCPServer) completeToolObservation(ctx context.Context, request mcp.Req
 	}
 
 	m.recordToolMetrics(ctx, toolName, isErr, errorType, errorCode, duration)
-	m.trackToolCall(ctx, request, toolName, isErr, duration, toolAnalyticsErrorType(errorType, errorCode))
 	if result != nil {
 		return result
 	}
 	return rawResult
-}
-
-func (m *MCPServer) trackMethodAnalytics(ctx context.Context, method string, request mcp.Request, result mcp.Result, err error) {
-	if err != nil {
-		return
-	}
-	signozURL, ok := util.GetSigNozURL(ctx)
-	if !ok || signozURL == "" {
-		return
-	}
-	props := map[string]any{analytics.AttrTenantURL: signozURL}
-	attachRequestAnalytics(request, props)
-	var params mcp.Params
-	if request != nil {
-		params = request.GetParams()
-	}
-	switch method {
-	case "initialize":
-		if initializeParams, ok := params.(*mcp.InitializeParams); ok && initializeParams != nil && initializeParams.ClientInfo != nil {
-			props[analytics.AttrClientName] = initializeParams.ClientInfo.Name
-			props[analytics.AttrClientVersion] = initializeParams.ClientInfo.Version
-			props[analytics.AttrProtocolVersion] = initializeParams.ProtocolVersion
-		}
-		if initialized, ok := result.(*mcp.InitializeResult); ok && initialized.ProtocolVersion != "" {
-			props[analytics.AttrProtocolVersion] = initialized.ProtocolVersion
-		}
-		attachCallerCorrelation(ctx, props)
-		m.trackEventAsync(ctx, analytics.EventClientInitialized, props)
-	case "prompts/get":
-		if promptParams, ok := params.(*mcp.GetPromptParams); ok && promptParams != nil {
-			props[analytics.AttrPromptName] = promptParams.Name
-			attachCallerCorrelation(ctx, props)
-			m.trackEventAsync(ctx, analytics.EventPromptFetched, props)
-		}
-	case "resources/read":
-		if resourceParams, ok := params.(*mcp.ReadResourceParams); ok && resourceParams != nil {
-			props[analytics.AttrResourceURI] = resourceParams.URI
-			attachCallerCorrelation(ctx, props)
-			m.trackEventAsync(ctx, analytics.EventResourceFetched, props)
-		}
-	}
 }
 
 func redactedRequestParams(request mcp.Request) string {
@@ -827,25 +609,6 @@ func (m *MCPServer) recordToolMetrics(ctx context.Context, toolName string, isEr
 	opts := metric.WithAttributes(attrKVs...)
 	m.meters.ToolCalls.Add(ctx, 1, opts)
 	m.meters.ToolCallDuration.Record(ctx, float64(duration)/float64(time.Millisecond), opts)
-}
-
-func (m *MCPServer) trackToolCall(ctx context.Context, request mcp.Request, toolName string, isErr bool, duration time.Duration, errorType string) {
-	signozURL, ok := util.GetSigNozURL(ctx)
-	if !ok || signozURL == "" {
-		return
-	}
-	props := map[string]any{
-		analytics.AttrTenantURL:   signozURL,
-		analytics.AttrToolName:    toolName,
-		analytics.AttrToolIsError: isErr,
-		analytics.AttrDurationMs:  duration.Milliseconds(),
-	}
-	if errorType != "" {
-		props[analytics.AttrErrorType] = errorType
-	}
-	attachRequestAnalytics(request, props)
-	attachCallerCorrelation(ctx, props)
-	m.trackEventAsync(ctx, analytics.EventToolCalled, props)
 }
 
 func toolOTelErrorType(err error, result *mcp.CallToolResult) string {
@@ -885,13 +648,6 @@ func extractToolErrorMessage(result *mcp.CallToolResult) string {
 		return tc.Text
 	}
 	return "tool returned error result"
-}
-
-func toolAnalyticsErrorType(errorType, errorCode string) string {
-	if errorCode != "" {
-		return strings.ToLower(errorCode)
-	}
-	return errorType
 }
 
 func serializedResultBytes(result *mcp.CallToolResult) (int64, error) {
@@ -1230,7 +986,7 @@ func (m *MCPServer) buildHTTP(s *mcp.Server) *http.Server {
 	mux.HandleFunc("/healthz", readyHandler)
 
 	if m.config.OAuthEnabled {
-		oauthHandler := oauth.NewHandler(m.logger, m.config, m.trackOAuthEvent, m.meters)
+		oauthHandler := oauth.NewHandler(m.logger, m.config, m.recordOAuthEvent, m.meters)
 		mux.HandleFunc("GET /.well-known/oauth-protected-resource", oauthHandler.HandleProtectedResourceMetadata)
 		mux.HandleFunc("GET /.well-known/oauth-authorization-server", oauthHandler.HandleAuthorizationServerMetadata)
 		mux.HandleFunc("POST /oauth/register", oauthHandler.HandleRegisterClient)
