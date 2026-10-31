@@ -2,7 +2,7 @@
   "manifest_version": "0.2",
   "name": "fusescope",
   "display_name": "FuseScope MCP Server",
-  "version": "0.18.0",
+  "version": "0.18.1",
   "description": "Access FuseScope metrics, traces, logs, and dashboards.",
   "author": {
     "name": "FuseOne"

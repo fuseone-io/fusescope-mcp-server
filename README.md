@@ -25,7 +25,16 @@ This is FuseOne's independent fork of [SigNoz MCP Server](https://github.com/Sig
 
 ## Installation
 
-There are no published binaries or container images yet. Build the server from source.
+Download a binary for Linux, macOS or Windows (amd64, arm64) from the [releases](https://github.com/fuseone-io/fusescope-mcp-server/releases), or pull the signed multi-arch image:
+
+```bash
+docker pull ghcr.io/fuseone-io/fusescope-mcp-server:0.18.1
+cosign verify ghcr.io/fuseone-io/fusescope-mcp-server:0.18.1 \
+  --certificate-identity-regexp '^https://github.com/fuseone-io/fusescope-mcp-server/.github/workflows/release.yaml@refs/tags/v' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+```
+
+To run it in Kubernetes, enable `mcpServer` in the [FuseScope Helm chart](https://docs.fusescope.fuseone.io/mcp/setup/).
 
 ### Build from Source
 
@@ -41,13 +50,7 @@ The binary is at `./bin/fusescope-mcp-server`. Move it somewhere on your PATH or
 
 ### Docker
 
-Build the image locally:
-
-```bash
-docker build -t fusescope-mcp-server .
-```
-
-Run it in HTTP mode:
+Run the published image in HTTP mode, or build it locally with `docker build -t fusescope-mcp-server .`:
 
 ```bash
 docker run -p 8000:8000 \
@@ -55,7 +58,7 @@ docker run -p 8000:8000 \
   -e MCP_SERVER_PORT=8000 \
   -e FUSESCOPE_URL=https://your-fusescope-instance.com \
   -e FUSESCOPE_API_KEY=your-api-key \
-  fusescope-mcp-server
+  ghcr.io/fuseone-io/fusescope-mcp-server:0.18.1
 ```
 
 ## Connect to FuseScope

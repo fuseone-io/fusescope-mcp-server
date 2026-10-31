@@ -7,11 +7,11 @@
     "url": "https://github.com/fuseone-io/fusescope-mcp-server",
     "source": "github"
   },
-  "version": "0.18.0",
+  "version": "0.18.1",
   "packages": [
     {
       "registryType": "oci",
-      "identifier": "ghcr.io/fuseone-io/fusescope-mcp-server:0.18.0",
+      "identifier": "ghcr.io/fuseone-io/fusescope-mcp-server:0.18.1",
       "transport": {
         "type": "stdio"
       }
