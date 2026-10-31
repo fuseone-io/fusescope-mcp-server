@@ -7,8 +7,8 @@
         "kind": "text",
         "uri": "fusescope://ai/query-builder-guide",
         "mimeType": "text/markdown",
-        "serializedLength": 9317,
-        "sha256": "cbe793842485c9a08f9f071f71ebe47049b5c8bae4b2de3339750eab173ad333"
+        "serializedLength": 9386,
+        "sha256": "bc5a8ec752d647225d5e95e6a9b23cc751c0ef3f3fb76dcdeeef44f4695ec197"
       }
     ]
   },
@@ -20,8 +20,8 @@
         "kind": "text",
         "uri": "fusescope://alert/examples",
         "mimeType": "text/markdown",
-        "serializedLength": 36976,
-        "sha256": "04f735ae6dda8a8425d986ff56ed3f65a08c2260675ba362964d608891de72b7"
+        "serializedLength": 36997,
+        "sha256": "0d7eb9f653e595dda5ebc28d8a255e3db860ec4134ee77f79a624c8f967fc58a"
       }
     ]
   },
@@ -33,8 +33,8 @@
         "kind": "text",
         "uri": "fusescope://alert/instructions",
         "mimeType": "text/markdown",
-        "serializedLength": 22267,
-        "sha256": "75b0dd21c2e8586b3ed8c9ae525c08535307940cc13148ec2f7a6858a315f368"
+        "serializedLength": 22297,
+        "sha256": "317bb4a5ac53280280f1bd1dbb67aa96d94a01a1c64f2593f19b5ba509a3505e"
       }
     ]
   },
@@ -46,8 +46,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/clickhouse-logs-example",
         "mimeType": "text/markdown",
-        "serializedLength": 7896,
-        "sha256": "a777972b29a83213e5717369356895a5e228b01b680ed111f49fa8ca18396d79"
+        "serializedLength": 7899,
+        "sha256": "2b52fdfb7843ffa61716b0992627a43497ecf9af07b7eb236c975414ba26f141"
       }
     ]
   },
@@ -59,8 +59,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/clickhouse-metrics-example",
         "mimeType": "text/markdown",
-        "serializedLength": 11746,
-        "sha256": "eda92044dc9d2359157e80400ccfffe2c0729e8b6ff07a413be7ad9fd0a9a0cd"
+        "serializedLength": 11749,
+        "sha256": "f9886a9dc3f22cecf30f5c8942c82ddaaa49c989a3e57401315ee404b36e8979"
       }
     ]
   },
@@ -72,8 +72,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/clickhouse-schema-for-logs",
         "mimeType": "text/markdown",
-        "serializedLength": 4766,
-        "sha256": "9cf73ec9c7685233b902760514d4f4a8a7bb75f72c70411c2ba56333fae91853"
+        "serializedLength": 4769,
+        "sha256": "3017580f9d0b9349abd11dc0595d45bcebd295144ddcaa71ebff4cfb7132d1a0"
       }
     ]
   },
@@ -85,8 +85,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/clickhouse-schema-for-metrics",
         "mimeType": "text/markdown",
-        "serializedLength": 7538,
-        "sha256": "db92d7396852e159f932aade804158c7c4c84f5d43a056f3ee5ed1c76b5422c1"
+        "serializedLength": 7541,
+        "sha256": "5edba84d4f7193578b509fc4bc3ac8cff20693522d9079296c4e937f65f6c35a"
       }
     ]
   },
@@ -98,8 +98,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/clickhouse-schema-for-traces",
         "mimeType": "text/markdown",
-        "serializedLength": 18124,
-        "sha256": "f078c74e2795a7acbdcedde0d8a1d2291b4adf3c23cd48cdef265156cd274434"
+        "serializedLength": 18127,
+        "sha256": "d1ac003cc1e1749f3bb686127c3e45fff77e265338c6a1ce813f0e629d641b36"
       }
     ]
   },
@@ -111,8 +111,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/clickhouse-traces-example",
         "mimeType": "text/markdown",
-        "serializedLength": 8774,
-        "sha256": "8179e4cc5ac81bd79547765a57f40887842a4973472576420f237a16597a3f74"
+        "serializedLength": 8777,
+        "sha256": "5c3d8d43dd211f0eb471020b08e5fe6efc0c8773d6746e43c140e0f8df16336b"
       }
     ]
   },
@@ -124,8 +124,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/examples",
         "mimeType": "text/markdown",
-        "serializedLength": 15536,
-        "sha256": "7606d78451e7c4d313779cdc274acdcd306a88d2447a004abd58250167c0e776"
+        "serializedLength": 15569,
+        "sha256": "4092173121be200c5f87db3f8e1d3952cd750bfc5fde116e3de55cd61e0ff078"
       }
     ]
   },
@@ -137,8 +137,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/instructions",
         "mimeType": "text/markdown",
-        "serializedLength": 7803,
-        "sha256": "e848a5d58c78eb6a2e84973fe1f84218bf1e8b09e8ea95c361bbbf1632d8fb39"
+        "serializedLength": 7821,
+        "sha256": "c6407cdede487fa098b8c543b3f6d123a50ccd36bea1f346f48b5633f578642d"
       }
     ]
   },
@@ -150,8 +150,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/list-filter-guide",
         "mimeType": "text/markdown",
-        "serializedLength": 3782,
-        "sha256": "226f37b3b1252736f8f305fc7d391da519c5d470a27f2c3853f22108e8bf38f5"
+        "serializedLength": 3788,
+        "sha256": "df54e809e137239dbe39b61e1ad74657b0cda43857664ea80f8cc819ac3ddb11"
       }
     ]
   },
@@ -163,8 +163,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/patch-instructions",
         "mimeType": "text/markdown",
-        "serializedLength": 5379,
-        "sha256": "1352848bd541f2477c799c7ea507ccbcf619c8087c6649901a1e71eec31f1bbb"
+        "serializedLength": 5400,
+        "sha256": "5eb9ff6645b9a4b5a4a7e91c7de1961313fc43ba1ee93251ec08ebc8cd525df5"
       }
     ]
   },
@@ -176,8 +176,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/query-builder-example",
         "mimeType": "text/markdown",
-        "serializedLength": 17751,
-        "sha256": "e4174aac51850acd8c0904f9e192e2fb7ae31d525028d16b4ac6ee92fc680e67"
+        "serializedLength": 17760,
+        "sha256": "387db459b52cbc94d621a6c5bfb81e9d3a7b50a7adf42477f5eaf23bfb44649f"
       }
     ]
   },
@@ -189,8 +189,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/widgets-examples",
         "mimeType": "text/markdown",
-        "serializedLength": 33604,
-        "sha256": "dd3d32fcf9f7993336bde88e6973905e7179b9e5177226b63343035506ee1236"
+        "serializedLength": 33616,
+        "sha256": "d400ecd06f6f44a3889028765005d64b8f8a101c70bb7a62cbe31c16d6c5d6c8"
       }
     ]
   },
@@ -202,8 +202,8 @@
         "kind": "text",
         "uri": "fusescope://dashboard/widgets-instructions",
         "mimeType": "text/markdown",
-        "serializedLength": 14669,
-        "sha256": "8f5663a1394f2add036c5732ddd1723dc0ba86c424214f5a946e43585ad5c4b2"
+        "serializedLength": 14714,
+        "sha256": "ed2235a3e6d0dc4f6fd9d502df9033f8ce62b9e182a3f56e3c0624b484d79a0f"
       }
     ]
   },
@@ -215,8 +215,8 @@
         "kind": "text",
         "uri": "fusescope://docs/sitemap",
         "mimeType": "text/markdown",
-        "serializedLength": 194,
-        "sha256": "6fa5cc3f25bead23c2fd5889480b873186c16070f3bb1314a7ba8e7957925804"
+        "serializedLength": 197,
+        "sha256": "5eae9e0557472f70ff2054148143b9c3aa5d5b18fe4d6fb677e3edcf3f9c016b"
       }
     ]
   },
@@ -228,8 +228,8 @@
         "kind": "text",
         "uri": "fusescope://logs/query-builder-guide",
         "mimeType": "text/markdown",
-        "serializedLength": 15981,
-        "sha256": "d39cdc5f5215a3107cf230969a074d6ec13836be459f925036901453d44fc36d"
+        "serializedLength": 16011,
+        "sha256": "2224cc5d761fb395a2aa71ec1ff517475fc1d8d3a791554a963a851e65bbe9a4"
       }
     ]
   },
@@ -241,8 +241,8 @@
         "kind": "text",
         "uri": "fusescope://metrics-aggregation-guide",
         "mimeType": "text/markdown",
-        "serializedLength": 12900,
-        "sha256": "ced7c89b335757a0b9e4306eb9b2b94d775981b5e96e0c8f6bbc1bddf73201af"
+        "serializedLength": 12927,
+        "sha256": "dc7edaca72703c3fdc39b3c5efaabe2b7cca941559bd1ea1c8d0d98d67107ca6"
       }
     ]
   },
@@ -254,8 +254,8 @@
         "kind": "text",
         "uri": "fusescope://notification-channel/examples",
         "mimeType": "text/markdown",
-        "serializedLength": 16170,
-        "sha256": "ad58b7f7f977b271f52ba140bf07ef809907aea9ed0504ce85f7443847c01a52"
+        "serializedLength": 16185,
+        "sha256": "b6f6864aef2d30cdf7b89871f61b77b42722401c7fe08636c3d6ceb118d9b87c"
       }
     ]
   },
@@ -267,8 +267,8 @@
         "kind": "text",
         "uri": "fusescope://promql/instructions",
         "mimeType": "text/markdown",
-        "serializedLength": 10903,
-        "sha256": "475ae5dfaf511e81032dcbce49fc205785905e2d785379d8b02006e8000ac29e"
+        "serializedLength": 10918,
+        "sha256": "0972d1f37d3998cae343acc91d3ab3fe7a2650d881f0d4ebebeb617ada8690e5"
       }
     ]
   },
@@ -280,8 +280,8 @@
         "kind": "text",
         "uri": "fusescope://query-builder/examples",
         "mimeType": "text/markdown",
-        "serializedLength": 20010,
-        "sha256": "0d4daff0693d0ec4f14dfa533c82d89cb57236fce27174a13d36e8acd308aaa8"
+        "serializedLength": 20034,
+        "sha256": "bf2195c07685198af471227dc38f353f28df6ea5063ab7a32480d0d11b3652dc"
       }
     ]
   },
@@ -293,8 +293,8 @@
         "kind": "text",
         "uri": "fusescope://traces/query-builder-guide",
         "mimeType": "text/markdown",
-        "serializedLength": 11939,
-        "sha256": "6f2a2a55bed78eb758883e8e5e414264a7860fdbb72b7c8e25049cced24e129b"
+        "serializedLength": 11954,
+        "sha256": "4433af93987e28c770cba3225a8e1acd34a764f037918a97a62321f97c4a0b76"
       }
     ]
   },
@@ -306,8 +306,8 @@
         "kind": "text",
         "uri": "fusescope://view/examples",
         "mimeType": "text/markdown",
-        "serializedLength": 7592,
-        "sha256": "171ce27307b1875b20679f9d56cd92846d5daca5a949bf586a3e39228d14a793"
+        "serializedLength": 7610,
+        "sha256": "ae67b38b97e885ff016e1adee9940cc39c91568a6ec59e2b2bec3f21968c0507"
       }
     ]
   },
@@ -319,8 +319,8 @@
         "kind": "text",
         "uri": "fusescope://view/instructions",
         "mimeType": "text/markdown",
-        "serializedLength": 6027,
-        "sha256": "0eb546a3c38079cca781645f1e283b25732a7af2ebc7afb789963c4824913882"
+        "serializedLength": 6048,
+        "sha256": "be530020b387efab2349d51a0d3ed123997c6694ba89e7dc647dbabb3ed5f039"
       }
     ]
   }
