@@ -14,9 +14,12 @@ builds:
     main: ./cmd/server/
     ldflags:
       - -s -w -X github.com/fuseone-io/fusescope-mcp-server/pkg/version.Version={{.Tag}}
+    env:
+      - CGO_ENABLED=0
     goos:
       - linux
       - darwin
+      - windows
     goarch:
       - amd64
       - arm64
@@ -31,6 +34,10 @@ archives:
       - tar.gz
     name_template: >-
       {{ .ProjectName }}_{{- .Os }}_{{- .Arch }}
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
     wrap_in_directory: true
     strip_binary_directory: false
     files:
@@ -38,6 +45,27 @@ archives:
         dst: README.md
       - src: LICENSE
         dst: LICENSE
+      - src: NOTICE
+        dst: NOTICE
+
+checksum:
+  name_template: checksums.txt
+
+sboms:
+  - artifacts: archive
+
+signs:
+  - cmd: cosign
+    artifacts: checksum
+    signature: "${artifact}.sigstore.json"
+    args:
+      - sign-blob
+      - --bundle=${signature}
+      - ${artifact}
+      - --yes
+
+changelog:
+  disable: true
 
 release:
   name_template: "v{{ .Version }}"
