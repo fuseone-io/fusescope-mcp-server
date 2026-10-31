@@ -2,7 +2,7 @@
 
 Source: the request examples published by the SigNoz OpenAPI spec.
 
-## Create a view with signoz_create_view
+## Create a view with fusescope_create_view
 
 ### 1. logs_list_generated_name — Logs list view with a generated name
 
@@ -203,7 +203,7 @@ A list panel over spans slower than 500ms in one service, ordered newest first, 
 }
 ```
 
-## Replace a view with signoz_update_view
+## Replace a view with fusescope_update_view
 
 ### 1. traces_list_widen_filter — Replace a traces list view
 

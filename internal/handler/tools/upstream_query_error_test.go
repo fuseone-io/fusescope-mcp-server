@@ -148,7 +148,7 @@ func TestUpstreamQueryError_LogsGuidanceAndStructuredKeys(t *testing.T) {
 	for _, want := range []string{
 		"`service.name`, which does not exist in this workspace's logs data",
 		"no spec-mandated resource attributes",
-		`signoz_get_field_keys (signal="logs"`,
+		`fusescope_get_field_keys (signal="logs"`,
 		"k8s.deployment.name",
 		"remove the failing condition",
 	} {
@@ -176,7 +176,7 @@ func TestUpstreamQueryError_TracesAndGenericSignalWording(t *testing.T) {
 	}
 
 	genericText := resultText(t, upstreamQueryError(keyNotFound400(keyNotFoundLegacyBody), ""))
-	if !strings.Contains(genericText, "signoz_get_field_keys for the queried signal") {
+	if !strings.Contains(genericText, "fusescope_get_field_keys for the queried signal") {
 		t.Fatalf("generic guidance missing signal-agnostic discovery hint: %q", genericText)
 	}
 }

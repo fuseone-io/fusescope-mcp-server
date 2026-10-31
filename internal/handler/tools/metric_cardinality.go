@@ -10,10 +10,10 @@ import (
 func (h *Handler) RegisterMetricCardinalityHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering metric cardinality handlers")
 
-	tool := mcp.NewTool("signoz_check_metric_cardinality",
+	tool := mcp.NewTool("fusescope_check_metric_cardinality",
 		withReadOnlyToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants to find high-cardinality labels or attributes on one metric. It returns keys sorted by cardinality count with sample values, helping distinguish unbounded values such as UUIDs from bounded dimensions such as status codes. Do not use it to find dashboard or alert dependencies (signoz_check_metric_usage) or rank metric ingestion (signoz_get_top_metrics). This does not show whether the metric is used; check usage before recommending a drop."),
+			"Use this when the user wants to find high-cardinality labels or attributes on one metric. It returns keys sorted by cardinality count with sample values, helping distinguish unbounded values such as UUIDs from bounded dimensions such as status codes. Do not use it to find dashboard or alert dependencies (fusescope_check_metric_usage) or rank metric ingestion (fusescope_get_top_metrics). This does not show whether the metric is used; check usage before recommending a drop."),
 		mcp.WithString("searchContext",
 			mcp.Description(searchContextParamDescription)),
 		mcp.WithString("metricName",
@@ -43,7 +43,7 @@ func (h *Handler) handleCheckMetricCardinality(ctx context.Context, req mcp.Call
 		return errorWithCode(CodeValidationFailed, err.Error()), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_check_metric_cardinality",
+	h.logger.DebugContext(ctx, "Tool called: fusescope_check_metric_cardinality",
 		slog.String("metricName", metricName))
 
 	client, err := h.GetClient(ctx)

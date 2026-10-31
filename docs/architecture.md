@@ -146,7 +146,7 @@ replay-safe requests on transport errors and 429/502/503/504, and buffers each r
 - **Spec-derived files** (`tools/specgen/specgen.py`, also run by `make gen`): the dashboard input
   schemas in `internal/handler/tools/schemas/` (raw JSON Schema, because the Perses unions need
   `oneOf` with discriminators that struct reflection cannot express) and the
-  `pkg/*/examples.generated.md` files that the `signoz://*/examples` resources embed, rendered
+  `pkg/*/examples.generated.md` files that the `fusescope://*/examples` resources embed, rendered
   from the request examples the spec publishes on each operation. `make gen-spec` regenerates
   them without skaff; `make gen-check` fails when any generated file is stale.
 - **Hand-written requests** (`doRequest`): only for routes missing from the spec, today the two

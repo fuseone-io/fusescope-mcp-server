@@ -44,7 +44,7 @@ func TestHandleListDashboards_UnconfiguredBrowserURLUsesLocalhostBackend(t *test
 	}
 	h := NewHandler(logpkg.New("error"), cfg)
 	ctx := util.SetAPIKey(util.SetSigNozURL(testCtx(), cfg.URL), cfg.APIKey)
-	result, err := h.handleListDashboards(ctx, makeToolRequest("signoz_list_dashboards", map[string]any{}))
+	result, err := h.handleListDashboards(ctx, makeToolRequest("fusescope_list_dashboards", map[string]any{}))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -85,7 +85,7 @@ func TestHandleListDashboards_DiscoversEachTenantsWebURL(t *testing.T) {
 		{first.URL, "first-key", "https://first.example.com"},
 	} {
 		ctx := util.SetAPIKey(util.SetSigNozURL(testCtx(), tc.backend), tc.key)
-		result, err := h.handleListDashboards(ctx, makeToolRequest("signoz_list_dashboards", map[string]any{}))
+		result, err := h.handleListDashboards(ctx, makeToolRequest("fusescope_list_dashboards", map[string]any{}))
 		if err != nil || result.IsError {
 			t.Fatalf("handler error: %v, %v", err, result)
 		}
@@ -147,7 +147,7 @@ func TestDashboardWrites_GlobalConfigAuthFailurePreventsMutation(t *testing.T) {
 func TestHandleListDashboardTemplates_SearchText(t *testing.T) {
 	list := func(t *testing.T, args map[string]any) (paths []string, total int) {
 		t.Helper()
-		result, err := newTestHandler(nil).handleListDashboardTemplates(testCtx(), makeToolRequest("signoz_list_dashboard_templates", args))
+		result, err := newTestHandler(nil).handleListDashboardTemplates(testCtx(), makeToolRequest("fusescope_list_dashboard_templates", args))
 		if err != nil || result.IsError {
 			t.Fatalf("list templates failed: err=%v result=%v", err, result.Content)
 		}
@@ -185,14 +185,14 @@ func TestHandleListDashboardTemplates_SearchText(t *testing.T) {
 
 	t.Run("at most 2048 characters", func(t *testing.T) {
 		list(t, map[string]any{"searchText": strings.Repeat("é", maxTemplateSearchTextRunes)})
-		result, _ := newTestHandler(nil).handleListDashboardTemplates(testCtx(), makeToolRequest("signoz_list_dashboard_templates", map[string]any{"searchText": strings.Repeat("é", maxTemplateSearchTextRunes+1)}))
+		result, _ := newTestHandler(nil).handleListDashboardTemplates(testCtx(), makeToolRequest("fusescope_list_dashboard_templates", map[string]any{"searchText": strings.Repeat("é", maxTemplateSearchTextRunes+1)}))
 		if code := resultCode(t, result); code != CodeValidationFailed {
 			t.Errorf("code = %q, want %q", code, CodeValidationFailed)
 		}
 	})
 
 	t.Run("non-string is rejected", func(t *testing.T) {
-		result, _ := newTestHandler(nil).handleListDashboardTemplates(testCtx(), makeToolRequest("signoz_list_dashboard_templates", map[string]any{"searchText": 42}))
+		result, _ := newTestHandler(nil).handleListDashboardTemplates(testCtx(), makeToolRequest("fusescope_list_dashboard_templates", map[string]any{"searchText": 42}))
 		if code := resultCode(t, result); code != CodeValidationFailed {
 			t.Errorf("code = %q, want %q", code, CodeValidationFailed)
 		}

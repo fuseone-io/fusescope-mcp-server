@@ -25,7 +25,7 @@ def test_setup(signoz: SigNoz, mcp_server: MCPServer) -> None:
         result = client.initialize()
     finally:
         client.close()
-    assert result["serverInfo"]["name"] == "SigNozMCP"
+    assert result["serverInfo"]["name"] == "FuseScopeMCP"
     assert result["protocolVersion"] == "2025-11-25"
     logger.info("mcp initialize handshake succeeded against %s", mcp_server.mcp_url)
 

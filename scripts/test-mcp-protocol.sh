@@ -220,7 +220,7 @@ function fail(message) {
     send({ jsonrpc: "2.0", id: 2, method: "tools/list", params: {} });
     const listed = await receive(2);
     assert(Array.isArray(listed.result?.tools), "legacy stdio tools/list did not return tools");
-    assert(listed.result.tools.some(tool => tool.name === "signoz_search_docs"), "legacy stdio tools/list omitted signoz_search_docs");
+    assert(listed.result.tools.some(tool => tool.name === "fusescope_search_docs"), "legacy stdio tools/list omitted fusescope_search_docs");
   } else if (era === "modern") {
     send({ jsonrpc: "2.0", id: 11, method: "server/discover", params: modernParams() });
     const discovered = await receive(11);
@@ -230,7 +230,7 @@ function fail(message) {
     const listed = await receive(12);
     assert(listed.result?.resultType === "complete", "modern stdio tools/list omitted the complete result type");
     assert(Array.isArray(listed.result?.tools), "modern stdio tools/list did not return tools");
-    assert(listed.result.tools.some(tool => tool.name === "signoz_search_docs"), "modern stdio tools/list omitted signoz_search_docs");
+    assert(listed.result.tools.some(tool => tool.name === "fusescope_search_docs"), "modern stdio tools/list omitted fusescope_search_docs");
   } else {
     throw new Error(`unknown stdio smoke era: ${era}`);
   }
@@ -361,7 +361,7 @@ assert_json "initialize JSON contract" "$initialize_body" '
   .jsonrpc == "2.0" and
   .id == 1 and
   .result.protocolVersion == "2025-11-25" and
-  .result.serverInfo.name == "SigNozMCP" and
+  .result.serverInfo.name == "FuseScopeMCP" and
   (.result.serverInfo.version | type == "string" and length > 0) and
   (.result.instructions | type == "string" and length > 0) and
   (.result.capabilities | has("tools") and has("resources") and has("prompts") and (has("logging") | not))
@@ -372,7 +372,7 @@ run_inspector "Inspector tools/list" "$tools_json" --method tools/list
 assert_json "tools/list contract" "$tools_json" '
   (.tools | type == "array" and length > 0) and
   all(.tools[]; (.name | type == "string" and length > 0)) and
-  any(.tools[]; .name == "signoz_search_docs")
+  any(.tools[]; .name == "fusescope_search_docs")
 '
 
 resources_json="$PROTOCOL_TMP_DIR/resources.json"
@@ -397,7 +397,7 @@ assert_json "prompts/list contract" "$prompts_json" '
 
 tool_call_json="$PROTOCOL_TMP_DIR/tool-call.json"
 run_inspector "Inspector tools/call" "$tool_call_json" \
-  --method tools/call --tool-name signoz_search_docs \
+  --method tools/call --tool-name fusescope_search_docs \
   --tool-arg searchText=docker \
   --tool-arg 'searchContext=How do I send Docker logs to SigNoz?' \
   --tool-arg limit=1
@@ -409,7 +409,7 @@ assert_json "tools/call contract" "$tool_call_json" '
 
 resource_read_json="$PROTOCOL_TMP_DIR/resource-read.json"
 run_inspector "Inspector resources/read" "$resource_read_json" \
-  --method resources/read --uri signoz://docs/sitemap
+  --method resources/read --uri fusescope://docs/sitemap
 assert_json "resources/read contract" "$resource_read_json" '
   (.contents | type == "array" and length > 0) and
   any(.contents[]; ((.text // .blob // "") | type == "string" and length > 0))

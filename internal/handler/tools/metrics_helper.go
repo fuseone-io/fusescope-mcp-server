@@ -10,9 +10,9 @@ import (
 	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
 )
 
-const metricsLegacyQueryAliasError = `parameter validation failed: "query" is not accepted by signoz_query_metrics; use "filter" with a Query Builder filter expression (see signoz://metrics-aggregation-guide)`
+const metricsLegacyQueryAliasError = `parameter validation failed: "query" is not accepted by fusescope_query_metrics; use "filter" with a Query Builder filter expression (see fusescope://metrics-aggregation-guide)`
 
-// metricsQueryRequest holds parsed arguments for signoz_query_metrics.
+// metricsQueryRequest holds parsed arguments for fusescope_query_metrics.
 type metricsQueryRequest struct {
 	MetricName       string
 	MetricType       string
@@ -78,7 +78,7 @@ func formulaSubQuerySchema() map[string]any {
 func parseMetricsQueryArgs(args map[string]any) (*metricsQueryRequest, error) {
 	metricName, _ := args["metricName"].(string)
 	if metricName == "" {
-		return nil, fmt.Errorf(`%s "metricName" is required. Use signoz_list_metrics to find available metrics`, validationErrorPrefix)
+		return nil, fmt.Errorf(`%s "metricName" is required. Use fusescope_list_metrics to find available metrics`, validationErrorPrefix)
 	}
 	filter, err := readFilterRejectingQueryAlias(args, metricsLegacyQueryAliasError)
 	if err != nil {

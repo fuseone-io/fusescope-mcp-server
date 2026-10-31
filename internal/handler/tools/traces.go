@@ -16,7 +16,7 @@ import (
 	"github.com/SigNoz/signoz-mcp-server/pkg/util"
 )
 
-// Row shapes of signoz_search_traces, sent as the query_range requestType.
+// Row shapes of fusescope_search_traces, sent as the query_range requestType.
 const (
 	requestTypeRaw   = string(apitypes.Querybuildertypesv5RequestTypeRaw)
 	requestTypeTrace = string(apitypes.Querybuildertypesv5RequestTypeTrace)
@@ -26,10 +26,10 @@ func (h *Handler) RegisterTracesHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering traces handlers")
 
 	// aggregate_traces: compute statistics over traces with GROUP BY
-	aggregateTracesTool := mcp.NewTool("signoz_aggregate_traces",
+	aggregateTracesTool := mcp.NewTool("fusescope_aggregate_traces",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants custom aggregate statistics over spans (counts, rates, latency percentiles, grouped/top-N breakdowns, or time series) rather than individual span rows or a full trace hierarchy. For the built-in operation table for one traced service, ranked by p99, use signoz_get_service_top_operations. Use signoz_search_traces for raw spans, trace-ID discovery, or one row per trace (such as the most expensive AI traces), and signoz_get_trace_details for one known trace ID. Before calling, read signoz://traces/query-builder-guide; discover unfamiliar workspace fields with signoz_get_field_keys. For the user's LLM, AI agent, token, cost, model, tool-call, or prompt questions (AI observability), set queryType to builder_ai_query and read signoz://ai/query-builder-guide. Defaults to the last 1 hour."),
+		mcp.WithDescription("Use this when the user wants custom aggregate statistics over spans (counts, rates, latency percentiles, grouped/top-N breakdowns, or time series) rather than individual span rows or a full trace hierarchy. For the built-in operation table for one traced service, ranked by p99, use fusescope_get_service_top_operations. Use fusescope_search_traces for raw spans, trace-ID discovery, or one row per trace (such as the most expensive AI traces), and fusescope_get_trace_details for one known trace ID. Before calling, read fusescope://traces/query-builder-guide; discover unfamiliar workspace fields with fusescope_get_field_keys. For the user's LLM, AI agent, token, cost, model, tool-call, or prompt questions (AI observability), set queryType to builder_ai_query and read fusescope://ai/query-builder-guide. Defaults to the last 1 hour."),
 		mcp.WithString("aggregations", mcp.Required(), stringOrStringArrayType(), mcp.Description(tracesAggregationsParamDescription)),
 		mcp.WithString("groupBy", stringOrStringArrayType(), mcp.Description(tracesGroupByParamDescription)),
 		mcp.WithString("having", mcp.Description(havingParamDescription)),
@@ -52,10 +52,10 @@ func (h *Handler) RegisterTracesHandlers(s *mcp.Server) {
 
 	h.addTool(s, aggregateTracesTool, h.handleAggregateTraces)
 
-	searchTracesTool := mcp.NewTool("signoz_search_traces",
+	searchTracesTool := mcp.NewTool("fusescope_search_traces",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants individual span rows matching service, operation, error, duration, or field filters, needs to discover trace IDs, or wants one row per trace (requestType=trace), such as the slowest traces or the most expensive AI traces. It returns paginated rows, not aggregate trends/groups or a full trace hierarchy; use signoz_aggregate_traces for statistics and signoz_get_trace_details for one known trace ID. Span rows carry a default set of span fields; name other fields in selectFields. A field missing from a row was not selected, so do not read it as absent from the span. Read signoz://traces/query-builder-guide before using unfamiliar workspace fields. For the user's LLM, AI agent, token, cost, model, tool-call, or prompt questions (AI observability), set queryType to builder_ai_query and read signoz://ai/query-builder-guide. Defaults to the last 1 hour."),
+		mcp.WithDescription("Use this when the user wants individual span rows matching service, operation, error, duration, or field filters, needs to discover trace IDs, or wants one row per trace (requestType=trace), such as the slowest traces or the most expensive AI traces. It returns paginated rows, not aggregate trends/groups or a full trace hierarchy; use fusescope_aggregate_traces for statistics and fusescope_get_trace_details for one known trace ID. Span rows carry a default set of span fields; name other fields in selectFields. A field missing from a row was not selected, so do not read it as absent from the span. Read fusescope://traces/query-builder-guide before using unfamiliar workspace fields. For the user's LLM, AI agent, token, cost, model, tool-call, or prompt questions (AI observability), set queryType to builder_ai_query and read fusescope://ai/query-builder-guide. Defaults to the last 1 hour."),
 		mcp.WithString("filter", mcp.Description(searchTracesFilterParamDescription)),
 		mcp.WithString("service", mcp.Description(searchTracesServiceParamDescription)),
 		mcp.WithString("operation", mcp.Description(searchTracesOperationParamDescription)),
@@ -75,10 +75,10 @@ func (h *Handler) RegisterTracesHandlers(s *mcp.Server) {
 
 	h.addTool(s, searchTracesTool, h.handleSearchTraces)
 
-	getTraceDetailsTool := mcp.NewTool("signoz_get_trace_details",
+	getTraceDetailsTool := mcp.NewTool("fusescope_get_trace_details",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user already has a known trace ID and wants that trace's spans, metadata, and hierarchy. If the ID is unknown, discover it with signoz_search_traces first. SigNoz locates the trace by its ID alone, so no time window is needed; an ID SigNoz does not know returns no spans. Do not use this for filtering many spans or aggregate analysis."),
+		mcp.WithDescription("Use this when the user already has a known trace ID and wants that trace's spans, metadata, and hierarchy. If the ID is unknown, discover it with fusescope_search_traces first. SigNoz locates the trace by its ID alone, so no time window is needed; an ID SigNoz does not know returns no spans. Do not use this for filtering many spans or aggregate analysis."),
 		mcp.WithString("traceId", mcp.Required(), mcp.Description(traceIDParamDescription)),
 		mcp.WithBoolean("includeSpans", boolOrStringType(), mcp.Description(includeSpansParamDescription)),
 	)
@@ -111,7 +111,7 @@ func (h *Handler) handleAggregateTraces(ctx context.Context, req mcp.CallToolReq
 		return InternalErrorResult("failed to marshal query payload: " + err.Error()), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_aggregate_traces",
+	h.logger.DebugContext(ctx, "Tool called: fusescope_aggregate_traces",
 		slog.String("aggregation", reqData.AggregationExpr),
 		slog.String("filter", reqData.FilterExpression))
 
@@ -126,11 +126,11 @@ func (h *Handler) handleAggregateTraces(ctx context.Context, req mcp.CallToolReq
 	}
 
 	notes := append(aggregateNotes(reqData), aiAggregateNotes(reqData)...)
-	return aggregateResult(ctx, h.logger, "signoz_aggregate_traces", result, reqData.LimitClamped, notes...), nil
+	return aggregateResult(ctx, h.logger, "fusescope_aggregate_traces", result, reqData.LimitClamped, notes...), nil
 }
 
 // aiAggregateNotes explains AI trace aggregations. They stay off
-// signoz_aggregate_logs, where a cost field is the app's own, not SigNoz's.
+// fusescope_aggregate_logs, where a cost field is the app's own, not SigNoz's.
 func aiAggregateNotes(reqData *AggregateRequest) []string {
 	var notes []string
 	if reqData.QueryType == querybuilder.QueryTypeBuilderAI {
@@ -181,7 +181,7 @@ func (h *Handler) handleSearchTraces(ctx context.Context, req mcp.CallToolReques
 		return InternalErrorResult("failed to marshal query payload: " + err.Error()), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_search_traces",
+	h.logger.DebugContext(ctx, "Tool called: fusescope_search_traces",
 		slog.String("requestType", reqData.RequestType),
 		slog.String("queryType", reqData.QueryType),
 		slog.String("filter", reqData.FilterExpression))
@@ -198,7 +198,7 @@ func (h *Handler) handleSearchTraces(ctx context.Context, req mcp.CallToolReques
 
 	result = h.enrichSearchTracesWebURL(ctx, base, result)
 	notes := aiSearchNotes(reqData, result)
-	return rawSearchResult(ctx, h.logger, "signoz_search_traces", result, reqData.Limit, reqData.Offset, reqData.LimitClamped, notes...), nil
+	return rawSearchResult(ctx, h.logger, "fusescope_search_traces", result, reqData.Limit, reqData.Offset, reqData.LimitClamped, notes...), nil
 }
 
 // aiSearchNotes explains builder_ai_query results; other query types get none.
@@ -234,7 +234,7 @@ func (h *Handler) handleGetTraceDetails(ctx context.Context, req mcp.CallToolReq
 		includeSpans = v
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_get_trace_details", slog.String("traceId", traceID), slog.Bool("includeSpans", includeSpans))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_get_trace_details", slog.String("traceId", traceID), slog.Bool("includeSpans", includeSpans))
 	client, base, clientErr := h.getResourceClient(ctx)
 	if clientErr != nil {
 		return clientErr, nil

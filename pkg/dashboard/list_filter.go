@@ -1,7 +1,7 @@
 package dashboard
 
 const ListFilterGuide = `
-Dashboard list filter — the "filter" argument of signoz_list_dashboards
+Dashboard list filter — the "filter" argument of fusescope_list_dashboards
 
 This is an optional, server-side filter over dashboard METADATA; it narrows which dashboards the list returns. It does not search panel or query contents. Omit it to list every dashboard.
 

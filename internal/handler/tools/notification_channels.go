@@ -15,38 +15,38 @@ import (
 
 func (h *Handler) RegisterNotificationChannelHandlers(server *mcp.Server) {
 	h.logger.Debug("Registering notification channel handlers")
-	h.addTool(server, mcp.NewTool("signoz_list_notification_channels",
+	h.addTool(server, mcp.NewTool("fusescope_list_notification_channels",
 		withReadOnlyToolAnnotations(),
-		mcp.WithDescription("List notification channels as configuration-free summaries. Use query and kind to filter before paging; total counts every matching channel. Use signoz_get_notification_channel with an ID to read the complete provider configuration."),
+		mcp.WithDescription("List notification channels as configuration-free summaries. Use query and kind to filter before paging; total counts every matching channel. Use fusescope_get_notification_channel with an ID to read the complete provider configuration."),
 		notificationSchemaOption(notificationListSchema()),
 	), h.handleListNotificationChannels)
-	h.addTool(server, mcp.NewTool("signoz_create_notification_channel",
+	h.addTool(server, mcp.NewTool("fusescope_create_notification_channel",
 		withCreateToolAnnotations(),
-		mcp.WithDescription("Use this when the user wants a new notification channel; use signoz_update_notification_channel to replace an existing one. The payload is config: {kind, spec} plus name, or generateName=true with displayName. Read signoz://notification-channel/examples for every kind SigNoz accepts, each kind's spec fields, and a worked payload per kind, unless already read in the same prepared operation. SigNoz rejects an unknown kind, an unknown or missing spec field, and a duplicate name, each with the exact requirement. Minimal example: {\"name\":\"ops-hook\",\"config\":{\"kind\":\"webhook\",\"spec\":{\"url\":\"https://example.com/hook\"}}}. name is an immutable DNS-1123 label; alert routing references displayName (SigNoz defaults it from name). test defaults to false: ask whether the user wants one live test notification and set test=true only if they agree; the channel remains created if the test fails."),
+		mcp.WithDescription("Use this when the user wants a new notification channel; use fusescope_update_notification_channel to replace an existing one. The payload is config: {kind, spec} plus name, or generateName=true with displayName. Read fusescope://notification-channel/examples for every kind SigNoz accepts, each kind's spec fields, and a worked payload per kind, unless already read in the same prepared operation. SigNoz rejects an unknown kind, an unknown or missing spec field, and a duplicate name, each with the exact requirement. Minimal example: {\"name\":\"ops-hook\",\"config\":{\"kind\":\"webhook\",\"spec\":{\"url\":\"https://example.com/hook\"}}}. name is an immutable DNS-1123 label; alert routing references displayName (SigNoz defaults it from name). test defaults to false: ask whether the user wants one live test notification and set test=true only if they agree; the channel remains created if the test fails."),
 		mcp.WithInputSchema[types.CreateNotificationChannelInput](),
 		boolOrStringProperties("test"),
 	), h.handleCreateNotificationChannel)
-	h.addTool(server, mcp.NewTool("signoz_update_notification_channel",
+	h.addTool(server, mcp.NewTool("fusescope_update_notification_channel",
 		withNonIdempotentUpdateToolAnnotations(),
-		mcp.WithDescription("Use this when the user wants to replace one notification channel's complete config: {kind, spec}; it is a full replacement and may change the provider kind. First call signoz_get_notification_channel and preserve every setting the user did not ask to change; send only id and config, because name and displayName are immutable. A fetched config is writable as-is; to unset an optional field, omit it, because SigNoz rejects an empty string for template-backed fields such as titles and messages. SigNoz also rejects an unknown kind and an unknown or missing spec field with the exact requirement; signoz://notification-channel/examples lists every kind's spec fields. Set test=true only when the user wants one live test notification after the update; the default is false and the update remains committed if the test fails."),
+		mcp.WithDescription("Use this when the user wants to replace one notification channel's complete config: {kind, spec}; it is a full replacement and may change the provider kind. First call fusescope_get_notification_channel and preserve every setting the user did not ask to change; send only id and config, because name and displayName are immutable. A fetched config is writable as-is; to unset an optional field, omit it, because SigNoz rejects an empty string for template-backed fields such as titles and messages. SigNoz also rejects an unknown kind and an unknown or missing spec field with the exact requirement; fusescope://notification-channel/examples lists every kind's spec fields. Set test=true only when the user wants one live test notification after the update; the default is false and the update remains committed if the test fails."),
 		mcp.WithInputSchema[types.UpdateNotificationChannelInput](),
 		boolOrStringProperties("test"),
 	), h.handleUpdateNotificationChannel)
-	h.addTool(server, mcp.NewTool("signoz_get_notification_channel",
+	h.addTool(server, mcp.NewTool("fusescope_get_notification_channel",
 		withReadOnlyToolAnnotations(),
-		mcp.WithDescription("Get one notification channel by ID, including its complete provider config. Use signoz_list_notification_channels to discover IDs. The response preserves backend-owned fields so an update can retain the full current configuration."),
+		mcp.WithDescription("Get one notification channel by ID, including its complete provider config. Use fusescope_list_notification_channels to discover IDs. The response preserves backend-owned fields so an update can retain the full current configuration."),
 		notificationSchemaOption(notificationIDSchema()),
 	), h.handleGetNotificationChannel)
-	h.addTool(server, mcp.NewTool("signoz_delete_notification_channel",
+	h.addTool(server, mcp.NewTool("fusescope_delete_notification_channel",
 		withDeleteToolAnnotations(),
 		mcp.WithDescription("Permanently delete one notification channel by ID after the user has confirmed the exact channel. This tool does not check alert-rule references."),
 		notificationSchemaOption(notificationIDSchema()),
 	), h.handleDeleteNotificationChannel)
 
 	channelExamples := mcp.NewResource(
-		"signoz://notification-channel/examples",
+		"fusescope://notification-channel/examples",
 		"Notification Channel Reference and Examples",
-		mcp.WithResourceDescription("Read this before composing config for signoz_create_notification_channel or signoz_update_notification_channel unless already read in the same prepared operation. It lists every provider kind SigNoz accepts, each kind's config.spec fields with the required ones marked, and a worked create payload per kind plus two replacement configs."),
+		mcp.WithResourceDescription("Read this before composing config for fusescope_create_notification_channel or fusescope_update_notification_channel unless already read in the same prepared operation. It lists every provider kind SigNoz accepts, each kind's config.spec fields with the required ones marked, and a worked create payload per kind plus two replacement configs."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(notificationchannel.Examples))),
 	)
@@ -73,7 +73,7 @@ func (h *Handler) handleListNotificationChannels(ctx context.Context, req mcp.Ca
 	if err := params.Normalize(); err != nil {
 		return notificationValidationError(err), nil
 	}
-	h.logger.DebugContext(ctx, "Tool called: signoz_list_notification_channels")
+	h.logger.DebugContext(ctx, "Tool called: fusescope_list_notification_channels")
 	upstream, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil
@@ -107,7 +107,7 @@ func (h *Handler) handleGetNotificationChannel(ctx context.Context, req mcp.Call
 	if result != nil {
 		return result, nil
 	}
-	h.logger.DebugContext(ctx, "Tool called: signoz_get_notification_channel", slog.String("id", args.ID))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_get_notification_channel", slog.String("id", args.ID))
 	upstream, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil
@@ -125,7 +125,7 @@ func (h *Handler) handleDeleteNotificationChannel(ctx context.Context, req mcp.C
 	if result != nil {
 		return result, nil
 	}
-	h.logger.DebugContext(ctx, "Tool called: signoz_delete_notification_channel", slog.String("id", args.ID))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_delete_notification_channel", slog.String("id", args.ID))
 	upstream, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil
@@ -163,7 +163,7 @@ func (h *Handler) handleCreateNotificationChannel(ctx context.Context, req mcp.C
 	if err != nil {
 		return InternalErrorResult("failed to marshal notification channel create request"), nil
 	}
-	h.logger.DebugContext(ctx, "Tool called: signoz_create_notification_channel", slog.String("kind", notificationConfigKind(args.Config)))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_create_notification_channel", slog.String("kind", notificationConfigKind(args.Config)))
 	upstream, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil
@@ -209,7 +209,7 @@ func (h *Handler) handleUpdateNotificationChannel(ctx context.Context, req mcp.C
 		return notificationValidationError(err), nil
 	}
 	if args.ID == "" {
-		return notificationValidationError(errors.New(`"id" is required; obtain it from signoz_list_notification_channels`)), nil
+		return notificationValidationError(errors.New(`"id" is required; obtain it from fusescope_list_notification_channels`)), nil
 	}
 	if len(args.Config) == 0 {
 		return notificationValidationError(errors.New(`"config" is required: {kind, spec}`)), nil
@@ -218,7 +218,7 @@ func (h *Handler) handleUpdateNotificationChannel(ctx context.Context, req mcp.C
 	if err != nil {
 		return InternalErrorResult("failed to marshal notification channel update request"), nil
 	}
-	h.logger.DebugContext(ctx, "Tool called: signoz_update_notification_channel", slog.String("id", args.ID), slog.String("kind", notificationConfigKind(args.Config)))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_update_notification_channel", slog.String("id", args.ID), slog.String("kind", notificationConfigKind(args.Config)))
 	upstream, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil
@@ -274,7 +274,7 @@ func decodeNotificationIDArgs(req mcp.CallToolRequest) (notificationIDArgs, *mcp
 		return args, notificationValidationError(err)
 	}
 	if args.ID == "" {
-		return args, notificationValidationError(errors.New(`"id" is required; obtain it from signoz_list_notification_channels`))
+		return args, notificationValidationError(errors.New(`"id" is required; obtain it from fusescope_list_notification_channels`))
 	}
 	return args, nil
 }

@@ -112,7 +112,7 @@ def assert_backend_version(endpoint: str) -> None:
     Image digests pin the artifact, while this check catches a Foundry casting
     bug that renders a different service onto the published backend port. The
     floor is the first release with GET /api/v3/rules, which
-    signoz_list_alert_rules reads.
+    fusescope_list_alert_rules reads.
     """
     deadline = time.time() + 240
     response = None

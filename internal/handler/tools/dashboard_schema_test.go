@@ -12,7 +12,7 @@ import (
 
 // TestWidgetExamplesValidateAgainstCreateSchema is the cross-contract guard tying
 // the widgets-examples resource to the embedded create schema. Every worked panel
-// served at signoz://dashboard/widgets-examples must satisfy the schema clients
+// served at fusescope://dashboard/widgets-examples must satisfy the schema clients
 // are handed. This specifically pins the discriminated-union contract: the Perses
 // query/panel/variable unions rely on OAS `discriminator`, which JSON-Schema
 // validators ignore, so tools/specgen/specgen.py narrows each branch's discriminator to
@@ -54,7 +54,7 @@ func TestWidgetExamplesValidateAgainstCreateSchema(t *testing.T) {
 
 // TestDashboardExamplesValidateAgainstCreateSchema ties the dashboard-examples
 // resource to the embedded create schema: every complete dashboard served at
-// signoz://dashboard/examples must validate as a create payload clients are handed.
+// fusescope://dashboard/examples must validate as a create payload clients are handed.
 func TestDashboardExamplesValidateAgainstCreateSchema(t *testing.T) {
 	var full jsonschema.Schema
 	if err := json.Unmarshal(createDashboardSchema, &full); err != nil {

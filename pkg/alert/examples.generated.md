@@ -2,7 +2,7 @@
 
 Source: the request examples published by the SigNoz OpenAPI spec.
 
-## Create a rule with signoz_create_alert (or replace one with signoz_update_alert)
+## Create a rule with fusescope_create_alert (or replace one with fusescope_update_alert)
 
 ### 1. logs_error_rate_formula — Logs error rate error count / total count × 100
 

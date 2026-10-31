@@ -84,7 +84,7 @@ func TestSearchTraces_QueryTypeRequestTypeAndOrderByReachSigNoz(t *testing.T) {
 			for k, v := range tc.args {
 				args[k] = v
 			}
-			result, err := h.handleSearchTraces(testCtx(), makeToolRequest("signoz_search_traces", args))
+			result, err := h.handleSearchTraces(testCtx(), makeToolRequest("fusescope_search_traces", args))
 			require.NoError(t, err)
 			require.False(t, result.IsError, textContent(t, result))
 			require.Len(t, *bodies, 1)
@@ -122,7 +122,7 @@ func TestAggregateTraces_QueryTypeReachesSigNoz(t *testing.T) {
 			for k, v := range tc.args {
 				args[k] = v
 			}
-			result, err := h.handleAggregateTraces(testCtx(), makeToolRequest("signoz_aggregate_traces", args))
+			result, err := h.handleAggregateTraces(testCtx(), makeToolRequest("fusescope_aggregate_traces", args))
 			require.NoError(t, err)
 			require.False(t, result.IsError, textContent(t, result))
 			require.Len(t, *bodies, 1)
@@ -161,7 +161,7 @@ func TestSearchTraces_AINotesExplainAIResultsOnly(t *testing.T) {
 			for k, v := range tc.args {
 				args[k] = v
 			}
-			result, err := h.handleSearchTraces(testCtx(), makeToolRequest("signoz_search_traces", args))
+			result, err := h.handleSearchTraces(testCtx(), makeToolRequest("fusescope_search_traces", args))
 			require.NoError(t, err)
 			require.False(t, result.IsError, textContent(t, result))
 			text := allTextBlocks(result)
@@ -182,7 +182,7 @@ func TestAggregateTraces_AINoteOnlyForBuilderAIQuery(t *testing.T) {
 	}{{"builder_ai_query", true}, {"builder_query", false}} {
 		t.Run(tc.queryType, func(t *testing.T) {
 			h, _ := queryRangeRecorder(t, emptyQueryRangeResponse)
-			result, err := h.handleAggregateTraces(testCtx(), makeToolRequest("signoz_aggregate_traces",
+			result, err := h.handleAggregateTraces(testCtx(), makeToolRequest("fusescope_aggregate_traces",
 				map[string]any{"timeRange": "1h", "aggregations": "count()", "queryType": tc.queryType}))
 			require.NoError(t, err)
 			require.False(t, result.IsError, textContent(t, result))
@@ -202,7 +202,7 @@ func TestAggregateTraces_CostAggregationsPointAtPricing(t *testing.T) {
 	} {
 		t.Run(tc.aggregations, func(t *testing.T) {
 			h, _ := queryRangeRecorder(t, emptyQueryRangeResponse)
-			result, err := h.handleAggregateTraces(testCtx(), makeToolRequest("signoz_aggregate_traces",
+			result, err := h.handleAggregateTraces(testCtx(), makeToolRequest("fusescope_aggregate_traces",
 				map[string]any{"timeRange": "1h", "aggregations": tc.aggregations, "queryType": "builder_ai_query"}))
 			require.NoError(t, err)
 			require.False(t, result.IsError, textContent(t, result))
@@ -213,7 +213,7 @@ func TestAggregateTraces_CostAggregationsPointAtPricing(t *testing.T) {
 
 func TestAggregateLogs_AppCostFieldsGetNoAIPricingNote(t *testing.T) {
 	h, _ := queryRangeRecorder(t, emptyQueryRangeResponse)
-	result, err := h.handleAggregateLogs(testCtx(), makeToolRequest("signoz_aggregate_logs",
+	result, err := h.handleAggregateLogs(testCtx(), makeToolRequest("fusescope_aggregate_logs",
 		map[string]any{"timeRange": "1h", "aggregations": "sum(estimated_total_cost)"}))
 	require.NoError(t, err)
 	require.False(t, result.IsError, textContent(t, result))

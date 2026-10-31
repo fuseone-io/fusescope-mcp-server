@@ -36,7 +36,7 @@ def test_trace_deep_links_shortcut_filters_and_group_by(mcp_client: MCPClient, t
 
     def search(extra: dict) -> list[dict]:
         result = mcp_client.call_tool(
-            "signoz_search_traces",
+            "fusescope_search_traces",
             {"searchContext": f"traces from {service}", "service": service, "timeRange": "1h", "limit": "5", **extra},
         )
         if result.get("isError", False):
@@ -61,7 +61,7 @@ def test_trace_deep_links_shortcut_filters_and_group_by(mcp_client: MCPClient, t
     for error in (False, True):
         filtered = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_search_traces",
+                "fusescope_search_traces",
                 {
                     "searchContext": f"traces with error={error} within duration bounds",
                     "service": service,
@@ -89,7 +89,7 @@ def test_trace_deep_links_shortcut_filters_and_group_by(mcp_client: MCPClient, t
     ):
         bounded = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_search_traces",
+                "fusescope_search_traces",
                 {"searchContext": f"traces within {bounds}", "service": service, "timeRange": "1h", **bounds},
             )
         )
@@ -99,7 +99,7 @@ def test_trace_deep_links_shortcut_filters_and_group_by(mcp_client: MCPClient, t
 
     grouped = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_aggregate_traces",
+            "fusescope_aggregate_traces",
             {
                 "searchContext": "trace count by service",
                 "timeRange": "1h",
@@ -116,7 +116,7 @@ def test_trace_deep_links_shortcut_filters_and_group_by(mcp_client: MCPClient, t
 
     details = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_get_trace_details",
+            "fusescope_get_trace_details",
             {"searchContext": f"trace {trace_id}", "traceId": trace_id, "timeRange": "1h", "includeSpans": True},
         )
     )
@@ -131,7 +131,7 @@ def test_search_traces_core_fields_and_select_fields(mcp_client: MCPClient, test
 
     def search(extra: dict) -> list[dict]:
         result = mcp_client.call_tool(
-            "signoz_search_traces",
+            "fusescope_search_traces",
             {"searchContext": f"traces from {service}", "service": service, "timeRange": "1h", "limit": "5", **extra},
         )
         if result.get("isError", False):
@@ -144,7 +144,7 @@ def test_search_traces_core_fields_and_select_fields(mcp_client: MCPClient, test
         assert row["service.name"] == service
     page = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_search_traces",
+            "fusescope_search_traces",
             {"searchContext": f"traces from {service}", "service": service, "timeRange": "1h", "limit": "5"},
         )
     )
@@ -163,7 +163,7 @@ def test_search_traces_core_fields_and_select_fields(mcp_client: MCPClient, test
             assert "resource" not in row and "attributes" not in row, f"row switched to nested maps: {sorted(row)}"
 
     invalid = mcp_client.call_tool(
-        "signoz_search_traces",
+        "fusescope_search_traces",
         {"searchContext": "bad selectFields", "service": service, "timeRange": "1h", "selectFields": [1, 2]},
     )
     assert invalid.get("isError", False), "non-string selectFields items must be rejected"
@@ -173,7 +173,7 @@ def test_search_traces_core_fields_and_select_fields(mcp_client: MCPClient, test
     # query and returns a key-not-found warning, which the tool shows as a note.
     unknown_key = f"mcp.e2e.absent.{test_id.replace('-', '_')}"
     unknown = mcp_client.call_tool(
-        "signoz_search_traces",
+        "fusescope_search_traces",
         {"searchContext": "unknown field", "service": service, "timeRange": "1h", "selectFields": [unknown_key]},
     )
     assert unknown_key in text_blocks(unknown), (
@@ -191,7 +191,7 @@ def test_shortcut_filters_narrow_an_or_filter(mcp_client: MCPClient, test_id: st
 
     def search(extra: dict) -> list[dict]:
         result = mcp_client.call_tool(
-            "signoz_search_traces",
+            "fusescope_search_traces",
             {
                 "searchContext": f"spans from {service} or {other}",
                 "filter": either,
@@ -222,7 +222,7 @@ def test_trace_details_finds_a_trace_by_id_alone(mcp_client: MCPClient, test_id:
 
     def spans() -> list[dict]:
         result = mcp_client.call_tool(
-            "signoz_get_trace_details", {"searchContext": f"trace {trace_id}", "traceId": trace_id}
+            "fusescope_get_trace_details", {"searchContext": f"trace {trace_id}", "traceId": trace_id}
         )
         if result.get("isError", False):
             return []
@@ -233,7 +233,7 @@ def test_trace_details_finds_a_trace_by_id_alone(mcp_client: MCPClient, test_id:
 
     unknown = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_get_trace_details", {"searchContext": "trace that never existed", "traceId": "0" * 32}
+            "fusescope_get_trace_details", {"searchContext": "trace that never existed", "traceId": "0" * 32}
         )
     )
     assert not query_range_rows(first_text_block(unknown)), "an unknown trace ID returned spans"
@@ -246,7 +246,7 @@ def test_is_root_selects_root_spans(mcp_client: MCPClient, test_id: str, telemet
 
     def search(extra: dict) -> list[dict]:
         result = mcp_client.call_tool(
-            "signoz_search_traces",
+            "fusescope_search_traces",
             {"searchContext": f"spans of {service}", "service": service, "timeRange": "1h", "limit": "20", **extra},
         )
         if result.get("isError", False):
@@ -270,7 +270,7 @@ def test_group_by_resolves_custom_and_intrinsic_trace_fields(
 
     def grouped() -> list:
         result = mcp_client.call_tool(
-            "signoz_aggregate_traces",
+            "fusescope_aggregate_traces",
             {
                 "searchContext": f"span count by marker and error for {service}",
                 "service": service,

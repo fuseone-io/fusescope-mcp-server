@@ -93,7 +93,7 @@ func TestGuardrail_WireCatalogGoldens(t *testing.T) {
 		}
 		sort.Slice(inventory, func(i, j int) bool { return inventory[i].Identity < inventory[j].Identity })
 		assertWireGolden(t, "resources-content-inventory.json", inventory)
-		sitemap := o.capture("resources/read", `{"uri":"signoz://docs/sitemap"}`)
+		sitemap := o.capture("resources/read", `{"uri":"fusescope://docs/sitemap"}`)
 		assertWireGolden(t, "resource-sitemap-literal.json", sitemap)
 	})
 
@@ -117,13 +117,13 @@ func TestGuardrail_WireCatalogGoldens(t *testing.T) {
 
 	t.Run("representative tool and error literals", func(t *testing.T) {
 		cases := []struct{ file, method, params string }{
-			{"tool-success-structured.json", "tools/call", `{"name":"signoz_list_notification_channels","arguments":{}}`},
-			{"tool-success-fail-open-input.json", "tools/call", `{"name":"signoz_list_dashboards","arguments":{"limit":{}}}`},
-			{"tool-error-coded-omitted-arguments.json", "tools/call", `{"name":"signoz_get_alert"}`},
-			{"tool-error-coded-null-arguments.json", "tools/call", `{"name":"signoz_get_alert","arguments":null}`},
-			{"error-unknown-tool.json", "tools/call", `{"name":"signoz_unknown","arguments":{}}`},
-			{"error-unknown-resource.json", "resources/read", `{"uri":"signoz://unknown"}`},
-			{"error-unknown-prompt.json", "prompts/get", `{"name":"signoz_unknown","arguments":{}}`},
+			{"tool-success-structured.json", "tools/call", `{"name":"fusescope_list_notification_channels","arguments":{}}`},
+			{"tool-success-fail-open-input.json", "tools/call", `{"name":"fusescope_list_dashboards","arguments":{"limit":{}}}`},
+			{"tool-error-coded-omitted-arguments.json", "tools/call", `{"name":"fusescope_get_alert"}`},
+			{"tool-error-coded-null-arguments.json", "tools/call", `{"name":"fusescope_get_alert","arguments":null}`},
+			{"error-unknown-tool.json", "tools/call", `{"name":"fusescope_unknown","arguments":{}}`},
+			{"error-unknown-resource.json", "resources/read", `{"uri":"fusescope://unknown"}`},
+			{"error-unknown-prompt.json", "prompts/get", `{"name":"fusescope_unknown","arguments":{}}`},
 		}
 		for _, tc := range cases {
 			assertWireGolden(t, tc.file, o.capture(tc.method, tc.params))

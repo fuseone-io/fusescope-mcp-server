@@ -46,7 +46,7 @@ func TestNotificationChannelFailuresKeepTheProviderSecretOutOfLogs(t *testing.T)
 			clientOverride: signozclient.NewClient(slog.New(slog.NewJSONHandler(&logs, nil)), srv.URL, "test-api-key", "SIGNOZ-API-KEY", nil),
 		}
 
-		result, err := h.handleCreateNotificationChannel(testCtx(), makeToolRequest("signoz_create_notification_channel", channelArgs(false)))
+		result, err := h.handleCreateNotificationChannel(testCtx(), makeToolRequest("fusescope_create_notification_channel", channelArgs(false)))
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
@@ -80,7 +80,7 @@ func TestNotificationChannelFailuresKeepTheProviderSecretOutOfLogs(t *testing.T)
 			clientOverride: signozclient.NewClient(slog.New(slog.NewJSONHandler(&logs, nil)), srv.URL, "test-api-key", "SIGNOZ-API-KEY", nil),
 		}
 
-		result, err := h.handleCreateNotificationChannel(testCtx(), makeToolRequest("signoz_create_notification_channel", channelArgs(true)))
+		result, err := h.handleCreateNotificationChannel(testCtx(), makeToolRequest("fusescope_create_notification_channel", channelArgs(true)))
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}

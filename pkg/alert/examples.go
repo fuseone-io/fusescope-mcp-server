@@ -8,16 +8,16 @@ import _ "embed"
 //go:embed examples.generated.md
 var generatedExamples string
 
-// Examples is the MCP resource content for signoz://alert/examples: the
+// Examples is the MCP resource content for fusescope://alert/examples: the
 // SigNoz-published examples between a hand-written routing preamble and the
 // Cost Meter budget example the spec does not carry yet.
 var Examples = examplesPreamble + generatedExamples + examplesAddendum
 
 const examplesPreamble = `# SigNoz Alert Rule Examples
 
-Every example uses schemaVersion v2alpha1. Adapt each example to the target workspace: discover filter and groupBy keys with signoz_get_field_keys instead of copying attribute names.
+Every example uses schemaVersion v2alpha1. Adapt each example to the target workspace: discover filter and groupBy keys with fusescope_get_field_keys instead of copying attribute names.
 
-**Before using any example:** channel displayName values are illustrative. Reuse a fully paginated signoz_list_notification_channels result only from the same still-current prepared operation; otherwise call it and replace every direct-routing value with an exact returned displayName. If none fits, ask the user or offer signoz_create_notification_channel with settings the user provides; never create automatically. Channel creation defaults test to false. Confirmed v2 policy routing may remove tier channels and set notificationSettings.usePolicy=true.
+**Before using any example:** channel displayName values are illustrative. Reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it and replace every direct-routing value with an exact returned displayName. If none fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never create automatically. Channel creation defaults test to false. Confirmed v2 policy routing may remove tier channels and set notificationSettings.usePolicy=true.
 
 `
 
@@ -71,6 +71,6 @@ Not in the SigNoz OpenAPI spec yet. Fires when today's total log ingestion excee
 ## Key Notes
 1. Metrics signal uses the object aggregation shape ({metricName, timeAggregation, spaceAggregation}); logs and traces use the expression shape ({expression: "count()"}).
 2. selectedQueryName references the query or formula that determines the alert.
-3. Direct routing uses exact displayName values from a same-operation, still-current signoz_list_notification_channels result, or calls the fully paginated tool when absent or stale. V2 needs a displayName on every tier; confirmed policy routing may omit them.
+3. Direct routing uses exact displayName values from a same-operation, still-current fusescope_list_notification_channels result, or calls the fully paginated tool when absent or stale. V2 needs a displayName on every tier; confirmed policy routing may omit them.
 4. Set schemaVersion="v2alpha1" and include evaluation and notificationSettings for every rule type; SigNoz requires both and treats an omitted schemaVersion as the retired v1 schema. An anomaly_rule also sets condition.algorithm and condition.seasonality, and its tier targets are signed anomaly scores (below -2, not below 2).
 `

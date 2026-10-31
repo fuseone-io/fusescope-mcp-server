@@ -35,11 +35,11 @@ type alertRuleListOutput struct {
 func (h *Handler) RegisterAlertsHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering alerts handlers")
 
-	alertsTool := mcp.NewTool("signoz_list_alerts",
+	alertsTool := mcp.NewTool("fusescope_list_alerts",
 		mcp.WithOutputSchema[alertListOutput](),
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants current firing, silenced, or inhibited Alertmanager alert instances and their state, severity, timing, and rule IDs. Do not use it for configured rules or history: use signoz_list_alert_rules for rule summaries, signoz_get_alert for one definition, or signoz_get_alert_history for one rule's timeline. Filter by alert labels, state, or receiver before paginating."),
+		mcp.WithDescription("Use this when the user wants current firing, silenced, or inhibited Alertmanager alert instances and their state, severity, timing, and rule IDs. Do not use it for configured rules or history: use fusescope_list_alert_rules for rule summaries, fusescope_get_alert for one definition, or fusescope_get_alert_history for one rule's timeline. Filter by alert labels, state, or receiver before paginating."),
 		mcp.WithString("limit", mcp.DefaultString("50"), intOrStringType(), mcp.Description("Maximum number of alerts to return per page. Default: 50, max: 1000 (higher values are clamped).")),
 		mcp.WithString("offset", mcp.DefaultString("0"), intOrStringType(), mcp.Description("Number of results to skip for pagination. Default: 0.")),
 		mcp.WithBoolean("active", boolOrStringType(), mcp.Description("Include active (firing) alerts. Default: true (server-side).")),
@@ -50,11 +50,11 @@ func (h *Handler) RegisterAlertsHandlers(s *mcp.Server) {
 	)
 	h.addTool(s, alertsTool, h.handleListAlerts)
 
-	alertRulesTool := mcp.NewTool("signoz_list_alert_rules",
+	alertRulesTool := mcp.NewTool("fusescope_list_alert_rules",
 		mcp.WithOutputSchema[alertRuleListOutput](),
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants configured alert-rule summaries, including inactive/OK and disabled rules. It returns rule IDs, names, types, state, severity, labels, and timestamps; use signoz_get_alert with an ID for the full definition. Do not use it for current firing/silenced/inhibited instances: use signoz_list_alerts. To find rules by name, label, severity, or state, narrow with filter and states instead of paging through every rule; paginate with limit and offset."),
+		mcp.WithDescription("Use this when the user wants configured alert-rule summaries, including inactive/OK and disabled rules. It returns rule IDs, names, types, state, severity, labels, and timestamps; use fusescope_get_alert with an ID for the full definition. Do not use it for current firing/silenced/inhibited instances: use fusescope_list_alerts. To find rules by name, label, severity, or state, narrow with filter and states instead of paging through every rule; paginate with limit and offset."),
 		mcp.WithString("filter", mcp.Description(`Filter expression SigNoz applies before paging, at most 1024 characters. Keys: name (the rule title), severity, alert_type, rule_type, created_by, updated_by, and created_at or updated_at with RFC 3339 times (created_at >= '2026-01-02T15:04:05Z'). Any other key is a rule label, matched case-sensitively (cluster = 'prod'); labels.<key> matches only the label. A bare word matches the name, description, or labels, ignoring case. Example: "name CONTAINS 'High Response Time' AND severity IN ('critical', 'error')".`)),
 		mcp.WithArray("states", stringOrStringArrayType(), mcp.Description("Only rules in these states: firing, pending, recovering, inactive, nodata, or disabled. Omit for every state.")),
 		mcp.WithString("sort", mcp.Description("Field to sort by: updated_at (default), created_at, name, state, or severity.")),
@@ -64,23 +64,23 @@ func (h *Handler) RegisterAlertsHandlers(s *mcp.Server) {
 	)
 	h.addTool(s, alertRulesTool, h.handleListAlertRules)
 
-	getAlertTool := mcp.NewTool("signoz_get_alert",
+	getAlertTool := mcp.NewTool("fusescope_get_alert",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants one configured alert rule's full definition, or before signoz_update_alert when a complete current definition is not already available for the prepared operation. Reuse a still-current definition fetched for that operation instead of repeating this preflight. It requires a known rule ID; use signoz_list_alert_rules to discover IDs. Do not use it for current alert instances or firing history: use signoz_list_alerts or signoz_get_alert_history."),
+		mcp.WithDescription("Use this when the user wants one configured alert rule's full definition, or before fusescope_update_alert when a complete current definition is not already available for the prepared operation. Reuse a still-current definition fetched for that operation instead of repeating this preflight. It requires a known rule ID; use fusescope_list_alert_rules to discover IDs. Do not use it for current alert instances or firing history: use fusescope_list_alerts or fusescope_get_alert_history."),
 		// Not declared mcp.Required(): the legacy alias "ruleId" must remain a
 		// valid call for schema-aware clients that validate args against the
 		// advertised inputSchema. The handler validates that one of id/ruleId is
 		// present. See readResourceID.
-		mcp.WithString("id", mcp.Description("Alert rule ID (UUIDv7 on v2 servers). Required; obtain it from signoz_list_alert_rules.")),
+		mcp.WithString("id", mcp.Description("Alert rule ID (UUIDv7 on v2 servers). Required; obtain it from fusescope_list_alert_rules.")),
 	)
 	h.addTool(s, getAlertTool, h.handleGetAlert)
 
-	alertHistoryTool := mcp.NewTool("signoz_get_alert_history",
+	alertHistoryTool := mcp.NewTool("fusescope_get_alert_history",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants alert firing history or the state-transition timeline of one configured rule; use signoz_list_alerts for current instances and signoz_get_alert for the rule definition. It requires a rule ID from signoz_list_alert_rules, defaults to the last 6 hours, and supports state/filter narrowing. For the next page, pass data.nextCursor as cursor and repeat the original filters, time range, and order."),
-		mcp.WithString("id", mcp.Description("Alert rule ID. Required; obtain it from signoz_list_alert_rules.")),
+		mcp.WithDescription("Use this when the user wants alert firing history or the state-transition timeline of one configured rule; use fusescope_list_alerts for current instances and fusescope_get_alert for the rule definition. It requires a rule ID from fusescope_list_alert_rules, defaults to the last 6 hours, and supports state/filter narrowing. For the next page, pass data.nextCursor as cursor and repeat the original filters, time range, and order."),
+		mcp.WithString("id", mcp.Description("Alert rule ID. Required; obtain it from fusescope_list_alert_rules.")),
 		mcp.WithString("timeRange", mcp.DefaultString("6h"), mcp.Description(timeRangeParamDescription("Defaults to last 6 hours if not provided."))),
 		mcp.WithString("start", intOrStringType(), mcp.Description("Start timestamp in unix milliseconds (optional, defaults to 6 hours ago).")),
 		mcp.WithString("end", intOrStringType(), mcp.Description("End timestamp in unix milliseconds (optional, defaults to now).")),
@@ -93,33 +93,33 @@ func (h *Handler) RegisterAlertsHandlers(s *mcp.Server) {
 	h.addTool(s, alertHistoryTool, h.handleGetAlertHistory)
 
 	createAlertTool := mcp.NewTool(
-		"signoz_create_alert",
+		"fusescope_create_alert",
 		withCreateToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants a new SigNoz alert rule; use signoz_update_alert to change an existing rule. "+
-				"Supports v2alpha1 threshold, PromQL, and metric anomaly alerts. Read signoz://alert/instructions and signoz://alert/examples before composing any payload, unless already read in the same prepared operation; for PromQL also read signoz://promql/instructions. "+
-				"For direct routing, reuse a fully paginated signoz_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If none fits, ask the user or offer signoz_create_notification_channel with settings the user provides; never guess or create automatically. SigNoz rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
+			"Use this when the user wants a new SigNoz alert rule; use fusescope_update_alert to change an existing rule. "+
+				"Supports v2alpha1 threshold, PromQL, and metric anomaly alerts. Read fusescope://alert/instructions and fusescope://alert/examples before composing any payload, unless already read in the same prepared operation; for PromQL also read fusescope://promql/instructions. "+
+				"For direct routing, reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If none fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never guess or create automatically. SigNoz rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
 		),
 		mcp.WithInputSchema[types.CreateAlertInput](),
 	)
 	h.addTool(s, createAlertTool, h.handleCreateAlert)
 
 	updateAlertTool := mcp.NewTool(
-		"signoz_update_alert",
+		"fusescope_update_alert",
 		withUpdateToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants to change an existing SigNoz alert rule; use signoz_create_alert for a new rule. This is a full replacement: call signoz_get_alert unless its complete result is available from the same still-current prepared operation, then preserve every unchanged field. Likewise reuse signoz://alert/instructions, signoz://alert/examples, and a fully paginated signoz_list_notification_channels result only from that operation; otherwise read/call them, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If no direct channel fits, ask the user or offer signoz_create_notification_channel with settings the user provides; never create automatically. SigNoz rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
+			"Use this when the user wants to change an existing SigNoz alert rule; use fusescope_create_alert for a new rule. This is a full replacement: call fusescope_get_alert unless its complete result is available from the same still-current prepared operation, then preserve every unchanged field. Likewise reuse fusescope://alert/instructions, fusescope://alert/examples, and a fully paginated fusescope_list_notification_channels result only from that operation; otherwise read/call them, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If no direct channel fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never create automatically. SigNoz rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
 		),
 		mcp.WithInputSchema[types.UpdateAlertInput](),
 	)
 	h.addTool(s, updateAlertTool, h.handleUpdateAlert)
 
 	deleteAlertTool := mcp.NewTool(
-		"signoz_delete_alert",
+		"fusescope_delete_alert",
 		withDeleteToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithString("id", mcp.Description("Alert rule UUIDv7. Required; obtain it from signoz_list_alert_rules.")),
-		mcp.WithDescription("Use this when the user explicitly wants to permanently delete a configured alert rule. Resolve its ID with signoz_list_alert_rules and confirm the exact rule first. If both steps are already complete, call this tool directly without repeating list/get preflight. Do not use it to disable a rule or clear a firing instance."),
+		mcp.WithString("id", mcp.Description("Alert rule UUIDv7. Required; obtain it from fusescope_list_alert_rules.")),
+		mcp.WithDescription("Use this when the user explicitly wants to permanently delete a configured alert rule. Resolve its ID with fusescope_list_alert_rules and confirm the exact rule first. If both steps are already complete, call this tool directly without repeating list/get preflight. Do not use it to disable a rule or clear a firing instance."),
 	)
 	h.addTool(s, deleteAlertTool, h.handleDeleteAlert)
 
@@ -142,7 +142,7 @@ func parseTriStateBool(args map[string]any, key string) (*bool, error) {
 }
 
 func (h *Handler) handleListAlerts(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	h.logger.DebugContext(ctx, "Tool called: signoz_list_alerts")
+	h.logger.DebugContext(ctx, "Tool called: fusescope_list_alerts")
 	args := req.GetArguments()
 	limit, offset, limitClamped := paginate.ParseParamsClamped(args)
 
@@ -233,7 +233,7 @@ func (h *Handler) handleListAlerts(ctx context.Context, req mcp.CallToolRequest)
 const alertRulesUpstreamPageSize = 200
 
 func (h *Handler) handleListAlertRules(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	h.logger.DebugContext(ctx, "Tool called: signoz_list_alert_rules")
+	h.logger.DebugContext(ctx, "Tool called: fusescope_list_alert_rules")
 	limit, offset, limitClamped := paginate.ParseParamsClamped(req.Params.Arguments)
 	args := req.GetArguments()
 	states, err := parseStringList("states", args["states"], "state", "firing", "nodata")
@@ -326,7 +326,7 @@ func (h *Handler) handleGetAlert(ctx context.Context, req mcp.CallToolRequest) (
 		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Provide a valid alert rule ID (UUID format). Example: {"id": "0196634d-5d66-75c4-b778-e317f49dab7a"}`), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_get_alert", slog.String("id", ruleID))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_get_alert", slog.String("id", ruleID))
 	client, base, clientErr := h.getResourceClient(ctx)
 	if clientErr != nil {
 		return clientErr, nil
@@ -432,7 +432,7 @@ func (h *Handler) handleGetAlertHistory(ctx context.Context, req mcp.CallToolReq
 		historyReq.Cursor = &cursor
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_get_alert_history",
+	h.logger.DebugContext(ctx, "Tool called: fusescope_get_alert_history",
 		slog.String("ruleId", ruleID),
 		slog.Int64("start", start),
 		slog.Int64("end", end),
@@ -451,7 +451,7 @@ func (h *Handler) handleGetAlertHistory(ctx context.Context, req mcp.CallToolReq
 		if errors.As(err, &statusErr) && statusErr.StatusCode == http.StatusNotFound {
 			result := upstreamError(err)
 			result.Content = append(result.Content, mcp.NewTextContent(
-				`recovery: Verify "id" in the SigNoz UI or, on SigNoz v0.120.0+, with signoz_list_alert_rules. If the rule exists, upgrade SigNoz to v0.118.0 or later; older versions do not support this tool.`))
+				`recovery: Verify "id" in the SigNoz UI or, on SigNoz v0.120.0+, with fusescope_list_alert_rules. If the rule exists, upgrade SigNoz to v0.118.0 or later; older versions do not support this tool.`))
 			return result, nil
 		}
 		return upstreamError(err), nil
@@ -484,7 +484,7 @@ func (h *Handler) handleCreateAlert(ctx context.Context, req mcp.CallToolRequest
 		return errResult, nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_create_alert")
+	h.logger.DebugContext(ctx, "Tool called: fusescope_create_alert")
 	client, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil
@@ -518,7 +518,7 @@ func (h *Handler) handleUpdateAlert(ctx context.Context, req mcp.CallToolRequest
 		return errResult, nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_update_alert", slog.String("ruleId", ruleID))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_update_alert", slog.String("ruleId", ruleID))
 	client, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil
@@ -542,7 +542,7 @@ func (h *Handler) handleDeleteAlert(ctx context.Context, req mcp.CallToolRequest
 		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required.`), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_delete_alert", slog.String("id", ruleID))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_delete_alert", slog.String("id", ruleID))
 	client, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil
@@ -571,9 +571,9 @@ func alertPayloadJSON(rawConfig map[string]any) ([]byte, *mcp.CallToolResult) {
 // registerAlertResources registers MCP resources needed for alert creation.
 func (h *Handler) registerAlertResources(s *mcp.Server) {
 	alertInstructions := mcp.NewResource(
-		"signoz://alert/instructions",
+		"fusescope://alert/instructions",
 		"Alert Rule Instructions",
-		mcp.WithResourceDescription("Read this before creating or updating an alert unless its current content was already read for the same prepared operation. It explains the query envelopes, threshold tiers, and evaluation specs the input schema does not describe, anomaly scoring, and when to reuse or call signoz_list_notification_channels. Read signoz://alert/examples only when examples are still needed."),
+		mcp.WithResourceDescription("Read this before creating or updating an alert unless its current content was already read for the same prepared operation. It explains the query envelopes, threshold tiers, and evaluation specs the input schema does not describe, anomaly scoring, and when to reuse or call fusescope_list_notification_channels. Read fusescope://alert/examples only when examples are still needed."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(alert.Instructions))),
 	)
@@ -589,9 +589,9 @@ func (h *Handler) registerAlertResources(s *mcp.Server) {
 	})
 
 	alertExamples := mcp.NewResource(
-		"signoz://alert/examples",
+		"fusescope://alert/examples",
 		"Alert Rule Examples",
-		mcp.WithResourceDescription("Read this after signoz://alert/instructions only when examples are still needed. Resolve illustrative direct/anomaly names with signoz_list_notification_channels; if none fits, offer signoz_create_notification_channel. Confirmed v2 policy routing may omit direct channels."),
+		mcp.WithResourceDescription("Read this after fusescope://alert/instructions only when examples are still needed. Resolve illustrative direct/anomaly names with fusescope_list_notification_channels; if none fits, offer fusescope_create_notification_channel. Confirmed v2 policy routing may omit direct channels."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(alert.Examples))),
 	)

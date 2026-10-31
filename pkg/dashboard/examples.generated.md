@@ -2,7 +2,7 @@
 
 Source: the request examples published by the SigNoz OpenAPI spec.
 
-## Create a dashboard with signoz_create_dashboard
+## Create a dashboard with fusescope_create_dashboard
 
 ### 1. logs_table_with_runbook — Logs dashboard with a text panel and a table panel
 
@@ -320,7 +320,7 @@ A `$service` list variable fed by the observed `service.name` values filters bot
 }
 ```
 
-## Replace a dashboard with signoz_update_dashboard
+## Replace a dashboard with fusescope_update_dashboard
 
 ### 1. replace_dashboard — Replace a dashboard with a single CPU time series panel
 
@@ -420,7 +420,7 @@ Update is a full replacement: every field is written as sent, so fetch the dashb
 }
 ```
 
-## Patch a dashboard with signoz_patch_dashboard
+## Patch a dashboard with fusescope_patch_dashboard
 
 ### 1. add_panel — Add a panel and place it
 

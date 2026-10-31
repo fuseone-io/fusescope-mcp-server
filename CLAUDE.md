@@ -23,7 +23,7 @@ contracts.
 - `make gen`: regenerate everything derived from the pinned SigNoz spec (`SIGNOZ_SPEC_REF`): the
   API client in `internal/apiclient/` from `skaff.yml`, the dashboard input schemas in
   `internal/handler/tools/schemas/`, and the `pkg/*/examples.generated.md` files behind the
-  `signoz://*/examples` resources (`tools/specgen/specgen.py`). Takes several minutes and needs a
+  `fusescope://*/examples` resources (`tools/specgen/specgen.py`). Takes several minutes and needs a
   `gh` login that can read SigNoz/skaff; `make gen-spec` regenerates only the schemas and
   examples and needs neither. `make gen-check` fails when any committed generated file is stale.
 - `make check-repo-docs READY=1`: the plan rules CI applies once a PR leaves draft.
@@ -83,7 +83,7 @@ the PR. Budgets and CI mechanics live in `guardrails/README.md`. In the same PR:
   `boolOrStringType`, or `intOrString` and `boolOrString` fields in typed argument structs),
   because some clients send every scalar as a string.
 - Each server release targets the latest SigNoz release. Don't name SigNoz versions in tool or
-  parameter descriptions, `signoz://` resources, or README tool sections.
+  parameter descriptions, `fusescope://` resources, or README tool sections.
 - Only expose features the SigNoz UI can render. An agent can save a query into a dashboard or
   saved view, so a request type or panel the UI lacks (for example heatmaps) breaks it there.
 - The PR summary lists the doc and metadata updates and says whether SigNoz/agent-skills needs a
@@ -93,7 +93,7 @@ the PR. Budgets and CI mechanics live in `guardrails/README.md`. In the same PR:
 
 ## Client-Visible Writing Style
 
-When editing tool or parameter descriptions, `signoz://` resources, prompts, server instructions,
+When editing tool or parameter descriptions, `fusescope://` resources, prompts, server instructions,
 or `manifest.json` descriptions, follow `docs/client-visible-writing-style.md`. Skip it for code,
 tests, and internal docs.
 
@@ -111,7 +111,7 @@ tests, and internal docs.
 
 Upstream, this server consumes the SigNoz backend and QB APIs. Downstream, MCP clients,
 SigNoz/agent-skills, and custom agents and clients parse its tool outputs, error codes, and
-`signoz://` resources, so those are contracts too (CMP-1). Fixture tests only prove our code
+`fusescope://` resources, so those are contracts too (CMP-1). Fixture tests only prove our code
 matches our assumption of a contract. They don't catch drift such as a renamed field, a changed QB
 envelope, or a new output shape. For code that parses an upstream response or shapes a tool output:
 

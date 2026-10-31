@@ -137,7 +137,7 @@ Source: the request examples published by the SigNoz OpenAPI spec.
 - `url` string (secret) (required): The endpoint that receives the Alertmanager webhook payload. A secret; returned by create, update and fetch by ID, never by list.
 - `username` string: The basic auth user; cannot be combined with bearerToken.
 
-## Create a channel with signoz_create_notification_channel
+## Create a channel with fusescope_create_notification_channel
 
 ### 1. email — Email recipients
 
@@ -332,7 +332,7 @@ Delivers the Alertmanager webhook payload to an HTTP endpoint. Use either `beare
 }
 ```
 
-## Replace a channel's config with signoz_update_notification_channel
+## Replace a channel's config with fusescope_update_notification_channel
 
 ### 1. slack_rotate_webhook — Replace a Slack webhook URL
 

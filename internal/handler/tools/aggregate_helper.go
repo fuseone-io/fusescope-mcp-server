@@ -674,7 +674,7 @@ func alertHistoryCompletenessNote(payload []byte, returnedRows, limit int, rowsK
 }
 
 // limitOnlyCompletenessNote is the completeness advisory for list tools that
-// expose a `limit` but NO offset pagination (e.g. signoz_list_metrics). It must
+// expose a `limit` but NO offset pagination (e.g. fusescope_list_metrics). It must
 // not tell callers to "fetch the next page with offset" — there is no offset
 // param, so the caller would loop on the same page. Instead it advises
 // narrowing the result set (searchText / time range / source). narrowHint names

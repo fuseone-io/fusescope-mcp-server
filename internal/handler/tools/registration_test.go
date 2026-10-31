@@ -42,7 +42,7 @@ func TestGuardrail_DuplicateRegistrationsRejectedBeforeSDKOverwrite(t *testing.T
 			name: "resource",
 			kind: registrationResource,
 			add: func(h *Handler, s *mcp.Server) {
-				h.addResource(s, mcp.NewResource("signoz://duplicate/probe", "Duplicate Probe"), resourceHandler)
+				h.addResource(s, mcp.NewResource("fusescope://duplicate/probe", "Duplicate Probe"), resourceHandler)
 			},
 		},
 		{

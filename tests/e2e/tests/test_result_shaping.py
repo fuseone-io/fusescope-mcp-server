@@ -23,7 +23,7 @@ CORE_LOG_FIELDS = {"timestamp", "id", "body", "severity_text", "trace_id", "span
 
 def _aggregate_logs(mcp_client: MCPClient, **arguments) -> dict:
     return mcp_client.call_tool(
-        "signoz_aggregate_logs",
+        "fusescope_aggregate_logs",
         {"searchContext": "result shaping on aggregate_logs", "timeRange": "1h", **arguments},
     )
 
@@ -68,7 +68,7 @@ def test_aggregate_traces_functions_change_time_series_and_not_scalars(
 
     def aggregate(**arguments) -> dict:
         return mcp_client.call_tool(
-            "signoz_aggregate_traces",
+            "fusescope_aggregate_traces",
             {
                 "searchContext": "span count over time",
                 "service": service,
@@ -116,7 +116,7 @@ def test_search_logs_select_fields_and_order(mcp_client: MCPClient, test_id: str
 
     def search(**arguments) -> dict:
         return mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {"searchContext": "seeded logs", "service": service, "timeRange": "1h", **arguments},
         )
 
@@ -154,7 +154,7 @@ def test_search_traces_order_by_duration(mcp_client: MCPClient, test_id: str, te
 
     def search(**arguments) -> list[dict]:
         result = mcp_client.call_tool(
-            "signoz_search_traces",
+            "fusescope_search_traces",
             {"searchContext": "seeded spans", "service": service, "timeRange": "1h", "limit": "10", **arguments},
         )
         if result.get("isError", False):
@@ -177,7 +177,7 @@ def test_query_metrics_limit_order_having_and_typed_formula_queries(
 
     def query(**arguments) -> dict:
         return mcp_client.call_tool(
-            "signoz_query_metrics",
+            "fusescope_query_metrics",
             {
                 "searchContext": "seeded gauge per service",
                 "metricName": metric,

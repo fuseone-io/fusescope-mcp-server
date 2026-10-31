@@ -19,7 +19,7 @@ def test_ai_pricing_views_return_paginated_envelopes(mcp_client: MCPClient) -> N
     for view in ("rules", "unpriced_models"):
         result = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_get_ai_pricing",
+                "fusescope_get_ai_pricing",
                 {"searchContext": f"which AI model prices does SigNoz use ({view})", "view": view},
             )
         )
@@ -40,7 +40,7 @@ def test_ai_pricing_lists_a_seeded_model_as_unpriced(mcp_client: MCPClient, tele
     def unpriced() -> list[dict]:
         result = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_get_ai_pricing",
+                "fusescope_get_ai_pricing",
                 {"searchContext": f"is {model} priced", "view": "unpriced_models", "searchText": model.upper()},
             )
         )
@@ -55,7 +55,7 @@ def test_ai_attribute_mappings_include_the_shipped_llm_group(mcp_client: MCPClie
     """SigNoz provisions the gen_ai.llm group; its mappers come back with source keys."""
     result = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_list_ai_attribute_mappings",
+            "fusescope_list_ai_attribute_mappings",
             {"searchContext": "which vendor attributes does SigNoz map to gen_ai"},
         )
     )
@@ -83,7 +83,7 @@ def test_ai_attribute_mapping_test_maps_an_openinference_span(mcp_client: MCPCli
     }
     result = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_test_ai_attribute_mapping",
+            "fusescope_test_ai_attribute_mapping",
             {"searchContext": "will SigNoz see this OpenInference span as a model call", "spans": [span]},
         )
     )

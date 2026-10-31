@@ -32,7 +32,7 @@ def test_signal_enum_values(mcp_client: MCPClient) -> None:
     for signal in ("metrics", "traces", "logs"):
         assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_get_field_keys", {"searchContext": f"field keys for {signal}", "signal": signal}
+                "fusescope_get_field_keys", {"searchContext": f"field keys for {signal}", "signal": signal}
             )
         )
 
@@ -49,7 +49,7 @@ def test_aggregation_set_matches_backend(mcp_client: MCPClient) -> None:
             "timeRange": "30m",
             "requestType": request_type,
         }
-        result = mcp_client.call_tool(f"signoz_aggregate_{signal}", args)
+        result = mcp_client.call_tool(f"fusescope_aggregate_{signal}", args)
         if result.get("isError", False):
             rejected.append((signal, aggregation, request_type, first_text_block(result)[:200]))
     assert not rejected, f"aggregation drift: backend rejected what we advertise: {rejected}"
@@ -65,7 +65,7 @@ def test_service_top_operations_lists_the_seeded_operation(
     # Top operations come from a table SigNoz fills after the spans are queryable.
     def visible() -> bool:
         result = mcp_client.call_tool(
-            "signoz_get_service_top_operations", {"searchContext": "top operations", "service": service}
+            "fusescope_get_service_top_operations", {"searchContext": "top operations", "service": service}
         )
         return not result.get("isError", False) and "e2e-operation" in first_text_block(result)
 
@@ -76,14 +76,14 @@ def test_service_top_operations_lists_the_seeded_operation(
         args = {"searchContext": f"top operations for {service}", "service": service, "timeRange": "1h"}
         if tags is not None:
             args["tags"] = tags
-        body = first_text_block(assert_tool_ok(mcp_client.call_tool("signoz_get_service_top_operations", args)))
+        body = first_text_block(assert_tool_ok(mcp_client.call_tool("fusescope_get_service_top_operations", args)))
         assert "e2e-operation" in body, f"tags={tags!r}: seeded operation missing: {body[:300]}"
 
 
 def test_promql_matcher_error_names_regexp(mcp_client: MCPClient) -> None:
     """SigNoz rejects a PromQL =~ matcher without naming REGEXP; the tool error adds the replacement."""
     result = mcp_client.call_tool(
-        "signoz_aggregate_logs",
+        "fusescope_aggregate_logs",
         {
             "searchContext": "count logs for checkout pods",
             "aggregations": "count()",
@@ -105,7 +105,7 @@ def test_order_keys_the_guides_teach(mcp_client: MCPClient, test_id: str) -> Non
 
     def ordered(order_by: str) -> dict:
         return mcp_client.call_tool(
-            "signoz_aggregate_traces",
+            "fusescope_aggregate_traces",
             {
                 "searchContext": f"p99 latency of {service} by operation",
                 "aggregations": "p99(duration_nano)",

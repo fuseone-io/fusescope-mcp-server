@@ -72,7 +72,7 @@ def test_every_provider_config_round_trips_and_update_preserves_it(
 
         fetched = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_get_notification_channel",
+                "fusescope_get_notification_channel",
                 {"searchContext": f"get the {kind} channel {channel_id}", "id": channel_id},
             )
         )
@@ -95,7 +95,7 @@ def test_every_provider_config_round_trips_and_update_preserves_it(
 
         updated = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_update_notification_channel",
+                "fusescope_update_notification_channel",
                 {
                     "searchContext": f"update one field on the {kind} channel",
                     "id": channel_id,
@@ -119,7 +119,7 @@ def test_every_provider_config_round_trips_and_update_preserves_it(
 
         listing = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_list_notification_channels",
+                "fusescope_list_notification_channels",
                 {"searchContext": f"verify {name} appears in a config-free list", "query": name},
             )
         )
@@ -156,7 +156,7 @@ def test_local_webhook_test_is_opt_in_and_reaches_only_local_sink(
         config = {"kind": "webhook", "spec": {"url": local_webhook_sink.url, "sendResolved": False}}
         updated = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_update_notification_channel",
+                "fusescope_update_notification_channel",
                 {
                     "searchContext": "update and send one test to the explicitly opt-in local sink",
                     "id": channel_id,
@@ -199,7 +199,7 @@ def test_slack_message_settings_round_trip_through_get_and_full_update(mcp_clien
         channel_id = create_channel(mcp_client, name, {"kind": "slack", "spec": spec})
         fetched = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_get_notification_channel",
+                "fusescope_get_notification_channel",
                 {"searchContext": f"get the slack channel {channel_id}", "id": channel_id},
             )
         )
@@ -216,7 +216,7 @@ def test_slack_message_settings_round_trip_through_get_and_full_update(mcp_clien
 
         updated = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_update_notification_channel",
+                "fusescope_update_notification_channel",
                 {
                     "searchContext": "update the slack channel footer and keep its message settings",
                     "id": channel_id,
@@ -256,7 +256,7 @@ def test_update_unsets_template_field_by_omission_never_by_blanking(mcp_client: 
         # Omission unsets: the authored text reverts to SigNoz's default.
         assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_update_notification_channel",
+                "fusescope_update_notification_channel",
                 {
                     "searchContext": "unset the msteams text by omitting it",
                     "id": channel_id,
@@ -267,7 +267,7 @@ def test_update_unsets_template_field_by_omission_never_by_blanking(mcp_client: 
         )
         fetched = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_get_notification_channel",
+                "fusescope_get_notification_channel",
                 {"searchContext": "verify the omitted text was unset", "id": channel_id},
             )
         )
@@ -276,7 +276,7 @@ def test_update_unsets_template_field_by_omission_never_by_blanking(mcp_client: 
 
         # Blanking is rejected.
         result = mcp_client.call_tool(
-            "signoz_update_notification_channel",
+            "fusescope_update_notification_channel",
             {
                 "searchContext": "unset the msteams text by blanking it",
                 "id": channel_id,

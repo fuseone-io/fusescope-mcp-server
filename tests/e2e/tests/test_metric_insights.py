@@ -22,7 +22,7 @@ def test_metric_usage_unreferenced_metric_reports_empty_usage(
 
     result = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_check_metric_usage",
+            "fusescope_check_metric_usage",
             {
                 "searchContext": "which dashboards or alerts use these metrics",
                 "metricNames": [seeded, missing],
@@ -44,7 +44,7 @@ def test_metric_cardinality_resolves_seeded_metric(mcp_client: MCPClient, test_i
 
     def cardinality_ready():
         result = mcp_client.call_tool(
-            "signoz_check_metric_cardinality",
+            "fusescope_check_metric_cardinality",
             {"searchContext": f"cardinality of {metric}", "metricName": metric, "timeRange": "1h"},
         )
         if result.get("isError", False):

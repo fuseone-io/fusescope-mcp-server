@@ -296,7 +296,7 @@ func (m *MCPServer) Run(ctx context.Context) error {
 	s := m.newSDKServer()
 
 	m.logger.InfoContext(ctx, "Starting SigNoz MCP Server",
-		slog.String("server_name", "SigNozMCPServer"),
+		slog.String("server_name", "FuseScopeMCPServer"),
 		slog.String("transport_mode", m.config.TransportMode))
 
 	// Short-circuit if shutdown already signaled. The async docs-index build
@@ -403,7 +403,7 @@ func (m *MCPServer) registerHandlers(s *mcp.Server) {
 }
 
 func (m *MCPServer) newSDKServer() *mcp.Server {
-	s := mcp.NewServer(&mcp.Implementation{Name: "SigNozMCP", Version: version.Version}, &mcp.ServerOptions{
+	s := mcp.NewServer(&mcp.Implementation{Name: "FuseScopeMCP", Version: version.Version}, &mcp.ServerOptions{
 		Instructions: instructions.ServerInstructions,
 		Logger:       slog.New(&sdkLogHandler{next: m.logger.Handler()}),
 		PageSize:     officialSDKPageSize,

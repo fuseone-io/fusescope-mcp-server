@@ -83,8 +83,8 @@ func TestProductionHTTPProtocolLifecycleMatrix(t *testing.T) {
 			{method: "resources/list", resultKey: "resources", minItems: 1},
 			{method: "resources/templates/list", resultKey: "resourceTemplates", minItems: 0},
 			{method: "prompts/list", resultKey: "prompts", minItems: 1},
-			{method: "tools/call", name: "signoz_search_docs", fields: map[string]any{"name": "signoz_search_docs", "arguments": map[string]any{"searchText": "docker"}}, resultKey: "content", minItems: 1},
-			{method: "resources/read", name: "signoz://docs/sitemap", fields: map[string]any{"uri": "signoz://docs/sitemap"}, resultKey: "contents", minItems: 1},
+			{method: "tools/call", name: "fusescope_search_docs", fields: map[string]any{"name": "fusescope_search_docs", "arguments": map[string]any{"searchText": "docker"}}, resultKey: "content", minItems: 1},
+			{method: "resources/read", name: "fusescope://docs/sitemap", fields: map[string]any{"uri": "fusescope://docs/sitemap"}, resultKey: "contents", minItems: 1},
 			{method: "prompts/get", name: "debug_service_errors", fields: map[string]any{"name": "debug_service_errors", "arguments": map[string]any{"service": "checkout", "timeRange": "2h"}}, resultKey: "messages", minItems: 1},
 		}
 		for index, tt := range tests {
@@ -127,8 +127,8 @@ func assertModernResultEnvelope(t *testing.T, response protocolHTTPResponse, dis
 		t.Fatalf("result._meta = %#v, want object", result["_meta"])
 	}
 	serverInfo, ok := meta["io.modelcontextprotocol/serverInfo"].(map[string]any)
-	if !ok || serverInfo["name"] != "SigNozMCP" {
-		t.Fatalf("serverInfo = %#v, want SigNozMCP", meta["io.modelcontextprotocol/serverInfo"])
+	if !ok || serverInfo["name"] != "FuseScopeMCP" {
+		t.Fatalf("serverInfo = %#v, want FuseScopeMCP", meta["io.modelcontextprotocol/serverInfo"])
 	}
 	if discover {
 		if result["ttlMs"] != float64(0) || result["cacheScope"] != "public" {
@@ -273,8 +273,8 @@ func TestProductionIOTransportProtocolLifecycleMatrix(t *testing.T) {
 			{method: "resources/list", resultKey: "resources", minItems: 1},
 			{method: "resources/templates/list", resultKey: "resourceTemplates", minItems: 0},
 			{method: "prompts/list", resultKey: "prompts", minItems: 1},
-			{method: "tools/call", fields: map[string]any{"name": "signoz_search_docs", "arguments": map[string]any{"searchText": "docker"}}, resultKey: "content", minItems: 1},
-			{method: "resources/read", fields: map[string]any{"uri": "signoz://docs/sitemap"}, resultKey: "contents", minItems: 1},
+			{method: "tools/call", fields: map[string]any{"name": "fusescope_search_docs", "arguments": map[string]any{"searchText": "docker"}}, resultKey: "content", minItems: 1},
+			{method: "resources/read", fields: map[string]any{"uri": "fusescope://docs/sitemap"}, resultKey: "contents", minItems: 1},
 			{method: "prompts/get", fields: map[string]any{"name": "debug_service_errors", "arguments": map[string]any{"service": "checkout", "timeRange": "2h"}}, resultKey: "messages", minItems: 1},
 		}
 		for index, tt := range tests {

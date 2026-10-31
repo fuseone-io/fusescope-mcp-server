@@ -1,4 +1,4 @@
-"""The upstream request examples the signoz://*/examples resources publish work on this release.
+"""The upstream request examples the fusescope://*/examples resources publish work on this release.
 
 `make gen` renders those resources from the request examples in the pinned SigNoz
 OpenAPI document, and the tool descriptions tell an agent to copy them. These
@@ -64,8 +64,8 @@ def channel_names(rule: dict) -> set[str]:
 @pytest.fixture
 def routing_channels(mcp_client: MCPClient, test_id: str) -> Iterator[dict[str, str]]:
     """Webhook channels named exactly as the alert examples route to."""
-    rules = section(mcp_client.read_resource("signoz://alert/examples"), "Create a rule")
-    addendum = section(mcp_client.read_resource("signoz://alert/examples"), "Cost Meter budget alert")
+    rules = section(mcp_client.read_resource("fusescope://alert/examples"), "Create a rule")
+    addendum = section(mcp_client.read_resource("fusescope://alert/examples"), "Cost Meter budget alert")
     names: set[str] = set()
     for _, rule in rules + addendum:
         names |= channel_names(rule)
@@ -74,7 +74,7 @@ def routing_channels(mcp_client: MCPClient, test_id: str) -> Iterator[dict[str, 
         for index, display_name in enumerate(sorted(names)):
             result = assert_tool_ok(
                 mcp_client.call_tool(
-                    "signoz_create_notification_channel",
+                    "fusescope_create_notification_channel",
                     {
                         "searchContext": f"create routing channel {display_name}",
                         "name": slug(test_id, f"ch{index}"),
@@ -94,12 +94,12 @@ def routing_channels(mcp_client: MCPClient, test_id: str) -> Iterator[dict[str, 
 
 
 def test_alert_examples_create_and_delete(mcp_client: MCPClient, routing_channels: dict[str, str]) -> None:
-    text = mcp_client.read_resource("signoz://alert/examples")
+    text = mcp_client.read_resource("fusescope://alert/examples")
     examples = section(text, "Create a rule") + section(text, "Cost Meter budget alert")
     created: list[str] = []
     try:
         for title, rule in examples:
-            result = mcp_client.call_tool("signoz_create_alert", {"searchContext": f"create {title}", **rule})
+            result = mcp_client.call_tool("fusescope_create_alert", {"searchContext": f"create {title}", **rule})
             assert not result.get("isError", False), f"{title}: {text_blocks(result)[:600]}"
             rule_id = (first_block_json(result).get("data") or {}).get("id")
             assert rule_id, f"{title}: create returned no id"
@@ -107,24 +107,24 @@ def test_alert_examples_create_and_delete(mcp_client: MCPClient, routing_channel
     finally:
         # Rules reference the fixture's routing channels, so they go before the channels do.
         for rule_id in created:
-            assert_tool_ok(mcp_client.call_tool("signoz_delete_alert", {"searchContext": "cleanup", "id": rule_id}))
+            assert_tool_ok(mcp_client.call_tool("fusescope_delete_alert", {"searchContext": "cleanup", "id": rule_id}))
 
 
 def test_view_examples_create_replace_and_delete(mcp_client: MCPClient, test_id: str) -> None:
-    text = mcp_client.read_resource("signoz://view/examples")
+    text = mcp_client.read_resource("fusescope://view/examples")
     created: list[str] = []
     try:
         for index, (title, view) in enumerate(section(text, "Create a view")):
             if not view.get("generateName"):
                 view = {**view, "name": slug(test_id, f"v{index}")}
-            result = mcp_client.call_tool("signoz_create_view", {"searchContext": f"create {title}", **view})
+            result = mcp_client.call_tool("fusescope_create_view", {"searchContext": f"create {title}", **view})
             assert not result.get("isError", False), f"{title}: {text_blocks(result)[:600]}"
             view_id = (first_block_json(result).get("data") or {}).get("id")
             assert view_id, f"{title}: create returned no id"
             created.append(view_id)
         for title, body in section(text, "Replace a view"):
             result = mcp_client.call_tool(
-                "signoz_update_view", {"searchContext": f"apply {title}", "id": created[0], "view": body}
+                "fusescope_update_view", {"searchContext": f"apply {title}", "id": created[0], "view": body}
             )
             assert not result.get("isError", False), f"{title}: {text_blocks(result)[:600]}"
     finally:
@@ -142,39 +142,39 @@ def _dashboard_id(result: dict) -> str:
 
 
 def test_dashboard_examples_create_replace_patch_and_delete(mcp_client: MCPClient) -> None:
-    text = mcp_client.read_resource("signoz://dashboard/examples")
+    text = mcp_client.read_resource("fusescope://dashboard/examples")
     created: list[str] = []
     try:
         for title, dashboard in section(text, "Create a dashboard"):
             body = {k: v for k, v in dashboard.items() if k != "name"} | {"generateName": True}
-            result = mcp_client.call_tool("signoz_create_dashboard", {"searchContext": f"create {title}", **body})
+            result = mcp_client.call_tool("fusescope_create_dashboard", {"searchContext": f"create {title}", **body})
             assert not result.get("isError", False), f"{title}: {text_blocks(result)[:600]}"
             created.append(_dashboard_id(result))
         target = created[0]
         current = first_block_json(
-            assert_tool_ok(mcp_client.call_tool("signoz_get_dashboard", {"searchContext": "read", "id": target}))
+            assert_tool_ok(mcp_client.call_tool("fusescope_get_dashboard", {"searchContext": "read", "id": target}))
         )
         current_name = (current.get("data") or current).get("name")
         for title, body in section(text, "Replace a dashboard"):
             result = mcp_client.call_tool(
-                "signoz_update_dashboard",
+                "fusescope_update_dashboard",
                 {"searchContext": f"apply {title}", "id": target, **body, "name": current_name},
             )
             assert not result.get("isError", False), f"{title}: {text_blocks(result)[:600]}"
         for title, patch in section(text, "Patch a dashboard"):
             result = mcp_client.call_tool(
-                "signoz_patch_dashboard", {"searchContext": f"apply {title}", "id": target, "patch": patch}
+                "fusescope_patch_dashboard", {"searchContext": f"apply {title}", "id": target, "patch": patch}
             )
             assert not result.get("isError", False), f"{title}: {text_blocks(result)[:600]}"
     finally:
         for dashboard_id in created:
             assert_tool_ok(
-                mcp_client.call_tool("signoz_delete_dashboard", {"searchContext": "cleanup", "id": dashboard_id})
+                mcp_client.call_tool("fusescope_delete_dashboard", {"searchContext": "cleanup", "id": dashboard_id})
             )
 
 
 def test_channel_examples_create_replace_and_delete(mcp_client: MCPClient, test_id: str) -> None:
-    text = mcp_client.read_resource("signoz://notification-channel/examples")
+    text = mcp_client.read_resource("fusescope://notification-channel/examples")
     created: list[str] = []
     try:
         for index, (title, channel) in enumerate(section(text, "Create a channel")):
@@ -189,7 +189,7 @@ def test_channel_examples_create_replace_and_delete(mcp_client: MCPClient, test_
         for title, body in section(text, "Replace a channel"):
             # The upstream PUT body is {config: {...}}; the tool takes its config object.
             result = mcp_client.call_tool(
-                "signoz_update_notification_channel",
+                "fusescope_update_notification_channel",
                 {"searchContext": f"apply {title}", "id": slack_id, "config": body["config"], "test": False},
             )
             assert not result.get("isError", False), f"{title}: {text_blocks(result)[:600]}"
@@ -200,10 +200,12 @@ def test_channel_examples_create_replace_and_delete(mcp_client: MCPClient, test_
 
 
 def test_query_builder_examples_execute(mcp_client: MCPClient) -> None:
-    text = mcp_client.read_resource("signoz://query-builder/examples")
+    text = mcp_client.read_resource("fusescope://query-builder/examples")
     end = int(time.time() * 1000)
     start = end - 30 * 60 * 1000
     for title, query in section(text, "Run a query"):
         body = {**query, "start": start, "end": end}
-        result = mcp_client.call_tool("signoz_execute_builder_query", {"searchContext": f"run {title}", "query": body})
+        result = mcp_client.call_tool(
+            "fusescope_execute_builder_query", {"searchContext": f"run {title}", "query": body}
+        )
         assert not result.get("isError", False), f"{title}: {text_blocks(result)[:600]}"

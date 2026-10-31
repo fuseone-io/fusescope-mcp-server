@@ -43,14 +43,14 @@ evolution.
   tool, a resource, or a prompt. A new tool MUST justify why the agent needs a
   separately selectable action.
 - **[SUR-5]** Names and descriptions MUST use agent/domain vocabulary
-  (`signoz_search_logs`, `signoz_list_alert_rules`), not backend route or
+  (`fusescope_search_logs`, `fusescope_list_alert_rules`), not backend route or
   implementation vocabulary. Unavoidable backend terminology (e.g. the query
   builder, Alertmanager) SHOULD be briefly explained where it appears rather
   than banned.
 - **[SUR-6] Nearest-neighbor boundaries.** Every tool whose scope could be
   confused with another MUST state the selection boundary against its nearest
-  neighbor(s) — as `signoz_search_traces` does against `signoz_aggregate_traces`
-  and `signoz_get_trace_details`. An agent reading only the descriptions should
+  neighbor(s) — as `fusescope_search_traces` does against `fusescope_aggregate_traces`
+  and `fusescope_get_trace_details`. An agent reading only the descriptions should
   never face two tools that both plausibly claim the same request.
 - **[SUR-7] Annotations are behavior-backed safety claims.** The advertised
   read-only/destructive/idempotent triple MUST match what the handler actually
@@ -72,8 +72,8 @@ evolution.
 | Result shape, handles (IDs, `webUrl`), pagination and truncation metadata | Output schema / result envelope |
 | Read-only / destructive / idempotent behavior | Tool annotations |
 | Routing rules and policies shared across several tools | Server instructions |
-| Long grammars, full schemas, complete worked examples, workflows, catalogs | Resources (`signoz://…`) |
-| Live tenant content addressed by ID | Read-only tools (`signoz_get_alert`, `signoz_get_dashboard`); resource template only under RES-1 |
+| Long grammars, full schemas, complete worked examples, workflows, catalogs | Resources (`fusescope://…`) |
+| Live tenant content addressed by ID | Read-only tools (`fusescope_get_alert`, `fusescope_get_dashboard`); resource template only under RES-1 |
 | Reusable user-invoked multi-step workflows | Prompts |
 | Immediate correction and recognized backend guidance for a failed call | Error result (text + structured fields) |
 
@@ -105,8 +105,8 @@ evolution.
 - **[SCH-4] Enums.** Use a schema enum only for values this server owns and
   keeps stable (e.g. `signal`, `requestType`). Workspace- or backend-evolving
   vocabularies (field keys, metric names, channel types that track the backend)
-  MUST instead point to a discovery tool (`signoz_get_field_keys`,
-  `signoz_get_field_values`) or resource.
+  MUST instead point to a discovery tool (`fusescope_get_field_keys`,
+  `fusescope_get_field_values`) or resource.
 - **[SCH-5] `searchContext`.** Every tool's input schema MUST expose a
   top-level `searchContext` string carrying the user's original request
   verbatim. It MUST NOT appear in the JSON Schema `required` list and MUST NOT
@@ -126,13 +126,13 @@ evolution.
   returns …"). Name only the nearest confusing alternative(s), include
   pre-call caveats that commonly break first calls (default time window,
   workspace-specific fields), and give exact discovery pointers
-  (tool name or `signoz://` URI), as the existing tool descriptions do.
+  (tool name or `fusescope://` URI), as the existing tool descriptions do.
 - **[DSC-3]** Field-local detail — format, units, constraints, dependencies,
   defaults, short examples — belongs on the parameter/schema surface, not in
   the tool description.
 - **[DSC-4] Examples.** Every non-trivial tool or workflow MUST have at least
   one realistic, executable example somewhere the agent can reach it
-  (tool/parameter description or a linked `signoz://` resource);
+  (tool/parameter description or a linked `fusescope://` resource);
   the same applies to any grammar, filter syntax, or ambiguous parameter
   format. Self-evident scalar fields do not need examples. Examples MUST use
   real SigNoz shapes and stay valid against the current handler.
@@ -143,8 +143,8 @@ evolution.
 ## 6. Resources, resource templates, and server instructions
 
 - **[RES-1]** Use resources for content too long or too structured for a
-  description: query grammars (`signoz://logs/query-builder-guide`), payload
-  schemas and worked examples (`signoz://dashboard/widgets-examples`),
+  description: query grammars (`fusescope://logs/query-builder-guide`), payload
+  schemas and worked examples (`fusescope://dashboard/widgets-examples`),
   multi-step workflows. Use read-only tools for live tenant entities. Add a
   resource template only when an application-controlled attachment workflow is
   demonstrated and the template provides value beyond an existing read tool.
@@ -224,7 +224,7 @@ evolution.
   cross-tenant identifier in the arguments MUST NOT leak another tenant's
   data; it fails like any other not-found/forbidden reference.
 - **[SEC-2]** Destructive actions MUST be explicit, narrowly scoped single
-  tools (`signoz_delete_dashboard` deletes exactly one dashboard by ID), with
+  tools (`fusescope_delete_dashboard` deletes exactly one dashboard by ID), with
   irreversibility stated in the description and side effects observable in the
   result. No tool may perform an undisclosed destructive side effect.
 - **[SEC-3]** Retry eligibility MUST derive from actual handler idempotency —

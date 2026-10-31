@@ -21,14 +21,14 @@ def test_list_metrics_path(mcp_client: MCPClient, test_id: str, telemetry: None)
 
     def visible() -> bool:
         result = mcp_client.call_tool(
-            "signoz_list_metrics", {"searchContext": f"find metric {metric}", "limit": "1000"}
+            "fusescope_list_metrics", {"searchContext": f"find metric {metric}", "limit": "1000"}
         )
         return not result.get("isError", False) and metric in first_text_block(result)
 
-    wait_for(visible, f"seeded metric {metric} visible via signoz_list_metrics")
+    wait_for(visible, f"seeded metric {metric} visible via fusescope_list_metrics")
 
     result = assert_tool_ok(
-        mcp_client.call_tool("signoz_list_metrics", {"searchContext": "list metrics", "limit": "5"})
+        mcp_client.call_tool("fusescope_list_metrics", {"searchContext": "list metrics", "limit": "5"})
     )
     _, ok = count_data_array_rows(first_text_block(result), "metrics")
     assert ok, "N4 DRIFT: list_metrics data.metrics[] path not found"
@@ -41,13 +41,13 @@ def test_top_metrics_path(mcp_client: MCPClient, test_id: str, telemetry: None) 
     seed_metrics(f"mcp-e2e-{test_id}", metric, count=2)
 
     def visible() -> bool:
-        result = mcp_client.call_tool("signoz_get_top_metrics", {"searchContext": "top metrics", "timeRange": "24h"})
+        result = mcp_client.call_tool("fusescope_get_top_metrics", {"searchContext": "top metrics", "timeRange": "24h"})
         return not result.get("isError", False) and metric in first_text_block(result)
 
-    wait_for(visible, f"seeded metric {metric} visible via signoz_get_top_metrics")
+    wait_for(visible, f"seeded metric {metric} visible via fusescope_get_top_metrics")
 
     result = assert_tool_ok(
-        mcp_client.call_tool("signoz_get_top_metrics", {"searchContext": "top metrics", "timeRange": "24h"})
+        mcp_client.call_tool("fusescope_get_top_metrics", {"searchContext": "top metrics", "timeRange": "24h"})
     )
     _, ok = count_data_array_rows(first_text_block(result), "samples")
     assert ok, "N4 DRIFT: get_top_metrics data.samples[] path not found"
@@ -72,6 +72,6 @@ def test_execute_builder_query(mcp_client: MCPClient) -> None:
         },
     }
     result = assert_tool_ok(
-        mcp_client.call_tool("signoz_execute_builder_query", {"searchContext": "count logs", "query": query})
+        mcp_client.call_tool("fusescope_execute_builder_query", {"searchContext": "count logs", "query": query})
     )
     json.loads(first_text_block(result))

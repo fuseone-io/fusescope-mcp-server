@@ -82,7 +82,7 @@ func TestGetFieldKeys_QueryTypeSelectsTheEndpoint(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			server, requests := newFieldsToolServer(t, http.StatusOK, body)
-			result := callRegisteredTool(t, server, "signoz_get_field_keys", tt.arguments)
+			result := callRegisteredTool(t, server, "fusescope_get_field_keys", tt.arguments)
 
 			require.False(t, result.IsError, allTextBlocks(result))
 			require.Equal(t, body, textContent(t, result))
@@ -97,7 +97,7 @@ func TestGetFieldKeys_QueryTypeSelectsTheEndpoint(t *testing.T) {
 func TestGetFieldKeys_AIFieldsPermissionDeniedIsCoded(t *testing.T) {
 	server, requests := newFieldsToolServer(t, http.StatusForbidden,
 		`{"status":"error","error":{"type":"forbidden","code":"forbidden","message":"viewer role required","errors":[]}}`)
-	result := callRegisteredTool(t, server, "signoz_get_field_keys", `{"signal":"traces","queryType":"builder_ai_query"}`)
+	result := callRegisteredTool(t, server, "fusescope_get_field_keys", `{"signal":"traces","queryType":"builder_ai_query"}`)
 
 	require.Len(t, *requests, 1)
 	require.Equal(t, "/api/v1/ai_observability/fields/keys", (*requests)[0].path)

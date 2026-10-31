@@ -1,13 +1,13 @@
 """AI trace queries against real SigNoz: queryType, requestType, and orderBy on the trace tools.
 
-These tests pin what the trace tool descriptions and signoz://ai/query-builder-guide
+These tests pin what the trace tool descriptions and fusescope://ai/query-builder-guide
 teach against the pinned release. One service holds an expensive looping AI
 trace, a cheap AI trace, and a plain trace, so ordering, counting, and exclusion
 assertions can fail: builder_ai_query keeps only AI traces, per-trace filters
 and order keys pick between the two AI traces, per-trace order keys are rejected
 on span rows, plain trace rows come back slowest first, per-trace aggregates
 agree with the trace rows, and a builder_ai_query runs through
-signoz_execute_builder_query and round-trips in an alert and a dashboard panel.
+fusescope_execute_builder_query and round-trips in an alert and a dashboard panel.
 """
 
 import time
@@ -54,7 +54,7 @@ def seeded(mcp_client: MCPClient, telemetry: None) -> Seeded:
 
     def visible() -> bool:
         result = mcp_client.call_tool(
-            "signoz_search_traces",
+            "fusescope_search_traces",
             {"searchContext": f"traces from {service}", "requestType": "trace", "service": service, "timeRange": "1h"},
         )
         if result.get("isError", False):
@@ -66,7 +66,9 @@ def seeded(mcp_client: MCPClient, telemetry: None) -> Seeded:
 
 
 def search_rows(client: MCPClient, arguments: dict) -> list[dict]:
-    result = assert_tool_ok(client.call_tool("signoz_search_traces", {"timeRange": "1h", "limit": "50", **arguments}))
+    result = assert_tool_ok(
+        client.call_tool("fusescope_search_traces", {"timeRange": "1h", "limit": "50", **arguments})
+    )
     return query_range_rows(first_text_block(result))
 
 
@@ -94,9 +96,9 @@ def test_ai_span_rows_are_the_gen_ai_spans_of_ai_traces_newest_first(mcp_client:
 
 
 def test_trace_details_show_model_tokens_and_tool_per_span(mcp_client: MCPClient, seeded: Seeded) -> None:
-    """signoz_get_trace_details returns the gen_ai.* columns, so an AI trace shows each call's model and usage."""
+    """fusescope_get_trace_details returns the gen_ai.* columns, so an AI trace shows each call's model and usage."""
     result = mcp_client.call_tool(
-        "signoz_get_trace_details",
+        "fusescope_get_trace_details",
         {"searchContext": "show this agent trace", "traceId": seeded.looping},
     )
     spans = query_range_rows(first_text_block(assert_tool_ok(result)))
@@ -115,7 +117,7 @@ def test_ai_span_rows_filter_on_per_trace_counts(mcp_client: MCPClient, seeded: 
 def test_span_rows_reject_per_trace_order_keys(mcp_client: MCPClient, seeded: Seeded) -> None:
     """The orderBy description says SigNoz rejects trace. keys on span rows; if that changes, so must the description."""
     result = mcp_client.call_tool(
-        "signoz_search_traces",
+        "fusescope_search_traces",
         {
             "searchContext": "AI spans ordered by trace tokens",
             "queryType": "builder_ai_query",
@@ -195,7 +197,7 @@ def scalar_rows(result: dict) -> list[dict]:
 
 def aggregate(client: MCPClient, seeded: Seeded, **arguments: str) -> list[dict]:
     result = client.call_tool(
-        "signoz_aggregate_traces",
+        "fusescope_aggregate_traces",
         {"searchContext": "AI trace statistics", "service": seeded.service, "timeRange": "1h", **arguments},
     )
     return scalar_rows(assert_tool_ok(result))
@@ -226,7 +228,7 @@ def test_ai_aggregate_per_trace_tokens_match_trace_rows(mcp_client: MCPClient, s
 def test_ai_aggregate_rejects_mixing_trace_and_span_aggregations(mcp_client: MCPClient, seeded: Seeded) -> None:
     """The guide and queryType description say one call cannot mix trace-level and span-level aggregations."""
     result = mcp_client.call_tool(
-        "signoz_aggregate_traces",
+        "fusescope_aggregate_traces",
         {
             "searchContext": "average AI trace tokens and p99 span latency",
             "service": seeded.service,
@@ -256,7 +258,7 @@ def test_ai_filter_rejects_or_across_trace_and_span_levels(mcp_client: MCPClient
     """The guide says SigNoz rejects OR across per-trace and span-level conditions; AND works."""
     filters = {"queryType": "builder_ai_query", "aggregations": "count_distinct(trace_id)"}
     rejected = mcp_client.call_tool(
-        "signoz_aggregate_traces",
+        "fusescope_aggregate_traces",
         {
             "searchContext": "looping or failing AI traces",
             "service": seeded.service,
@@ -294,7 +296,7 @@ def scalar_ai_request(spec: dict) -> dict:
 def test_execute_builder_query_bounds_builder_ai_query_without_an_order(mcp_client: MCPClient, seeded: Seeded) -> None:
     query = scalar_ai_request(ai_spec(seeded, "count_distinct(trace_id)"))
     result = assert_tool_ok(
-        mcp_client.call_tool("signoz_execute_builder_query", {"searchContext": "count AI traces", "query": query})
+        mcp_client.call_tool("fusescope_execute_builder_query", {"searchContext": "count AI traces", "query": query})
     )
     assert float(only_value(scalar_rows(result))) == 2
     notes = note_blocks(result)
@@ -326,12 +328,14 @@ def test_ai_alert_round_trip(mcp_client: MCPClient, seeded: Seeded, test_id: str
         "evaluation": {"kind": "rolling", "spec": {"evalWindow": "5m", "frequency": "1m"}},
         "notificationSettings": {"usePolicy": True},
     }
-    created = assert_tool_ok(mcp_client.call_tool("signoz_create_alert", {"searchContext": "alert on AI cost", **rule}))
+    created = assert_tool_ok(
+        mcp_client.call_tool("fusescope_create_alert", {"searchContext": "alert on AI cost", **rule})
+    )
     rule_id = (first_block_json(created).get("data") or {}).get("id")
     assert isinstance(rule_id, str) and rule_id, f"create_alert returned no rule id: {first_text_block(created)[:300]}"
     try:
         fetched = assert_tool_ok(
-            mcp_client.call_tool("signoz_get_alert", {"searchContext": f"get rule {name}", "id": rule_id})
+            mcp_client.call_tool("fusescope_get_alert", {"searchContext": f"get rule {name}", "id": rule_id})
         )
         data = first_block_json(fetched)["data"]
         assert data["alertType"] == "AI_TRACES_BASED_ALERT", f"alert type did not round-trip: {data['alertType']}"
@@ -339,8 +343,8 @@ def test_ai_alert_round_trip(mcp_client: MCPClient, seeded: Seeded, test_id: str
         assert queries[0]["type"] == "builder_ai_query", f"envelope type did not round-trip: {queries}"
         assert queries[0]["spec"]["aggregations"][0]["expression"] == "sum(trace.estimated_total_cost)"
     finally:
-        assert_tool_ok(mcp_client.call_tool("signoz_delete_alert", {"searchContext": "cleanup", "id": rule_id}))
-    gone = mcp_client.call_tool("signoz_get_alert", {"searchContext": f"confirm {name} is gone", "id": rule_id})
+        assert_tool_ok(mcp_client.call_tool("fusescope_delete_alert", {"searchContext": "cleanup", "id": rule_id}))
+    gone = mcp_client.call_tool("fusescope_get_alert", {"searchContext": f"confirm {name} is gone", "id": rule_id})
     assert gone.get("isError", False), f"alert {rule_id} remained after cleanup"
 
 
@@ -377,7 +381,7 @@ def test_ai_dashboard_panel_round_trips_and_runs(mcp_client: MCPClient, seeded: 
             ],
         },
     }
-    created = assert_tool_ok(mcp_client.call_tool("signoz_create_dashboard", dashboard))
+    created = assert_tool_ok(mcp_client.call_tool("fusescope_create_dashboard", dashboard))
     payload = first_json(created)
     data = payload.get("data", payload)
     dashboard_id = data.get("id") or data.get("uuid")
@@ -386,7 +390,7 @@ def test_ai_dashboard_panel_round_trips_and_runs(mcp_client: MCPClient, seeded: 
         fetched = first_json(
             assert_tool_ok(
                 mcp_client.call_tool(
-                    "signoz_get_dashboard", {"searchContext": f"get dashboard {dashboard_id}", "id": dashboard_id}
+                    "fusescope_get_dashboard", {"searchContext": f"get dashboard {dashboard_id}", "id": dashboard_id}
                 )
             )
         )
@@ -397,17 +401,17 @@ def test_ai_dashboard_panel_round_trips_and_runs(mcp_client: MCPClient, seeded: 
         query = scalar_ai_request(saved["spec"])
         result = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_execute_builder_query", {"searchContext": "run the saved panel", "query": query}
+                "fusescope_execute_builder_query", {"searchContext": "run the saved panel", "query": query}
             )
         )
         assert float(only_value(scalar_rows(result))) == 2
     finally:
         assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_delete_dashboard", {"searchContext": f"cleanup dashboard {dashboard_id}", "id": dashboard_id}
+                "fusescope_delete_dashboard", {"searchContext": f"cleanup dashboard {dashboard_id}", "id": dashboard_id}
             )
         )
     gone = mcp_client.call_tool(
-        "signoz_get_dashboard", {"searchContext": f"confirm dashboard {dashboard_id} is gone", "id": dashboard_id}
+        "fusescope_get_dashboard", {"searchContext": f"confirm dashboard {dashboard_id} is gone", "id": dashboard_id}
     )
     assert gone.get("isError", False), f"dashboard {dashboard_id} remained after cleanup"

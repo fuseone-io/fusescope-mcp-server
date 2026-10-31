@@ -152,8 +152,8 @@ func TestStructuredResult_FailsOpenOnTrailingData(t *testing.T) {
 func TestRawPassthroughResults_CarryNoStructuredContent(t *testing.T) {
 	payload := []byte(`{"status":"success","data":[]}`)
 	results := map[string]*mcp.CallToolResult{
-		"search_logs and search_traces":       rawSearchResult(testCtx(), nil, "signoz_search_logs", payload, 100, 0, false),
-		"aggregate_logs and aggregate_traces": aggregateResult(testCtx(), nil, "signoz_aggregate_logs", payload, false),
+		"search_logs and search_traces":       rawSearchResult(testCtx(), nil, "fusescope_search_logs", payload, 100, 0, false),
+		"aggregate_logs and aggregate_traces": aggregateResult(testCtx(), nil, "fusescope_aggregate_logs", payload, false),
 	}
 	for tools, result := range results {
 		if result.StructuredContent != nil {

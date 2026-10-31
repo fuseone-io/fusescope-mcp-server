@@ -372,7 +372,7 @@ func TestTelemetryMetricsExcludeHighCardinalityCorrelation(t *testing.T) {
 
 func TestSecretBearingToolTelemetryScrubsSearchContextAndErrorText(t *testing.T) {
 	const secret = "https://hooks.example.test/credential-url-canary"
-	for _, toolName := range []string{"signoz_create_notification_channel", "signoz_update_notification_channel"} {
+	for _, toolName := range []string{"fusescope_create_notification_channel", "fusescope_update_notification_channel"} {
 		t.Run(toolName, func(t *testing.T) {
 			identity := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				_, _ = w.Write([]byte(`{"status":"success","data":{"id":"sa-1","orgId":"org-1"}}`))

@@ -17,10 +17,10 @@ import (
 func (h *Handler) RegisterServiceHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering service handlers")
 
-	listTool := mcp.NewTool("signoz_list_services",
+	listTool := mcp.NewTool("fusescope_list_services",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants APM services with trace activity and their call or latency summaries in a time window. It returns traced-service records sorted by name and paginated; absence means no trace activity in that window, not that a matching service.name never appears in logs. For log values use signoz_get_field_values with signal=\"logs\" and name=\"service.name\"; for one service's operations use signoz_get_service_top_operations. Follow pagination.nextOffset until hasMore=false before concluding a traced service is absent."),
+		mcp.WithDescription("Use this when the user wants APM services with trace activity and their call or latency summaries in a time window. It returns traced-service records sorted by name and paginated; absence means no trace activity in that window, not that a matching service.name never appears in logs. For log values use fusescope_get_field_values with signal=\"logs\" and name=\"service.name\"; for one service's operations use fusescope_get_service_top_operations. Follow pagination.nextOffset until hasMore=false before concluding a traced service is absent."),
 		mcp.WithString("timeRange", mcp.DefaultString("6h"), mcp.Description(timeRangeParamDescription("Defaults to last 6 hours if not provided."))),
 		mcp.WithString("start", intOrStringType(), mcp.Description("Start time in unix milliseconds (optional, defaults to 6 hours ago).")),
 		mcp.WithString("end", intOrStringType(), mcp.Description("End time in unix milliseconds (optional, defaults to now).")),
@@ -30,11 +30,11 @@ func (h *Handler) RegisterServiceHandlers(s *mcp.Server) {
 
 	h.addTool(s, listTool, h.handleListServices)
 
-	getOpsTool := mcp.NewTool("signoz_get_service_top_operations",
+	getOpsTool := mcp.NewTool("fusescope_get_service_top_operations",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants the built-in operation table for one traced service in a time window. It ranks operation names by p99 latency and returns p50, p95, p99, call count, and error count. Use signoz_list_services to discover active traced service names. For custom aggregation, grouping, time series, cross-service comparison, or arbitrary trace filters, use signoz_aggregate_traces instead. The optional tags parameter is a JSON-encoded TagQueryParam array."),
-		mcp.WithString("service", mcp.Required(), mcp.Description("Exact traced service name, typically from signoz_list_services.")),
+		mcp.WithDescription("Use this when the user wants the built-in operation table for one traced service in a time window. It ranks operation names by p99 latency and returns p50, p95, p99, call count, and error count. Use fusescope_list_services to discover active traced service names. For custom aggregation, grouping, time series, cross-service comparison, or arbitrary trace filters, use fusescope_aggregate_traces instead. The optional tags parameter is a JSON-encoded TagQueryParam array."),
+		mcp.WithString("service", mcp.Required(), mcp.Description("Exact traced service name, typically from fusescope_list_services.")),
 		mcp.WithString("timeRange", mcp.DefaultString("6h"), mcp.Description(timeRangeParamDescription("Defaults to last 6 hours if not provided."))),
 		mcp.WithString("start", intOrStringType(), mcp.Description("Start time in unix milliseconds (optional, defaults to 6 hours ago).")),
 		mcp.WithString("end", intOrStringType(), mcp.Description("End time in unix milliseconds (optional, defaults to now).")),
@@ -57,7 +57,7 @@ func (h *Handler) handleListServices(ctx context.Context, req mcp.CallToolReques
 	start, end := timeutil.GetTimestampsWithDefaults(args, timeutil.UnitNanos)
 	limit, offset, limitClamped := paginate.ParseParamsClamped(req.Params.Arguments)
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_list_services", slog.String("start", start), slog.String("end", end), slog.Int("limit", limit), slog.Int("offset", offset))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_list_services", slog.String("start", start), slog.String("end", end), slog.Int("limit", limit), slog.Int("offset", offset))
 	client, base, clientErr := h.getResourceClient(ctx)
 	if clientErr != nil {
 		return clientErr, nil
@@ -144,7 +144,7 @@ func (h *Handler) handleGetServiceTopOperations(ctx context.Context, req mcp.Cal
 		tags = json.RawMessage("[]")
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_get_service_top_operations",
+	h.logger.DebugContext(ctx, "Tool called: fusescope_get_service_top_operations",
 		slog.String("start", start),
 		slog.String("end", end),
 		slog.String("service", service))

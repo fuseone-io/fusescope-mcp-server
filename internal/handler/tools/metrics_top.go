@@ -11,10 +11,10 @@ import (
 func (h *Handler) RegisterTopMetricsHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering top metrics handlers")
 
-	tool := mcp.NewTool("signoz_get_top_metrics",
+	tool := mcp.NewTool("fusescope_get_top_metrics",
 		withReadOnlyToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants to know which metrics drive ingestion volume or cost. It returns a fixed top 100 ranked by ingested sample count with pre-computed percentages for the requested window. Do not use it for metric values or trends (signoz_query_metrics), dashboard or alert dependencies (signoz_check_metric_usage), or label cardinality (signoz_check_metric_cardinality). This ranking has no offset pagination."),
+			"Use this when the user wants to know which metrics drive ingestion volume or cost. It returns a fixed top 100 ranked by ingested sample count with pre-computed percentages for the requested window. Do not use it for metric values or trends (fusescope_query_metrics), dashboard or alert dependencies (fusescope_check_metric_usage), or label cardinality (fusescope_check_metric_cardinality). This ranking has no offset pagination."),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
 		mcp.WithString("timeRange", mcp.DefaultString("7d"), mcp.Description(timeRangeParamDescription("Defaults to '7d' (a cost-analysis window); if the query times out, retry with '3d', then '24h'."))),
 		mcp.WithString("start", intOrStringType(), mcp.Description("Start time in unix milliseconds. When both start and end are provided, they override timeRange.")),
@@ -40,7 +40,7 @@ func (h *Handler) handleGetTopMetrics(ctx context.Context, req mcp.CallToolReque
 		return clientError(err), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_get_top_metrics",
+	h.logger.DebugContext(ctx, "Tool called: fusescope_get_top_metrics",
 		slog.Int64("start", startTime),
 		slog.Int64("end", endTime))
 

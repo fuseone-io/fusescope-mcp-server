@@ -1,19 +1,19 @@
 package metricsrules
 
 // MetricsGuide is the full markdown guide served as the
-// signoz://metrics-aggregation-guide MCP resource.
+// fusescope://metrics-aggregation-guide MCP resource.
 const MetricsGuide = `# Metrics Aggregation Guide
 
 ## Pre-Query Checklist
 
-If the exact metric name is known, call **signoz_query_metrics** directly. When ` + "`metricType`" + ` is
+If the exact metric name is known, call **fusescope_query_metrics** directly. When ` + "`metricType`" + ` is
 omitted, the tool looks up the metric and auto-fetches:
 - **type**: gauge, sum, histogram, exponential_histogram, summary
 - **temporality**: cumulative, delta, unspecified
 - **isMonotonic**: true/false (only relevant for type=sum)
 
 These fields pick the default aggregations for any you leave empty. Use
-**signoz_list_metrics** first only when discovering a metric name, inspecting catalog metadata, or
+**fusescope_list_metrics** first only when discovering a metric name, inspecting catalog metadata, or
 supplying metadata manually.
 
 ---
@@ -73,7 +73,7 @@ whole-window percentile. Each formula input query in a scalar request needs its 
 2. **Gauges**: avg, max, or latest. rate and increase run but measure how the value changed, which is rarely what a gauge question asks.
 3. **Histograms**: SigNoz stores a histogram named X as X.bucket (type histogram) plus the counters X.count and X.sum; query X.bucket, not X. Leave timeAggregation empty and pick a percentile for latency. To read the buckets instead, use timeAggregation rate with spaceAggregation sum: the result is grouped by le, and the le="+Inf" series is the total observation rate.
 4. **Summaries**: query the .quantile series with both aggregations set, for example avg and max, grouped by quantile; the .count and .sum series are counters.
-5. **Providing only metricType for a counter** → This bypasses metadata auto-fetch and can leave temporality or monotonicity unspecified. Either omit metricType so all metadata is fetched, or pass the matching values from signoz_list_metrics.
+5. **Providing only metricType for a counter** → This bypasses metadata auto-fetch and can leave temporality or monotonicity unspecified. Either omit metricType so all metadata is fetched, or pass the matching values from fusescope_list_metrics.
 6. **Setting temporality by hand** → Omit it. The backend resolves cumulative, delta or unspecified from the metric's metadata; a pinned value that does not match the exporter returns no data. Set it only to override the stored metadata.
 
 ---
@@ -82,7 +82,7 @@ whole-window percentile. Each formula input query in a scalar request needs its 
 
 Metric labels hold resource attributes and data-point attributes in one set, so groupBy and filter
 keys are plain label names with no context prefix: k8s.namespace.name, host.name, service_name,
-http.method. Discover them with signoz_get_field_keys (signal="metrics", metricName).
+http.method. Discover them with fusescope_get_field_keys (signal="metrics", metricName).
 
 Filters use the Query Builder operators (=, !=, IN, NOT IN, LIKE, ILIKE, CONTAINS, REGEXP, NOT REGEXP,
 EXISTS, NOT EXISTS, and numeric comparisons), not PromQL matchers: write =~ as REGEXP and !~ as
@@ -266,7 +266,7 @@ future). They answer questions like "which services consume the most telemetry b
 are **not** visible in the default metrics store.
 
 To query them, set ` + "`source: \"meter\"`" + ` on the ` + "`builder_query`" + ` spec (a sibling of
-` + "`name`" + ` and ` + "`signal`" + `), or pass ` + "`source=\"meter\"`" + ` to **signoz_query_metrics**. Omit
+` + "`name`" + ` and ` + "`signal`" + `), or pass ` + "`source=\"meter\"`" + ` to **fusescope_query_metrics**. Omit
 ` + "`source`" + ` (or leave it empty) for ordinary metrics. Everything else (filters, groupBy,
 aggregations, formulas) works exactly as for normal metrics.
 
@@ -278,20 +278,20 @@ Even log and span volume are queried this way, as metrics with ` + "`signal: \"m
 Meter data is aggregated in 1-hour buckets, so always set ` + "`stepInterval: 3600`" + ` (as in the
 example below). A smaller step adds no resolution and a query window shorter than 1 hour yields at
 most the current, still-incomplete hour (the build tested returns it flagged ` + "`partial: true`" + `;
-some versions return no data). Use a window of at least a few hours. When **signoz_query_metrics**
+some versions return no data). Use a window of at least a few hours. When **fusescope_query_metrics**
 is called without ` + "`stepInterval`" + ` it sends none and the backend auto-derives roughly
 ` + "`max(60, window/300)`" + ` seconds, below 3600 for any window shorter than ~12.5 days, so pass
 ` + "`stepInterval: 3600`" + ` explicitly for meter queries.
 
 ### Discover the current meter metrics
 
-Don't assume a fixed list; the meter metric set evolves. Call **signoz_list_metrics** with
+Don't assume a fixed list; the meter metric set evolves. Call **fusescope_list_metrics** with
 ` + "`source=\"meter\"`" + ` for the authoritative, current set, with each metric's ` + "`type`" + `,
 ` + "`temporality`" + `, and ` + "`unit`" + `, then apply the normal per-type aggregation rules (see above).
 As of this writing the set is telemetry-ingestion counters (delta monotonic sums), for
 example ` + "`signoz.meter.log.size`" + ` (bytes), ` + "`signoz.meter.span.count`" + `, and
 ` + "`signoz.meter.metric.datapoint.size`" + `, for which ` + "`timeAggregation: rate`" + ` or ` + "`increase`" + `
-with ` + "`spaceAggregation: sum`" + ` is correct. Verify type/unit per metric via signoz_list_metrics
+with ` + "`spaceAggregation: sum`" + ` is correct. Verify type/unit per metric via fusescope_list_metrics
 rather than relying on this example list.
 
 ### Example: Log Bytes Ingested Over Time

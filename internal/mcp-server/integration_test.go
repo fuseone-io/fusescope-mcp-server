@@ -376,11 +376,11 @@ func TestIntegration_FilterExpressionToolsAdvertiseCanonicalFilter(t *testing.T)
 	}
 
 	for _, name := range []string{
-		"signoz_search_logs",
-		"signoz_search_traces",
-		"signoz_aggregate_logs",
-		"signoz_aggregate_traces",
-		"signoz_query_metrics",
+		"fusescope_search_logs",
+		"fusescope_search_traces",
+		"fusescope_aggregate_logs",
+		"fusescope_aggregate_traces",
+		"fusescope_query_metrics",
 	} {
 		tool, ok := toolsByName[name]
 		if !ok {
@@ -395,20 +395,20 @@ func TestIntegration_FilterExpressionToolsAdvertiseCanonicalFilter(t *testing.T)
 		}
 	}
 
-	// signoz_search_docs was renamed (#367): its free-text param is now the
+	// fusescope_search_docs was renamed (#367): its free-text param is now the
 	// canonical "searchText". The legacy "query" key is still accepted by the
 	// handler as a PERMANENT silent alias but is no longer advertised in the
 	// schema. Pin both halves of that contract.
-	if tool, ok := toolsByName["signoz_search_docs"]; ok {
-		props := schemaProperties(t, "signoz_search_docs", inputSchema(t, tool))
+	if tool, ok := toolsByName["fusescope_search_docs"]; ok {
+		props := schemaProperties(t, "fusescope_search_docs", inputSchema(t, tool))
 		if _, ok := props["searchText"]; !ok {
-			t.Errorf("signoz_search_docs should advertise canonical %q param", "searchText")
+			t.Errorf("fusescope_search_docs should advertise canonical %q param", "searchText")
 		}
 		if _, ok := props["query"]; ok {
-			t.Errorf("signoz_search_docs should NOT advertise legacy %q param (handler-only alias)", "query")
+			t.Errorf("fusescope_search_docs should NOT advertise legacy %q param (handler-only alias)", "query")
 		}
 	} else {
-		t.Fatalf("tool signoz_search_docs not registered")
+		t.Fatalf("tool fusescope_search_docs not registered")
 	}
 }
 
@@ -545,7 +545,7 @@ func TestIntegration_InitializeListAndReadResources(t *testing.T) {
 			// The sitemap is backed by the asynchronously built docs index, which
 			// buildTestServer deliberately does not initialize. Its readable-content
 			// contract is covered by TestE2EDocsSearchFetchAndSitemap.
-			if resource.URI == "signoz://docs/sitemap" {
+			if resource.URI == "fusescope://docs/sitemap" {
 				t.Skip("requires initialized docs index")
 			}
 			if resource.Size == 0 {

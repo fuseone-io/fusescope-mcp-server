@@ -13,11 +13,11 @@ import (
 func (h *Handler) RegisterMetricUsageHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering metric usage handlers")
 
-	tool := mcp.NewTool("signoz_check_metric_usage",
+	tool := mcp.NewTool("fusescope_check_metric_usage",
 		mcp.WithOutputSchema[map[string]signozclient.MetricUsage](),
 		withReadOnlyToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user needs to know which dashboards and alerts reference known metric names, especially before dropping or reducing telemetry. It returns dashboards, alerts, and an error for each metric, with up to 50 unique names per call. Do not use it for ingestion ranking (signoz_get_top_metrics) or label cardinality (signoz_check_metric_cardinality). A non-empty per-metric error means that entry is partial and unreliable; never interpret it as proof that the metric is unused."),
+			"Use this when the user needs to know which dashboards and alerts reference known metric names, especially before dropping or reducing telemetry. It returns dashboards, alerts, and an error for each metric, with up to 50 unique names per call. Do not use it for ingestion ranking (fusescope_get_top_metrics) or label cardinality (fusescope_check_metric_cardinality). A non-empty per-metric error means that entry is partial and unreliable; never interpret it as proof that the metric is unused."),
 		mcp.WithString("searchContext",
 			mcp.Description(searchContextParamDescription)),
 		mcp.WithArray("metricNames",
@@ -74,7 +74,7 @@ func (h *Handler) handleCheckMetricUsage(ctx context.Context, req mcp.CallToolRe
 		)), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_check_metric_usage", slog.Int("count", len(names)))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_check_metric_usage", slog.Int("count", len(names)))
 
 	client, err := h.GetClient(ctx)
 	if err != nil {

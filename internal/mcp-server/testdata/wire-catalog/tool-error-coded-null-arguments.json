@@ -7,7 +7,7 @@
     "method": "tools/call",
     "params": {
       "arguments": null,
-      "name": "signoz_get_alert"
+      "name": "fusescope_get_alert"
     }
   },
   "httpStatus": 200,

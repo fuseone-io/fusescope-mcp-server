@@ -7,7 +7,7 @@
     "method": "tools/call",
     "params": {
       "arguments": {},
-      "name": "signoz_list_notification_channels"
+      "name": "fusescope_list_notification_channels"
     }
   },
   "httpStatus": 200,

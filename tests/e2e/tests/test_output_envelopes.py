@@ -32,12 +32,12 @@ from fixtures.telemetry import seed_metrics, seed_traces, wait_for
 
 def test_structured_content_on_list_tools(mcp_client: MCPClient) -> None:
     calls = [
-        ("signoz_list_services", {"timeRange": "1h"}),
-        ("signoz_list_alerts", {}),
-        ("signoz_list_alert_rules", {}),
-        ("signoz_list_dashboards", {}),
-        ("signoz_list_views", {"source": "traces"}),
-        ("signoz_list_notification_channels", {}),
+        ("fusescope_list_services", {"timeRange": "1h"}),
+        ("fusescope_list_alerts", {}),
+        ("fusescope_list_alert_rules", {}),
+        ("fusescope_list_dashboards", {}),
+        ("fusescope_list_views", {"source": "traces"}),
+        ("fusescope_list_notification_channels", {}),
     ]
     for tool, args in calls:
         result = assert_tool_ok(mcp_client.call_tool(tool, {"searchContext": f"call {tool}", **args}))
@@ -48,7 +48,7 @@ def test_structured_content_on_get_tools(mcp_client: MCPClient, test_id: str, te
     # Seed one resource of each kind so every get path runs (never skipped).
     dashboard = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_create_dashboard",
+            "fusescope_create_dashboard",
             {
                 "searchContext": f"create dashboard mcp-e2e-{test_id}",
                 "schemaVersion": "v6",
@@ -69,7 +69,7 @@ def test_structured_content_on_get_tools(mcp_client: MCPClient, test_id: str, te
 
     def trace_visible() -> str:
         result = mcp_client.call_tool(
-            "signoz_search_traces",
+            "fusescope_search_traces",
             {"searchContext": "recent traces", "service": f"mcp-e2e-{test_id}", "timeRange": "1h", "limit": "5"},
         )
         if result.get("isError", False):
@@ -81,11 +81,11 @@ def test_structured_content_on_get_tools(mcp_client: MCPClient, test_id: str, te
 
     try:
         for tool, args in (
-            ("signoz_get_dashboard", {"id": dashboard_id}),
-            ("signoz_get_alert", {"id": rule_id}),
-            ("signoz_get_view", {"id": view_id}),
-            ("signoz_get_notification_channel", {"id": channel_id}),
-            ("signoz_get_trace_details", {"traceId": trace_id, "timeRange": "1h"}),
+            ("fusescope_get_dashboard", {"id": dashboard_id}),
+            ("fusescope_get_alert", {"id": rule_id}),
+            ("fusescope_get_view", {"id": view_id}),
+            ("fusescope_get_notification_channel", {"id": channel_id}),
+            ("fusescope_get_trace_details", {"traceId": trace_id, "timeRange": "1h"}),
         ):
             result = assert_tool_ok(mcp_client.call_tool(tool, {"searchContext": f"call {tool}", **args}))
             assert_structured_matches_text(result)
@@ -98,12 +98,12 @@ def test_structured_content_on_get_tools(mcp_client: MCPClient, test_id: str, te
         assert channel_gone(mcp_client, channel_id), f"channel {channel_id} remained after cleanup"
         assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_delete_dashboard",
+                "fusescope_delete_dashboard",
                 {"searchContext": f"cleanup dashboard {dashboard_id}", "id": dashboard_id},
             )
         )
         dashboard_gone = mcp_client.call_tool(
-            "signoz_get_dashboard",
+            "fusescope_get_dashboard",
             {"searchContext": f"confirm dashboard {dashboard_id} gone", "id": dashboard_id},
         )
         assert dashboard_gone.get("isError", False), f"dashboard {dashboard_id} remained after cleanup"
@@ -115,14 +115,14 @@ def test_query_metrics_json_first(mcp_client: MCPClient, test_id: str, telemetry
     seed_metrics(f"mcp-e2e-{test_id}", metric, count=2)
 
     def visible() -> bool:
-        result = mcp_client.call_tool("signoz_list_metrics", {"searchContext": f"find {metric}", "limit": "1000"})
+        result = mcp_client.call_tool("fusescope_list_metrics", {"searchContext": f"find {metric}", "limit": "1000"})
         return not result.get("isError", False) and metric in first_text_block(result)
 
     wait_for(visible, f"seeded metric {metric} visible")
 
     result = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_query_metrics", {"searchContext": f"query {metric}", "metricName": metric, "timeRange": "1h"}
+            "fusescope_query_metrics", {"searchContext": f"query {metric}", "metricName": metric, "timeRange": "1h"}
         )
     )
     assert_no_structured(result)

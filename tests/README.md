@@ -97,7 +97,7 @@ variables: `--reuse`, `--teardown`, `--foundry-binary-path`, `--license-key`.
   `queryType` and `requestType`: span rows for both query types, per-trace
   filters and order keys, AI trace rows with their per-trace columns, plain
   trace rows, per-trace aggregates that agree with the trace rows, and a
-  `builder_ai_query` run through `signoz_execute_builder_query`, an alert, and a
+  `builder_ai_query` run through `fusescope_execute_builder_query`, an alert, and a
   dashboard panel.
 - `test_org_overview.py` — org overview conservation vs `GET /api/v1/stats`.
 - `test_ai_pricing_and_mappings.py` — AI pricing envelopes for both views, a seeded

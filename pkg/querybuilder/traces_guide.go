@@ -40,10 +40,10 @@ An unknown key may not fail: SigNoz can match a guessed attribute, return the wa
 Built-in span columns are stable, but resource and span attributes depend
 on this workspace's instrumentation. Do not guess unfamiliar field names. Discover keys, then confirm
 their observed values before filtering:
-  signoz_get_field_keys(signal="traces", fieldContext="span")
-  signoz_get_field_keys(signal="traces", fieldContext="resource")
-  signoz_get_field_keys(signal="traces", fieldContext="attribute")
-  signoz_get_field_values(signal="traces", name="<field>", fieldContext="<matching context>")
+  fusescope_get_field_keys(signal="traces", fieldContext="span")
+  fusescope_get_field_keys(signal="traces", fieldContext="resource")
+  fusescope_get_field_keys(signal="traces", fieldContext="attribute")
+  fusescope_get_field_values(signal="traces", name="<field>", fieldContext="<matching context>")
 
 Span attributes use fieldContext "attribute" everywhere: in the discovery tools and in Query Builder
 selectFields and groupBy entries. Older query payloads spell the same context with the legacy value

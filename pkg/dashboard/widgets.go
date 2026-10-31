@@ -1,7 +1,7 @@
 package dashboard
 
 const WidgetsInstructions = `
-Conceptual guidance only: WHICH query type and panel type to choose, and how to think about legends and layout. For the exact JSON shape (the panels map, plugin 'kind's, layouts, and variables), see signoz://dashboard/instructions and the create/update tool's JSON Schema.
+Conceptual guidance only: WHICH query type and panel type to choose, and how to think about legends and layout. For the exact JSON shape (the panels map, plugin 'kind's, layouts, and variables), see fusescope://dashboard/instructions and the create/update tool's JSON Schema.
 
 Query Type Selection [CRITICAL]:
 Choose the appropriate query type based on your data source and requirements:
@@ -28,7 +28,7 @@ Choose the appropriate query type based on your data source and requirements:
    - Supports: Metrics only
    - When to use: Prometheus migration, metric-specific operations, OpenTelemetry metrics with dots in names
    - Required: Must follow new format syntax (wrap metric names in curly braces, quote names with dots)
-   - Reference: Read signoz://promql/instructions, which covers the Prometheus 3.x UTF-8 quoted-selector form for dotted OTel names, anti-pattern table, dotted labels in by()/on()/ignoring(), and common patterns by metric type.
+   - Reference: Read fusescope://promql/instructions, which covers the Prometheus 3.x UTF-8 quoted-selector form for dotted OTel names, anti-pattern table, dotted labels in by()/on()/ignoring(), and common patterns by metric type.
 
 Selection Guidelines:
 - Start with Query Builder for simplicity and maintainability
@@ -37,14 +37,14 @@ Selection Guidelines:
 - Avoid mixing query types within a single dashboard unless necessary for specific requirements
 
 Query Resources [REQUIRED]:
-- Query Builder: signoz://dashboard/query-builder-example
-- ClickHouse logs: signoz://dashboard/clickhouse-schema-for-logs and signoz://dashboard/clickhouse-logs-example
-- ClickHouse metrics: signoz://dashboard/clickhouse-schema-for-metrics and signoz://dashboard/clickhouse-metrics-example
-- ClickHouse traces: signoz://dashboard/clickhouse-schema-for-traces and signoz://dashboard/clickhouse-traces-example
-- PromQL: signoz://promql/instructions
+- Query Builder: fusescope://dashboard/query-builder-example
+- ClickHouse logs: fusescope://dashboard/clickhouse-schema-for-logs and fusescope://dashboard/clickhouse-logs-example
+- ClickHouse metrics: fusescope://dashboard/clickhouse-schema-for-metrics and fusescope://dashboard/clickhouse-metrics-example
+- ClickHouse traces: fusescope://dashboard/clickhouse-schema-for-traces and fusescope://dashboard/clickhouse-traces-example
+- PromQL: fusescope://promql/instructions
 
 Field Discovery:
-- When a Query Builder field name is not already known, call signoz_get_field_keys with the widget's signal and fieldContext before composing the query; use signoz_get_field_values when observed values help verify the filter.
+- When a Query Builder field name is not already known, call fusescope_get_field_keys with the widget's signal and fieldContext before composing the query; use fusescope_get_field_values when observed values help verify the filter.
 - Do not invent tenant-specific attributes from an example. Adapt each example to fields present in the target tenant.
 
 Query count per panel [CRITICAL]:
@@ -53,7 +53,7 @@ Query count per panel [CRITICAL]:
 - Every panel must include queries. null is rejected, including for TextPanel.
 
 Dry-run a panel query [CRITICAL]:
-- Before saving a query panel, validate its one query with signoz_execute_builder_query. A saved query spec is already a Query Builder v5 execution spec, so translate only the envelope and keep the spec unchanged.
+- Before saving a query panel, validate its one query with fusescope_execute_builder_query. A saved query spec is already a Query Builder v5 execution spec, so translate only the envelope and keep the spec unchanged.
 - Envelope per query plugin: signoz/BuilderQuery -> builder_query, signoz/AIBuilderQuery -> builder_ai_query, signoz/Formula -> builder_formula, signoz/TraceOperator -> builder_trace_operator, signoz/PromQLQuery -> promql, signoz/ClickHouseSQL -> clickhouse_sql. Each becomes {"type": <envelope>, "spec": <saved spec>}.
 - signoz/CompositeQuery: its entries become sibling envelopes in compositeQuery.queries, in order, keeping disabled inputs and every formula.
 - PromQL and ClickHouse specs hold name and query. PromQL also accepts disabled, step, stats, and legend; ClickHouse accepts disabled and legend. Example: {"type": "promql", "spec": {"name": "A", "query": "sum(rate({\"http.server.request.duration.count\"}[5m]))"}}.
@@ -95,7 +95,7 @@ Layout (concepts):
 - Give charts with legends enough height that the legend stays fully visible; treat legend space as a vertical requirement.
 - Keep consistent sizing within a row of similar panels, group related panels together, and don't let panels overlap.
 - Use full width for tables and wide timeseries; split a row for side-by-side comparisons.
-- For the exact layout fields and how a panel links to its grid position, see signoz://dashboard/instructions and this tool's JSON Schema.
+- For the exact layout fields and how a panel links to its grid position, see fusescope://dashboard/instructions and this tool's JSON Schema.
 
 Area chart panel [CRITICAL]:
 Best for: volume over time (requests, bytes, log lines) and how grouped series add up to a total, such as traffic split by service.

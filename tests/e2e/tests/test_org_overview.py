@@ -37,7 +37,7 @@ def test_org_overview(mcp_client: MCPClient, signoz: SigNoz) -> None:
 
     result = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_get_org_overview", {"searchContext": "Give me a complete SigNoz deployment posture overview"}
+            "fusescope_get_org_overview", {"searchContext": "Give me a complete SigNoz deployment posture overview"}
         )
     )
 

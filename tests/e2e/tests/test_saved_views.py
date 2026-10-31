@@ -12,7 +12,7 @@ from fixtures.seeded import create_view, delete_view, extract_view_data, extract
 
 
 def listed_view_names(result: dict, source: str | None = None) -> set:
-    """Names in a signoz_list_views result (fails on envelope drift)."""
+    """Names in a fusescope_list_views result (fails on envelope drift)."""
     payload = first_block_json(result)
     data = payload.get("data")
     assert isinstance(data, list), f"list_views envelope drifted ({source=}): {payload}"
@@ -25,7 +25,7 @@ def test_view_crud_round_trip(mcp_client: MCPClient, test_id: str) -> None:
     deleted = False
     try:
         source = assert_tool_ok(
-            mcp_client.call_tool("signoz_get_view", {"searchContext": f"get view {source_id}", "id": source_id})
+            mcp_client.call_tool("fusescope_get_view", {"searchContext": f"get view {source_id}", "id": source_id})
         )
         source_data = extract_view_data(source)
 
@@ -33,14 +33,14 @@ def test_view_crud_round_trip(mcp_client: MCPClient, test_id: str) -> None:
         create_args = dict(source_data)
         create_args["name"] = name
 
-        created = assert_tool_ok(mcp_client.call_tool("signoz_create_view", create_args))
+        created = assert_tool_ok(mcp_client.call_tool("fusescope_create_view", create_args))
         clone_id = extract_view_data(created).get("id", "")
         assert clone_id, f"could not extract created view id from create_view response: {created}"
 
         # Read back via BOTH the canonical id and the legacy viewId.
         for key in ("id", "viewId"):
             fetched = assert_tool_ok(
-                mcp_client.call_tool("signoz_get_view", {"searchContext": f"get view {clone_id}", key: clone_id})
+                mcp_client.call_tool("fusescope_get_view", {"searchContext": f"get view {clone_id}", key: clone_id})
             )
             assert extract_view_name(fetched) == name, f"get_view via {key!r}: name round-trip mismatch"
 
@@ -86,7 +86,7 @@ def test_list_views_without_source_spans_explorers(mcp_client: MCPClient, test_i
         # environment with more than one page of views cannot hide the pins.
         listed = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_list_views",
+                "fusescope_list_views",
                 {"searchContext": "list saved views across all explorers", "name": test_id, "limit": "1000"},
             )
         )
@@ -105,7 +105,7 @@ def test_update_view_source_change_moves_view(mcp_client: MCPClient, test_id: st
     """Changing source on update is forwarded, and SigNoz moves the view to that Explorer.
 
     The old update guard rejected a source change client-side;
-    signoz://view/instructions now teaches that SigNoz accepts it and the view
+    fusescope://view/instructions now teaches that SigNoz accepts it and the view
     moves. Pinned: after updating a logs view to traces, the traces listing
     carries it and the logs listing does not.
     """
@@ -113,7 +113,7 @@ def test_update_view_source_change_moves_view(mcp_client: MCPClient, test_id: st
     view_id = create_view(mcp_client, name)
     try:
         fetched = assert_tool_ok(
-            mcp_client.call_tool("signoz_get_view", {"searchContext": f"get view {view_id}", "id": view_id})
+            mcp_client.call_tool("fusescope_get_view", {"searchContext": f"get view {view_id}", "id": view_id})
         )
         view = {k: v for k, v in extract_view_data(fetched).items() if k not in ("id", "createdAt", "updatedAt")}
         view["source"] = "traces"
@@ -123,7 +123,7 @@ def test_update_view_source_change_moves_view(mcp_client: MCPClient, test_id: st
 
         assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_update_view",
+                "fusescope_update_view",
                 {"searchContext": f"move view {view_id} to traces", "id": view_id, "view": view},
             )
         )
@@ -131,7 +131,7 @@ def test_update_view_source_change_moves_view(mcp_client: MCPClient, test_id: st
         traces_names = listed_view_names(
             assert_tool_ok(
                 mcp_client.call_tool(
-                    "signoz_list_views",
+                    "fusescope_list_views",
                     {"searchContext": "traces explorer views", "source": "traces", "name": test_id, "limit": "1000"},
                 )
             ),
@@ -140,7 +140,7 @@ def test_update_view_source_change_moves_view(mcp_client: MCPClient, test_id: st
         logs_names = listed_view_names(
             assert_tool_ok(
                 mcp_client.call_tool(
-                    "signoz_list_views",
+                    "fusescope_list_views",
                     {"searchContext": "logs explorer views", "source": "logs", "name": test_id, "limit": "1000"},
                 )
             ),

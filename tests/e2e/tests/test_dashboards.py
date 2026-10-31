@@ -94,13 +94,13 @@ def test_text_panel_create_get_update_patch_defaults_layout_and_cleanup(mcp_clie
         },
     }
 
-    created = assert_tool_ok(mcp_client.call_tool("signoz_create_dashboard", dashboard))
+    created = assert_tool_ok(mcp_client.call_tool("fusescope_create_dashboard", dashboard))
     dashboard_id = _dashboard_id(first_json(created))
     deleted = False
     try:
         fetched = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_get_dashboard", {"searchContext": f"get dashboard {dashboard_id}", "id": dashboard_id}
+                "fusescope_get_dashboard", {"searchContext": f"get dashboard {dashboard_id}", "id": dashboard_id}
             )
         )
         data = _data(first_json(fetched))
@@ -127,7 +127,7 @@ def test_text_panel_create_get_update_patch_defaults_layout_and_cleanup(mcp_clie
             "text": "# Updated runbook",
             "presentation": {"textAlign": "right", "verticalAlign": "center", "background": "#244B57"},
         }
-        updated = assert_tool_ok(mcp_client.call_tool("signoz_update_dashboard", replacement))
+        updated = assert_tool_ok(mcp_client.call_tool("fusescope_update_dashboard", replacement))
         updated_data = _data(first_json(updated))
         assert (
             updated_data["spec"]["panels"]["explicit"]["spec"]["plugin"]["spec"]
@@ -137,7 +137,7 @@ def test_text_panel_create_get_update_patch_defaults_layout_and_cleanup(mcp_clie
 
         patched = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_patch_dashboard",
+                "fusescope_patch_dashboard",
                 {
                     "searchContext": "patch only the explicit TextPanel plugin spec",
                     "id": dashboard_id,
@@ -169,26 +169,27 @@ def test_text_panel_create_get_update_patch_defaults_layout_and_cleanup(mcp_clie
 
         deleted_result = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_delete_dashboard",
+                "fusescope_delete_dashboard",
                 {"searchContext": f"delete dashboard {dashboard_id}", "id": dashboard_id},
             )
         )
         assert "deleted" in text_blocks(deleted_result).lower()
         deleted = True
         gone = mcp_client.call_tool(
-            "signoz_get_dashboard", {"searchContext": f"confirm dashboard {dashboard_id} is gone", "id": dashboard_id}
+            "fusescope_get_dashboard",
+            {"searchContext": f"confirm dashboard {dashboard_id} is gone", "id": dashboard_id},
         )
         assert gone.get("isError", False), f"dashboard {dashboard_id} remained after delete"
     finally:
         if not deleted:
             assert_tool_ok(
                 mcp_client.call_tool(
-                    "signoz_delete_dashboard",
+                    "fusescope_delete_dashboard",
                     {"searchContext": f"cleanup dashboard {dashboard_id}", "id": dashboard_id},
                 )
             )
         gone = mcp_client.call_tool(
-            "signoz_get_dashboard",
+            "fusescope_get_dashboard",
             {"searchContext": f"confirm dashboard {dashboard_id} is gone after cleanup", "id": dashboard_id},
         )
         assert gone.get("isError", False), f"dashboard {dashboard_id} remained after cleanup"
@@ -248,7 +249,7 @@ def test_dashboard_web_urls_follow_global_config_and_keep_request_backend_routin
             alternate = MCPClient(server.mcp_url, headers={"X-SigNoz-URL": other_backend})
             clients.callback(alternate.close)
             routes.append(("request", alternate, server.external_url or other_backend))
-        created = _data(first_json(assert_tool_ok(configured.call_tool("signoz_create_dashboard", dashboard))))
+        created = _data(first_json(assert_tool_ok(configured.call_tool("fusescope_create_dashboard", dashboard))))
         dashboard_id = _dashboard_id(created)
         args = {"searchContext": "read the temporary browser-link dashboard", "id": dashboard_id}
         expected_web_url = f"{server.external_url or server.backend_url}/dashboard/{dashboard_id}"
@@ -270,13 +271,13 @@ def test_dashboard_web_urls_follow_global_config_and_keep_request_backend_routin
             # external URL, links fall back to each caller's own API destination.
             for label, client, origin in routes:
                 web_url = f"{origin}/dashboard/{dashboard_id}"
-                fetched = _data(first_json(assert_tool_ok(client.call_tool("signoz_get_dashboard", args))))
+                fetched = _data(first_json(assert_tool_ok(client.call_tool("fusescope_get_dashboard", args))))
                 assert fetched["webUrl"] == web_url
                 listed = _data(
                     first_json(
                         assert_tool_ok(
                             client.call_tool(
-                                "signoz_list_dashboards",
+                                "fusescope_list_dashboards",
                                 {
                                     "searchContext": "find the browser-link dashboard",
                                     "filter": f"name CONTAINS '{title}'",
@@ -291,7 +292,7 @@ def test_dashboard_web_urls_follow_global_config_and_keep_request_backend_routin
                 replacement = deepcopy(fetched)
                 replacement["searchContext"] = "rename the temporary browser-link dashboard"
                 replacement["spec"]["display"]["name"] = f"{title}-{label}"
-                updated = _data(first_json(assert_tool_ok(client.call_tool("signoz_update_dashboard", replacement))))
+                updated = _data(first_json(assert_tool_ok(client.call_tool("fusescope_update_dashboard", replacement))))
                 assert updated["webUrl"] == web_url
                 assert updated["spec"]["display"]["name"] == replacement["spec"]["display"]["name"]
                 assert_persisted(updated)
@@ -301,7 +302,7 @@ def test_dashboard_web_urls_follow_global_config_and_keep_request_backend_routin
                     first_json(
                         assert_tool_ok(
                             client.call_tool(
-                                "signoz_patch_dashboard",
+                                "fusescope_patch_dashboard",
                                 {
                                     **args,
                                     "patch": [{"op": "replace", "path": "/spec/display/name", "value": patched_title}],
@@ -314,11 +315,11 @@ def test_dashboard_web_urls_follow_global_config_and_keep_request_backend_routin
                 assert patched["spec"]["display"]["name"] == patched_title
                 assert_persisted(patched)
 
-            fetched = _data(first_json(assert_tool_ok(configured.call_tool("signoz_get_dashboard", args))))
+            fetched = _data(first_json(assert_tool_ok(configured.call_tool("fusescope_get_dashboard", args))))
             assert fetched["webUrl"] == expected_web_url
             assert fetched["spec"]["display"]["name"] == f"{title}-{routes[-1][0]}-patched"
         finally:
-            assert_tool_ok(configured.call_tool("signoz_delete_dashboard", args))
+            assert_tool_ok(configured.call_tool("fusescope_delete_dashboard", args))
             gone = signoz.api("GET", f"/api/v2/dashboards/{dashboard_id}")
             assert gone.status_code == 404, f"dashboard {dashboard_id} remained after cleanup: HTTP {gone.status_code}"
 
@@ -387,19 +388,19 @@ def _area_dashboard(title: str, spec: dict) -> dict:
 def test_area_chart_panel_round_trips_stack_and_fill_and_rejects_fill_none(mcp_client: MCPClient, test_id: str) -> None:
     title = f"mcp-e2e-areachart-{test_id}"
     rejected = mcp_client.call_tool(
-        "signoz_create_dashboard",
+        "fusescope_create_dashboard",
         _area_dashboard(f"{title}-invalid", {"chartAppearance": {"fillMode": "none"}}),
     )
     if not rejected.get("isError", False):
         leaked_id = _dashboard_id(first_json(rejected))
         mcp_client.call_tool(
-            "signoz_delete_dashboard", {"searchContext": f"cleanup dashboard {leaked_id}", "id": leaked_id}
+            "fusescope_delete_dashboard", {"searchContext": f"cleanup dashboard {leaked_id}", "id": leaked_id}
         )
         raise AssertionError("area chart accepted fillMode none, which only timeseries panels allow")
 
     created = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_create_dashboard",
+            "fusescope_create_dashboard",
             _area_dashboard(
                 title,
                 {
@@ -414,7 +415,7 @@ def test_area_chart_panel_round_trips_stack_and_fill_and_rejects_fill_none(mcp_c
     try:
         fetched = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_get_dashboard", {"searchContext": f"get dashboard {dashboard_id}", "id": dashboard_id}
+                "fusescope_get_dashboard", {"searchContext": f"get dashboard {dashboard_id}", "id": dashboard_id}
             )
         )
         plugin = _data(first_json(fetched))["spec"]["panels"]["volume"]["spec"]["plugin"]
@@ -425,7 +426,7 @@ def test_area_chart_panel_round_trips_stack_and_fill_and_rejects_fill_none(mcp_c
 
         patched = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_patch_dashboard",
+                "fusescope_patch_dashboard",
                 {
                     "searchContext": "switch the area chart to percent stacking",
                     "id": dashboard_id,
@@ -445,12 +446,12 @@ def test_area_chart_panel_round_trips_stack_and_fill_and_rejects_fill_none(mcp_c
     finally:
         assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_delete_dashboard",
+                "fusescope_delete_dashboard",
                 {"searchContext": f"cleanup dashboard {dashboard_id}", "id": dashboard_id},
             )
         )
         gone = mcp_client.call_tool(
-            "signoz_get_dashboard",
+            "fusescope_get_dashboard",
             {"searchContext": f"confirm dashboard {dashboard_id} is gone after cleanup", "id": dashboard_id},
         )
         assert gone.get("isError", False), f"dashboard {dashboard_id} remained after cleanup"
@@ -466,7 +467,7 @@ ENVELOPE_BY_PLUGIN = {
 
 
 def _execution_envelopes(plugin: dict) -> list[dict]:
-    """Translate one saved panel query plugin as signoz://dashboard/widgets-instructions describes."""
+    """Translate one saved panel query plugin as fusescope://dashboard/widgets-instructions describes."""
     if plugin["kind"] == "signoz/CompositeQuery":
         return plugin["spec"]["queries"]
     return [{"type": ENVELOPE_BY_PLUGIN[plugin["kind"]], "spec": plugin["spec"]}]
@@ -557,12 +558,12 @@ def test_saved_panel_queries_dry_run_unchanged_through_execute_builder_query(
             ],
         },
     }
-    created = assert_tool_ok(mcp_client.call_tool("signoz_create_dashboard", dashboard))
+    created = assert_tool_ok(mcp_client.call_tool("fusescope_create_dashboard", dashboard))
     dashboard_id = _dashboard_id(first_json(created))
     try:
         fetched = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_get_dashboard", {"searchContext": f"get dashboard {dashboard_id}", "id": dashboard_id}
+                "fusescope_get_dashboard", {"searchContext": f"get dashboard {dashboard_id}", "id": dashboard_id}
             )
         )
         panels = _data(first_json(fetched))["spec"]["panels"]
@@ -578,19 +579,19 @@ def test_saved_panel_queries_dry_run_unchanged_through_execute_builder_query(
             }
             assert_tool_ok(
                 mcp_client.call_tool(
-                    "signoz_execute_builder_query",
+                    "fusescope_execute_builder_query",
                     {"searchContext": f"dry-run the saved {panel_id} panel query", "query": query},
                 )
             )
     finally:
         assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_delete_dashboard",
+                "fusescope_delete_dashboard",
                 {"searchContext": f"cleanup dashboard {dashboard_id}", "id": dashboard_id},
             )
         )
         gone = mcp_client.call_tool(
-            "signoz_get_dashboard",
+            "fusescope_get_dashboard",
             {"searchContext": f"confirm dashboard {dashboard_id} is gone after cleanup", "id": dashboard_id},
         )
         assert gone.get("isError", False), f"dashboard {dashboard_id} remained after cleanup"
@@ -604,7 +605,7 @@ def test_template_catalog_import_lifecycle(mcp_client: MCPClient) -> None:
     """
     catalog = first_json(
         assert_tool_ok(
-            mcp_client.call_tool("signoz_list_dashboard_templates", {"searchContext": "list dashboard templates"})
+            mcp_client.call_tool("fusescope_list_dashboard_templates", {"searchContext": "list dashboard templates"})
         )
     )
     entries = catalog if isinstance(catalog, list) else catalog.get("templates") or catalog.get("data") or []
@@ -613,7 +614,7 @@ def test_template_catalog_import_lifecycle(mcp_client: MCPClient) -> None:
 
     imported = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_import_dashboard",
+            "fusescope_import_dashboard",
             {"searchContext": "import the hostmetrics template", "path": "hostmetrics/hostmetrics.json"},
         )
     )
@@ -626,12 +627,12 @@ def test_template_catalog_import_lifecycle(mcp_client: MCPClient) -> None:
     finally:
         assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_delete_dashboard",
+                "fusescope_delete_dashboard",
                 {"searchContext": f"cleanup imported dashboard {dashboard_id}", "id": dashboard_id},
             )
         )
         gone = mcp_client.call_tool(
-            "signoz_get_dashboard",
+            "fusescope_get_dashboard",
             {"searchContext": f"confirm imported dashboard {dashboard_id} is gone", "id": dashboard_id},
         )
         assert gone.get("isError", False), f"imported dashboard {dashboard_id} remained after cleanup"

@@ -19,7 +19,7 @@ def create_channel(client: MCPClient, name: str, config: dict) -> str:
     """Create a canonical v2 notification channel; return its id."""
     result = assert_tool_ok(
         client.call_tool(
-            "signoz_create_notification_channel",
+            "fusescope_create_notification_channel",
             {
                 "searchContext": f"create a webhook channel named {name}",
                 "name": name,
@@ -43,7 +43,7 @@ def create_channel(client: MCPClient, name: str, config: dict) -> str:
 def delete_channel(client: MCPClient, channel_id: str) -> None:
     result = assert_tool_ok(
         client.call_tool(
-            "signoz_delete_notification_channel",
+            "fusescope_delete_notification_channel",
             {"searchContext": f"delete channel {channel_id}", "id": channel_id},
         )
     )
@@ -52,7 +52,7 @@ def delete_channel(client: MCPClient, channel_id: str) -> None:
 
 def channel_gone(client: MCPClient, channel_id: str) -> bool:
     result = client.call_tool(
-        "signoz_get_notification_channel", {"searchContext": f"confirm channel {channel_id} gone", "id": channel_id}
+        "fusescope_get_notification_channel", {"searchContext": f"confirm channel {channel_id} gone", "id": channel_id}
     )
     return bool(result.get("isError", False))
 
@@ -61,7 +61,7 @@ def channel_id_by_name(client: MCPClient, name: str) -> str:
     """Best-effort id recovery by name (cleanup backstop; never raises)."""
     try:
         result = client.call_tool(
-            "signoz_list_notification_channels",
+            "fusescope_list_notification_channels",
             {"searchContext": f"find channel {name}", "query": name, "limit": 200},
         )
         if result.get("isError", False):
@@ -85,7 +85,7 @@ def create_alert_rule(client: MCPClient, name: str, *, channel_name: str) -> str
     """Create a logs threshold alert rule routed to `channel_name`; return its id."""
     result = assert_tool_ok(
         client.call_tool(
-            "signoz_create_alert",
+            "fusescope_create_alert",
             {
                 "searchContext": f"create an alert rule named {name}",
                 "alert": name,
@@ -136,7 +136,7 @@ def create_alert_rule(client: MCPClient, name: str, *, channel_name: str) -> str
 def delete_alert_rule(client: MCPClient, rule_id: str) -> None:
     assert_tool_ok(
         client.call_tool(
-            "signoz_delete_alert",
+            "fusescope_delete_alert",
             {"searchContext": f"delete alert rule {rule_id}", "id": rule_id},
         )
     )
@@ -144,7 +144,7 @@ def delete_alert_rule(client: MCPClient, rule_id: str) -> None:
 
 def alert_rule_gone(client: MCPClient, rule_id: str) -> bool:
     result = client.call_tool(
-        "signoz_get_alert", {"searchContext": f"confirm alert rule {rule_id} gone", "id": rule_id}
+        "fusescope_get_alert", {"searchContext": f"confirm alert rule {rule_id} gone", "id": rule_id}
     )
     return bool(result.get("isError", False))
 
@@ -153,7 +153,7 @@ def create_view(client: MCPClient, name: str, *, source: str = "logs", spec: dic
     """Create a saved view; return its id."""
     result = assert_tool_ok(
         client.call_tool(
-            "signoz_create_view",
+            "fusescope_create_view",
             {
                 "searchContext": f"create a saved view named {name}",
                 "name": name,
@@ -178,14 +178,14 @@ def create_view(client: MCPClient, name: str, *, source: str = "logs", spec: dic
 def delete_view(client: MCPClient, view_id: str, *, key: str = "id") -> None:
     assert_tool_ok(
         client.call_tool(
-            "signoz_delete_view",
+            "fusescope_delete_view",
             {"searchContext": f"delete view {view_id}", key: view_id},
         )
     )
 
 
 def view_gone(client: MCPClient, view_id: str) -> bool:
-    result = client.call_tool("signoz_get_view", {"searchContext": f"confirm view {view_id} gone", "id": view_id})
+    result = client.call_tool("fusescope_get_view", {"searchContext": f"confirm view {view_id} gone", "id": view_id})
     return bool(result.get("isError", False))
 
 

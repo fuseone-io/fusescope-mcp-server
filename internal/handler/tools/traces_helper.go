@@ -8,7 +8,7 @@ import (
 	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
 )
 
-const tracesLegacyQueryAliasError = `parameter validation failed: "query" is not accepted by trace tools; use "filter" with a Query Builder filter expression (see signoz://traces/query-builder-guide)`
+const tracesLegacyQueryAliasError = `parameter validation failed: "query" is not accepted by trace tools; use "filter" with a Query Builder filter expression (see fusescope://traces/query-builder-guide)`
 
 // readTraceFilterExpr reads the canonical filter parameter for trace tools.
 func readTraceFilterExpr(args map[string]any) (string, error) {

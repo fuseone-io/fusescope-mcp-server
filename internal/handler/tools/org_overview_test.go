@@ -66,7 +66,7 @@ func TestBuildOrgOverview_CloudProviderAvailabilityIsIndependent(t *testing.T) {
 	if !containsString(drift, "cloudintegration.azure.connectedaccounts.count") {
 		t.Fatalf("missing Azure source field must be observable: %v", drift)
 	}
-	if recovery := incompleteGroup(got.Data.Metadata.IncompleteGroups, "cloudIntegrations"); recovery == nil || recovery.NextAction == "" || containsString(recovery.NextTools, "signoz_get_org_overview") {
+	if recovery := incompleteGroup(got.Data.Metadata.IncompleteGroups, "cloudIntegrations"); recovery == nil || recovery.NextAction == "" || containsString(recovery.NextTools, "fusescope_get_org_overview") {
 		t.Fatalf("missing cloud recovery guidance: %#v", got.Data.Metadata.IncompleteGroups)
 	}
 }
@@ -183,17 +183,17 @@ func TestOrgOverviewRecoveryNeverRecommendsRecursiveOverviewCall(t *testing.T) {
 			if nextAction == "" {
 				t.Fatal("recovery guidance must include a next action")
 			}
-			if containsString(nextTools, "signoz_get_org_overview") {
-				t.Fatalf("recovery must not recursively recommend signoz_get_org_overview: %v", nextTools)
+			if containsString(nextTools, "fusescope_get_org_overview") {
+				t.Fatalf("recovery must not recursively recommend fusescope_get_org_overview: %v", nextTools)
 			}
 		})
 	}
 }
 
 func TestOrgOverviewOutputSchema_SourceStatsAcceptsArbitraryValues(t *testing.T) {
-	entry := registeredTestTools(t)["signoz_get_org_overview"]
+	entry := registeredTestTools(t)["fusescope_get_org_overview"]
 	if entry == nil {
-		t.Fatal("signoz_get_org_overview is not registered")
+		t.Fatal("fusescope_get_org_overview is not registered")
 	}
 	rawSchema := outputSchemaJSON(entry.Tool)
 
@@ -205,7 +205,7 @@ func TestOrgOverviewOutputSchema_SourceStatsAcceptsArbitraryValues(t *testing.T)
 	if err != nil {
 		t.Fatalf("encode schema probe: %v", err)
 	}
-	compiled, err := compileToolSchema("signoz_get_org_overview", "output", rawSchema)
+	compiled, err := compileToolSchema("fusescope_get_org_overview", "output", rawSchema)
 	if err != nil {
 		t.Fatalf("compile output schema: %v", err)
 	}
@@ -369,7 +369,7 @@ func TestGetOrgOverview_FeatureFlagsFailure(t *testing.T) {
 			server := newMCPTestServer()
 			h.RegisterOrgOverviewHandlers(server)
 
-			result := callRegisteredTool(t, server, "signoz_get_org_overview", `{}`)
+			result := callRegisteredTool(t, server, "fusescope_get_org_overview", `{}`)
 			if tt.wantCode != "" {
 				if got := resultCode(t, result); got != tt.wantCode {
 					t.Fatalf("code = %q, want %q", got, tt.wantCode)

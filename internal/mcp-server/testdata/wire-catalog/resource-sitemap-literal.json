@@ -6,7 +6,7 @@
     "jsonrpc": "2.0",
     "method": "resources/read",
     "params": {
-      "uri": "signoz://docs/sitemap"
+      "uri": "fusescope://docs/sitemap"
     }
   },
   "httpStatus": 200,
@@ -21,7 +21,7 @@
         {
           "mimeType": "text/markdown",
           "text": "- [Send logs](https://signoz.io/docs/logs-management/send-logs/)\n- [Install Docker](https://signoz.io/docs/install/docker/)\n",
-          "uri": "signoz://docs/sitemap"
+          "uri": "fusescope://docs/sitemap"
         }
       ],
       "ttlMs": 0

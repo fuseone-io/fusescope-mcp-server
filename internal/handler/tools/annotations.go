@@ -44,7 +44,7 @@ func withUpdateToolAnnotations() mcp.ToolOption {
 
 // withNonIdempotentUpdateToolAnnotations marks an update tool whose handler
 // performs an external side effect on every call beyond the PUT itself —
-// signoz_update_notification_channel sends a live test notification after
+// fusescope_update_notification_channel sends a live test notification after
 // each successful update — so a repeat call re-notifies and is not free.
 func withNonIdempotentUpdateToolAnnotations() mcp.ToolOption {
 	return func(t *mcp.Tool) {

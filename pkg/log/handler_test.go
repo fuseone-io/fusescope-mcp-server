@@ -19,7 +19,7 @@ func newTestLogger(buf *bytes.Buffer) *slog.Logger {
 }
 
 func TestContextHandler_SuppressesSearchContextForSecretBearingTools(t *testing.T) {
-	for _, toolName := range []string{"signoz_create_notification_channel", "signoz_update_notification_channel"} {
+	for _, toolName := range []string{"fusescope_create_notification_channel", "fusescope_update_notification_channel"} {
 		t.Run(toolName, func(t *testing.T) {
 			var buf bytes.Buffer
 			logger := newTestLogger(&buf)
@@ -114,47 +114,47 @@ func TestRedactedTruncAnyRedactsNotificationChannelArguments(t *testing.T) {
 	}{
 		{
 			name:     "nested adapted create request",
-			toolName: "signoz_create_notification_channel",
+			toolName: "fusescope_create_notification_channel",
 			payload: map[string]any{
 				"request": mcpcontract.CallToolRequest{Params: mcpcontract.CallToolParams{
-					Name:      "signoz_create_notification_channel",
+					Name:      "fusescope_create_notification_channel",
 					Arguments: arguments,
 				}},
 			},
 		},
 		{
 			name:     "nested adapted update request",
-			toolName: "signoz_update_notification_channel",
+			toolName: "fusescope_update_notification_channel",
 			payload: map[string]any{
 				"request": mcpcontract.CallToolRequest{Params: mcpcontract.CallToolParams{
-					Name:      "signoz_update_notification_channel",
+					Name:      "fusescope_update_notification_channel",
 					Arguments: arguments,
 				}},
 			},
 		},
 		{
 			name:     "nested SDK request",
-			toolName: "signoz_create_notification_channel",
+			toolName: "fusescope_create_notification_channel",
 			payload: map[string]any{
 				"request": &mcp.CallToolRequest{Params: &mcp.CallToolParamsRaw{
-					Name:      "signoz_create_notification_channel",
+					Name:      "fusescope_create_notification_channel",
 					Arguments: encodedArguments,
 				}},
 			},
 		},
 		{
 			name:     "flat create params",
-			toolName: "signoz_create_notification_channel",
+			toolName: "fusescope_create_notification_channel",
 			payload: &mcp.CallToolParams{
-				Name:      "signoz_create_notification_channel",
+				Name:      "fusescope_create_notification_channel",
 				Arguments: arguments,
 			},
 		},
 		{
 			name:     "flat update params",
-			toolName: "signoz_update_notification_channel",
+			toolName: "fusescope_update_notification_channel",
 			payload: &mcp.CallToolParams{
-				Name:      "signoz_update_notification_channel",
+				Name:      "fusescope_update_notification_channel",
 				Arguments: arguments,
 			},
 		},
@@ -188,7 +188,7 @@ func TestRedactedTruncAnyRedactsNotificationChannelArguments(t *testing.T) {
 
 func TestRedactedTruncAnyPreservesOrdinaryToolURLs(t *testing.T) {
 	payload := &mcp.CallToolParams{
-		Name: "signoz_create_dashboard",
+		Name: "fusescope_create_dashboard",
 		Arguments: map[string]any{
 			"url":    "https://dashboard.example.com/url-canary",
 			"apiUrl": "https://dashboard.example.com/api-url-canary",

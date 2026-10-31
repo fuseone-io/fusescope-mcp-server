@@ -6,7 +6,7 @@
     "jsonrpc": "2.0",
     "method": "resources/read",
     "params": {
-      "uri": "signoz://unknown"
+      "uri": "fusescope://unknown"
     }
   },
   "httpStatus": 200,
@@ -16,7 +16,7 @@
     "error": {
       "code": -32602,
       "data": {
-        "uri": "signoz://unknown"
+        "uri": "fusescope://unknown"
       },
       "message": "Resource not found"
     },

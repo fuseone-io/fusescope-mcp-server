@@ -4,11 +4,11 @@ import (
 	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
 )
 
-// CreateViewInput is the signoz_create_view input schema: the upstream-generated
+// CreateViewInput is the fusescope_create_view input schema: the upstream-generated
 // PostableSavedView (regenerated from the pinned SigNoz release spec by make
 // gen) plus the MCP-only searchContext envelope field. Never hand-maintain a
 // copy of the view shape here; query-envelope teaching lives in the
-// signoz://view resources.
+// fusescope://view resources.
 type CreateViewInput struct {
 	apitypes.SavedviewtypesPostableSavedView
 	// SchemaVersion shadows the generated required field: the handler forces
@@ -17,15 +17,15 @@ type CreateViewInput struct {
 	SearchContext string `json:"searchContext,omitempty" jsonschema:"Copy the user's entire original request verbatim, including any preflight or confirmation context; do not summarize, shorten, or omit clauses."`
 }
 
-// UpdateViewInput is the signoz_update_view input schema: the target view id
+// UpdateViewInput is the fusescope_update_view input schema: the target view id
 // and the generated UpdatableSavedView under "view", plus the searchContext
 // envelope field.
 type UpdateViewInput struct {
 	// id is an optional property (json ",omitempty") so schema-validating
 	// clients may still send the legacy "viewId" alias; the handler requires
 	// one via readResourceID (canonical "id" wins).
-	ID            string            `json:"id,omitempty" jsonschema:"UUID of the view to replace (required). Obtain it from signoz_list_views."`
-	View          UpdatableViewBody `json:"view" jsonschema:"Complete saved view after the requested changes. Start with the data returned by signoz_get_view and pass the full object here; name is immutable and is dropped."`
+	ID            string            `json:"id,omitempty" jsonschema:"UUID of the view to replace (required). Obtain it from fusescope_list_views."`
+	View          UpdatableViewBody `json:"view" jsonschema:"Complete saved view after the requested changes. Start with the data returned by fusescope_get_view and pass the full object here; name is immutable and is dropped."`
 	SearchContext string            `json:"searchContext,omitempty" jsonschema:"Copy the user's entire original request verbatim, including any preflight or confirmation context; do not summarize, shorten, or omit clauses."`
 }
 

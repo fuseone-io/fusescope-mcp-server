@@ -22,7 +22,7 @@ import (
 
 func TestToolHandlers_MissingCredentialsAreCoded(t *testing.T) {
 	h := &Handler{logger: logpkg.New("error")}
-	result, err := h.handleListMetrics(context.Background(), makeToolRequest("signoz_list_metrics", map[string]any{}))
+	result, err := h.handleListMetrics(context.Background(), makeToolRequest("fusescope_list_metrics", map[string]any{}))
 	if err != nil {
 		t.Fatalf("handleListMetrics returned Go error: %v", err)
 	}
@@ -65,34 +65,34 @@ func TestToolHandlers_RejectInvalidArgumentsBeforeCallingSigNoz(t *testing.T) {
 		arguments string
 		wantText  string
 	}{
-		{tool: "signoz_get_alert", arguments: `{}`, wantText: `"id" is required`},
+		{tool: "fusescope_get_alert", arguments: `{}`, wantText: `"id" is required`},
 		// A wrong-typed legacy alias counts as absent, so the canonical id error wins.
-		{tool: "signoz_get_alert", arguments: `{"ruleId":12345}`, wantText: `"id" is required`},
-		{tool: "signoz_get_dashboard", arguments: `{}`, wantText: `"id" is required`},
-		{tool: "signoz_get_dashboard", arguments: `{"uuid":true}`, wantText: `"uuid" is no longer accepted`},
-		{tool: "signoz_get_view", arguments: `{}`, wantText: `"id" is required`},
+		{tool: "fusescope_get_alert", arguments: `{"ruleId":12345}`, wantText: `"id" is required`},
+		{tool: "fusescope_get_dashboard", arguments: `{}`, wantText: `"id" is required`},
+		{tool: "fusescope_get_dashboard", arguments: `{"uuid":true}`, wantText: `"uuid" is no longer accepted`},
+		{tool: "fusescope_get_view", arguments: `{}`, wantText: `"id" is required`},
 		// The retired flat update body names the "view" wrapper that replaced it.
-		{tool: "signoz_update_view", arguments: `{"id":"019947a7-f200-7000-8000-000000000001","source":"logs","spec":{"displayName":"x"}}`, wantText: `"source" is no longer accepted at the top level; pass the saved view under "view"`},
-		{tool: "signoz_update_view", arguments: `{"id":"019947a7-f200-7000-8000-000000000001"}`, wantText: `"view" is required`},
-		{tool: "signoz_get_notification_channel", arguments: `{}`, wantText: `"id" is required`},
-		{tool: "signoz_execute_builder_query", arguments: `{}`, wantText: `"query" must be a JSON object`},
-		{tool: "signoz_get_trace_details", arguments: `{"traceId":"deadbeefdeadbeefdeadbeefdeadbeef","includeSpans":"perhaps"}`, wantText: "includeSpans"},
-		{tool: "signoz_aggregate_logs", arguments: `{"aggregation":"count"}`, wantText: `"aggregations"`},
-		{tool: "signoz_aggregate_logs", arguments: `{"aggregations":"p99(x)","aggregateOn":"x"}`, wantText: `"aggregations"`},
-		{tool: "signoz_aggregate_logs", arguments: `{"groupBy":"service.name"}`, wantText: `"aggregations" is required`},
-		{tool: "signoz_aggregate_logs", arguments: `{"aggregations":["count()",7]}`, wantText: `"aggregations" items`},
-		{tool: "signoz_aggregate_logs", arguments: `{"aggregations":"count()","functions":"cutOffMin"}`, wantText: `"functions"`},
-		{tool: "signoz_aggregate_logs", arguments: `{"aggregations":"count()","functions":[{"args":[]}]}`, wantText: `"functions"`},
-		{tool: "signoz_aggregate_logs", arguments: `{"aggregations":"count()","groupBy":[{"key":"service.name"}]}`, wantText: `"groupBy"`},
-		{tool: "signoz_query_metrics", arguments: `{"metricName":"x","formulaQueries":"{\"name\":\"B\"}"}`, wantText: `"formulaQueries"`},
-		{tool: "signoz_query_metrics", arguments: `{"metricName":"x","formulaQueries":[{"name":"B","metricName":"y","metricType":"sum","isMonotonic":"tru"}]}`, wantText: `"isMonotonic"`},
-		{tool: "signoz_search_logs", arguments: `{"selectFields":["attribute.body"]}`, wantText: `"attribute.body"`},
-		{tool: "signoz_query_metrics", arguments: `{"metricName":"m","groupBy":[{"key":"service.name"}]}`, wantText: `"groupBy"`},
-		{tool: "signoz_aggregate_traces", arguments: `{"aggregations":"count()","groupBy":"[\"http.route\","}`, wantText: `"groupBy" value: not a valid JSON array`},
-		{tool: "signoz_aggregate_traces", arguments: `{"aggregations":"count()","groupBy":"[\"http.route\", null]"}`, wantText: `"groupBy" item`},
-		{tool: "signoz_query_metrics", arguments: `{"metricName":"x","formulaQueries":[{"name":"B","metricName":"y","groupBy":"[\"host.name\""}]}`, wantText: `formulaQueries[0]`},
-		{tool: "signoz_search_logs", arguments: `{"filter":"{\"expression\":\"service.name = 'api'\"}"}`, wantText: `not {"expression": ...}`},
-		{tool: "signoz_list_alert_rules", arguments: `{"states":["firing",3]}`, wantText: `"states" item 3: each item must be a state string`},
+		{tool: "fusescope_update_view", arguments: `{"id":"019947a7-f200-7000-8000-000000000001","source":"logs","spec":{"displayName":"x"}}`, wantText: `"source" is no longer accepted at the top level; pass the saved view under "view"`},
+		{tool: "fusescope_update_view", arguments: `{"id":"019947a7-f200-7000-8000-000000000001"}`, wantText: `"view" is required`},
+		{tool: "fusescope_get_notification_channel", arguments: `{}`, wantText: `"id" is required`},
+		{tool: "fusescope_execute_builder_query", arguments: `{}`, wantText: `"query" must be a JSON object`},
+		{tool: "fusescope_get_trace_details", arguments: `{"traceId":"deadbeefdeadbeefdeadbeefdeadbeef","includeSpans":"perhaps"}`, wantText: "includeSpans"},
+		{tool: "fusescope_aggregate_logs", arguments: `{"aggregation":"count"}`, wantText: `"aggregations"`},
+		{tool: "fusescope_aggregate_logs", arguments: `{"aggregations":"p99(x)","aggregateOn":"x"}`, wantText: `"aggregations"`},
+		{tool: "fusescope_aggregate_logs", arguments: `{"groupBy":"service.name"}`, wantText: `"aggregations" is required`},
+		{tool: "fusescope_aggregate_logs", arguments: `{"aggregations":["count()",7]}`, wantText: `"aggregations" items`},
+		{tool: "fusescope_aggregate_logs", arguments: `{"aggregations":"count()","functions":"cutOffMin"}`, wantText: `"functions"`},
+		{tool: "fusescope_aggregate_logs", arguments: `{"aggregations":"count()","functions":[{"args":[]}]}`, wantText: `"functions"`},
+		{tool: "fusescope_aggregate_logs", arguments: `{"aggregations":"count()","groupBy":[{"key":"service.name"}]}`, wantText: `"groupBy"`},
+		{tool: "fusescope_query_metrics", arguments: `{"metricName":"x","formulaQueries":"{\"name\":\"B\"}"}`, wantText: `"formulaQueries"`},
+		{tool: "fusescope_query_metrics", arguments: `{"metricName":"x","formulaQueries":[{"name":"B","metricName":"y","metricType":"sum","isMonotonic":"tru"}]}`, wantText: `"isMonotonic"`},
+		{tool: "fusescope_search_logs", arguments: `{"selectFields":["attribute.body"]}`, wantText: `"attribute.body"`},
+		{tool: "fusescope_query_metrics", arguments: `{"metricName":"m","groupBy":[{"key":"service.name"}]}`, wantText: `"groupBy"`},
+		{tool: "fusescope_aggregate_traces", arguments: `{"aggregations":"count()","groupBy":"[\"http.route\","}`, wantText: `"groupBy" value: not a valid JSON array`},
+		{tool: "fusescope_aggregate_traces", arguments: `{"aggregations":"count()","groupBy":"[\"http.route\", null]"}`, wantText: `"groupBy" item`},
+		{tool: "fusescope_query_metrics", arguments: `{"metricName":"x","formulaQueries":[{"name":"B","metricName":"y","groupBy":"[\"host.name\""}]}`, wantText: `formulaQueries[0]`},
+		{tool: "fusescope_search_logs", arguments: `{"filter":"{\"expression\":\"service.name = 'api'\"}"}`, wantText: `not {"expression": ...}`},
+		{tool: "fusescope_list_alert_rules", arguments: `{"states":["firing",3]}`, wantText: `"states" item 3: each item must be a state string`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.tool+" "+tt.arguments, func(t *testing.T) {
@@ -169,7 +169,7 @@ func TestErrorCodeDecorator_AddsOperationSpecificAuthorizationRecovery(t *testin
 			next := func(context.Context, mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 				return upstreamError(&signozclient.HTTPStatusError{StatusCode: tt.statusCode, Body: "secret-canary"}), nil
 			}
-			result, err := h.errorCodeDecorator("signoz_test_operation", next)(context.Background(), makeToolRequest("signoz_test_operation", map[string]any{}))
+			result, err := h.errorCodeDecorator("fusescope_test_operation", next)(context.Background(), makeToolRequest("fusescope_test_operation", map[string]any{}))
 			if err != nil {
 				t.Fatalf("decorator returned Go error: %v", err)
 			}
@@ -177,7 +177,7 @@ func TestErrorCodeDecorator_AddsOperationSpecificAuthorizationRecovery(t *testin
 				t.Fatalf("code = %q, want %q", got, tt.wantCode)
 			}
 			text := resultText(t, result)
-			if !strings.Contains(text, "`signoz_test_operation`") || !strings.Contains(text, tt.wantText) {
+			if !strings.Contains(text, "`fusescope_test_operation`") || !strings.Contains(text, tt.wantText) {
 				t.Fatalf("text = %q, want operation-specific recovery", text)
 			}
 			if strings.Contains(text, "secret-canary") {
@@ -194,12 +194,12 @@ func TestErrorCodeDecorator_AddsOperationSpecificAuthorizationRecovery(t *testin
 				Body:       `{"status":"error","error":{"type":"unauthorized","code":"unauthenticated","message":"session expired","errors":[],"suggestions":["sign in again"]}}`,
 			}), nil
 		}
-		result, err := h.errorCodeDecorator("signoz_test_operation", next)(context.Background(), makeToolRequest("signoz_test_operation", map[string]any{}))
+		result, err := h.errorCodeDecorator("fusescope_test_operation", next)(context.Background(), makeToolRequest("fusescope_test_operation", map[string]any{}))
 		if err != nil {
 			t.Fatalf("decorator returned Go error: %v", err)
 		}
 		text := resultText(t, result)
-		for _, want := range []string{"session expired", "sign in again", "`signoz_test_operation`", "Re-authenticate"} {
+		for _, want := range []string{"session expired", "sign in again", "`fusescope_test_operation`", "Re-authenticate"} {
 			if !strings.Contains(text, want) {
 				t.Fatalf("composed authorization text omitted %q: %q", want, text)
 			}
@@ -218,7 +218,7 @@ func TestErrorCodeDecorator_AddsOperationSpecificAuthorizationRecovery(t *testin
 		next := func(context.Context, mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			return errorWithCode(CodeUnauthorized, "missing tenant credentials"), nil
 		}
-		result, err := h.errorCodeDecorator("signoz_test_operation", next)(context.Background(), makeToolRequest("signoz_test_operation", map[string]any{}))
+		result, err := h.errorCodeDecorator("fusescope_test_operation", next)(context.Background(), makeToolRequest("fusescope_test_operation", map[string]any{}))
 		if err != nil {
 			t.Fatalf("decorator returned Go error: %v", err)
 		}

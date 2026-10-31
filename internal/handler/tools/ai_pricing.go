@@ -29,7 +29,7 @@ type aiPricingOutput struct {
 func (h *Handler) RegisterAIPricingHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering AI pricing handlers")
 
-	tool := mcp.NewTool("signoz_get_ai_pricing",
+	tool := mcp.NewTool("fusescope_get_ai_pricing",
 		withReadOnlyToolAnnotations(),
 		mcp.WithDescription("Use this when the user asks which per-token price SigNoz uses for an AI model's cost, or which models have no price. view=rules (default) lists the pricing rules: provider, model name and match patterns, input, output, and cache prices in USD per million tokens, and whether each rule is enabled. view=unpriced_models lists the models seen in spans during the last hour that no rule prices, with span counts; their spans carry no cost. SigNoz stamps cost on each span at ingest, so a price change does not touch spans already stored. Prices are changed on the Model pricing tab of AI Observability in SigNoz; this tool cannot change them."),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
@@ -63,7 +63,7 @@ func (h *Handler) handleGetAIPricing(ctx context.Context, req mcp.CallToolReques
 	}
 	limit, offset, limitClamped := paginate.ParseParamsClamped(args)
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_get_ai_pricing", slog.String("view", view))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_get_ai_pricing", slog.String("view", view))
 
 	client, err := h.GetClient(ctx)
 	if err != nil {

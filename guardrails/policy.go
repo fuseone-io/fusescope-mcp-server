@@ -27,7 +27,7 @@ const (
 
 // OfficialServerAliases are published in first-party setup examples or sent
 // during initialize. Some clients combine alias + separator + tool name.
-var OfficialServerAliases = []string{"signoz", "signoz-mcp-server", "SigNozMCP"}
+var OfficialServerAliases = []string{"fusescope", "fusescope-mcp-server", "FuseScopeMCP"}
 
 // GrandfatheredWideSchemaProperties pins the exact property inventory of the
 // only schemas allowed above MaxTopLevelProperties. Adding or changing an
@@ -35,7 +35,7 @@ var OfficialServerAliases = []string{"signoz", "signoz-mcp-server", "SigNozMCP"}
 var GrandfatheredWideSchemaProperties = map[string][]string{
 	// queryType takes aggregate to 18 on purpose: a separate AI aggregate tool
 	// would repeat every other parameter.
-	"signoz_aggregate_traces": {
+	"fusescope_aggregate_traces": {
 		"aggregations",
 		"end",
 		"error",
@@ -56,7 +56,7 @@ var GrandfatheredWideSchemaProperties = map[string][]string{
 		"stepInterval",
 		"timeRange",
 	},
-	"signoz_create_alert": {
+	"fusescope_create_alert": {
 		"alert",
 		"alertType",
 		"annotations",
@@ -75,7 +75,7 @@ var GrandfatheredWideSchemaProperties = map[string][]string{
 		"source",
 		"version",
 	},
-	"signoz_query_metrics": {
+	"fusescope_query_metrics": {
 		"end",
 		"filter",
 		"formula",
@@ -102,7 +102,7 @@ var GrandfatheredWideSchemaProperties = map[string][]string{
 	// orderBy, queryType, and requestType take search to 16 on purpose: a
 	// separate trace-list or AI search tool would repeat the filter, time, and
 	// paging parameters.
-	"signoz_search_traces": {
+	"fusescope_search_traces": {
 		"end",
 		"error",
 		"filter",
@@ -120,7 +120,7 @@ var GrandfatheredWideSchemaProperties = map[string][]string{
 		"start",
 		"timeRange",
 	},
-	"signoz_update_alert": {
+	"fusescope_update_alert": {
 		"alert",
 		"alertType",
 		"annotations",

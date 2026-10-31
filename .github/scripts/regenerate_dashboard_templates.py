@@ -9,7 +9,7 @@ JSON, extracts the title/description (v6 `spec.display.*`, falling back to v1
 top-level fields) and tags, and emits the bundled index at
 internal/handler/tools/dashboard_templates.json.
 
-The runtime fetcher (signoz_import_dashboard) also reads from `main`, so the
+The runtime fetcher (fusescope_import_dashboard) also reads from `main`, so the
 catalog and the fetcher always reference the same ref. There is no pinned
 SHA to keep in sync.
 

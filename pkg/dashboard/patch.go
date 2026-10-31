@@ -1,11 +1,11 @@
 package dashboard
 
-// PatchInstructions is the recipe guide served at signoz://dashboard/patch-instructions:
+// PatchInstructions is the recipe guide served at fusescope://dashboard/patch-instructions:
 // worked, server-verified RFC 6902 JSON Patch operations for targeted dashboard edits
 // (add/edit/move/remove a panel, edit a query, rename, variables, tags) with the exact
 // JSON Pointer paths and the multi-op sequences the backend requires.
 const PatchInstructions = `
-Recipes for signoz_patch_dashboard (RFC 6902 JSON Patch): targeted edits to a v2 dashboard without re-sending the whole payload. Every "patch" example below is an array of {op, path, value} operations verified against a live SigNoz instance. For the JSON of a panel/query/variable value, read signoz://dashboard/widgets-examples and signoz://dashboard/instructions; for the exact field set use the create/update tool's JSON Schema.
+Recipes for fusescope_patch_dashboard (RFC 6902 JSON Patch): targeted edits to a v2 dashboard without re-sending the whole payload. Every "patch" example below is an array of {op, path, value} operations verified against a live SigNoz instance. For the JSON of a panel/query/variable value, read fusescope://dashboard/widgets-examples and fusescope://dashboard/instructions; for the exact field set use the create/update tool's JSON Schema.
 
 Shape recap (JSON Pointers target the postable shape):
 - spec.panels is a MAP keyed by panel id: {"<id>": {"kind":"Panel","spec":{...}}}.
@@ -27,7 +27,7 @@ Rename / edit description:
 
 Add a panel (panel + grid item together). Set the grid item's "y" below every existing item (its y + height) — overlapping items are rejected ("items overlap"):
 [
-  {"op":"add","path":"/spec/panels/panel-b","value":{ ...a Panel — copy a shape from signoz://dashboard/widgets-examples... }},
+  {"op":"add","path":"/spec/panels/panel-b","value":{ ...a Panel — copy a shape from fusescope://dashboard/widgets-examples... }},
   {"op":"add","path":"/spec/layouts/0/spec/items/-","value":{"x":0,"y":6,"width":12,"height":6,"content":{"$ref":"#/spec/panels/panel-b"}}}
 ]
 
@@ -35,7 +35,7 @@ Edit one field of an existing panel (e.g. its title or y-axis unit):
 [{"op":"replace","path":"/spec/panels/panel-b/spec/display/name","value":"Renamed panel"}]
 
 Replace a panel's query (one query per panel — replace, don't append; use signoz/CompositeQuery for multi-series):
-[{"op":"replace","path":"/spec/panels/panel-b/spec/queries/0","value":{ ...a query — see signoz://dashboard/widgets-examples... }}]
+[{"op":"replace","path":"/spec/panels/panel-b/spec/queries/0","value":{ ...a query — see fusescope://dashboard/widgets-examples... }}]
 
 Add a Markdown TextPanel (two ops in one patch: panel plus grid item):
 [
@@ -51,7 +51,7 @@ Move / resize a panel (edit its grid item):
 
 Add a variable (appends even when variables is empty):
 [{"op":"add","path":"/spec/variables/-","value":{"kind":"ListVariable","spec":{"name":"service_name","display":{"name":"Service Name"},"plugin":{"kind":"signoz/DynamicVariable","spec":{"name":"service.name","signal":"logs"}}}}}]
-(spec.name is the $service_name reference handle; plugin.spec.name is the attribute key. See signoz://dashboard/instructions for variable rules — always ask which panels a variable applies to before wiring it in.)
+(spec.name is the $service_name reference handle; plugin.spec.name is the attribute key. See fusescope://dashboard/instructions for variable rules — always ask which panels a variable applies to before wiring it in.)
 
 Add a tag:
 [{"op":"add","path":"/tags/-","value":{"key":"team","value":"platform"}}]

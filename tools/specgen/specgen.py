@@ -16,7 +16,7 @@ Outputs, relative to the repository root:
   only validator.
 - pkg/<area>/examples.generated.md: the request examples the spec publishes on
   each mutating operation, rendered as Markdown and embedded into the
-  signoz:// examples resources. The notification-channel file also carries a
+  fusescope:// examples resources. The notification-channel file also carries a
   per-kind reference of config.spec fields, the only place the open `config`
   object is described.
 
@@ -347,7 +347,7 @@ def main() -> int:
 
     write(
         os.path.join(root, "pkg", "alert", "examples.generated.md"),
-        render_examples(spec, "Alert rule request examples", [("post", "/api/v2/rules", "Create a rule with signoz_create_alert (or replace one with signoz_update_alert)")]),
+        render_examples(spec, "Alert rule request examples", [("post", "/api/v2/rules", "Create a rule with fusescope_create_alert (or replace one with fusescope_update_alert)")]),
     )
     write(
         os.path.join(root, "pkg", "views", "examples.generated.md"),
@@ -355,8 +355,8 @@ def main() -> int:
             spec,
             "Saved view request examples",
             [
-                ("post", "/api/v2/saved_views", "Create a view with signoz_create_view"),
-                ("put", "/api/v2/saved_views/{id}", "Replace a view with signoz_update_view"),
+                ("post", "/api/v2/saved_views", "Create a view with fusescope_create_view"),
+                ("put", "/api/v2/saved_views/{id}", "Replace a view with fusescope_update_view"),
             ],
         ),
     )
@@ -366,9 +366,9 @@ def main() -> int:
             spec,
             "Dashboard request examples",
             [
-                ("post", "/api/v2/dashboards", "Create a dashboard with signoz_create_dashboard"),
-                ("put", "/api/v2/dashboards/{id}", "Replace a dashboard with signoz_update_dashboard"),
-                ("patch", "/api/v2/dashboards/{id}", "Patch a dashboard with signoz_patch_dashboard"),
+                ("post", "/api/v2/dashboards", "Create a dashboard with fusescope_create_dashboard"),
+                ("put", "/api/v2/dashboards/{id}", "Replace a dashboard with fusescope_update_dashboard"),
+                ("patch", "/api/v2/dashboards/{id}", "Patch a dashboard with fusescope_patch_dashboard"),
             ],
         ),
     )
@@ -378,8 +378,8 @@ def main() -> int:
             spec,
             "Notification channel request examples",
             [
-                ("post", "/api/v2/notification_channels", "Create a channel with signoz_create_notification_channel"),
-                ("put", "/api/v2/notification_channels/{id}", "Replace a channel's config with signoz_update_notification_channel"),
+                ("post", "/api/v2/notification_channels", "Create a channel with fusescope_create_notification_channel"),
+                ("put", "/api/v2/notification_channels/{id}", "Replace a channel's config with fusescope_update_notification_channel"),
             ],
             extra=render_channel_kinds(spec),
         ),
@@ -389,7 +389,7 @@ def main() -> int:
         render_examples(
             spec,
             "Query range request examples",
-            [("post", "/api/v5/query_range", "Run a query with signoz_execute_builder_query")],
+            [("post", "/api/v5/query_range", "Run a query with fusescope_execute_builder_query")],
         ),
     )
     return 0

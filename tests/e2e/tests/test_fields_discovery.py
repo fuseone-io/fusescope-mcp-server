@@ -39,7 +39,7 @@ def test_seeded_resource_attribute_values_discoverable(mcp_client: MCPClient, te
 
     def service_visible() -> bool:
         result = mcp_client.call_tool(
-            "signoz_get_field_values",
+            "fusescope_get_field_values",
             {
                 "searchContext": f"values for service.name including {service}",
                 "signal": "traces",
@@ -59,7 +59,7 @@ def test_seeded_resource_attribute_values_discoverable(mcp_client: MCPClient, te
     # descriptions teach exactly this trap, so if SigNoz starts rejecting or
     # honoring "tag", this pin fails and the teaching must change with it.
     legacy = mcp_client.call_tool(
-        "signoz_get_field_values",
+        "fusescope_get_field_values",
         {
             "searchContext": "values for service.name via the legacy tag context",
             "signal": "traces",
@@ -80,7 +80,7 @@ def test_field_keys_context_filter_is_honored(mcp_client: MCPClient, test_id: st
 
     def seeded_marker_keys(context: str) -> dict:
         result = mcp_client.call_tool(
-            "signoz_get_field_keys",
+            "fusescope_get_field_keys",
             {
                 "searchContext": f"discover e2e.marker in context {context}",
                 "signal": "traces",
@@ -102,7 +102,7 @@ def test_field_keys_context_filter_is_honored(mcp_client: MCPClient, test_id: st
 def test_span_intrinsics_discoverable_under_span_context(mcp_client: MCPClient) -> None:
     """duration_nano is discoverable with fieldContext=span, as the traces guide teaches."""
     result = mcp_client.call_tool(
-        "signoz_get_field_keys",
+        "fusescope_get_field_keys",
         {
             "searchContext": "discover the span intrinsic duration_nano",
             "signal": "traces",
@@ -131,7 +131,7 @@ AI_TRACE_COLUMNS = {
 def ai_key_names(signal: str, mcp_client: MCPClient) -> set:
     """Every key name queryType=builder_ai_query lists for the given signal."""
     result = mcp_client.call_tool(
-        "signoz_get_field_keys",
+        "fusescope_get_field_keys",
         {"searchContext": "which AI fields exist", "signal": signal, "queryType": "builder_ai_query"},
     )
     assert_tool_ok(result)
@@ -141,7 +141,7 @@ def ai_key_names(signal: str, mcp_client: MCPClient) -> set:
 def ai_trace_column_names(signal: str, mcp_client: MCPClient) -> set:
     """Names that queryType=builder_ai_query lists under the per-trace "trace" context."""
     result = mcp_client.call_tool(
-        "signoz_get_field_keys",
+        "fusescope_get_field_keys",
         {
             "searchContext": "which AI fields can I filter AI traces on, like cost and token counts",
             "signal": signal,
@@ -173,7 +173,7 @@ def test_ai_field_keys_ignore_signal(mcp_client: MCPClient) -> None:
 def test_ai_field_keys_filter_to_trace_context(mcp_client: MCPClient) -> None:
     """fieldContext=trace with queryType=builder_ai_query returns only the computed per-trace fields."""
     result = mcp_client.call_tool(
-        "signoz_get_field_keys",
+        "fusescope_get_field_keys",
         {
             "searchContext": "which per-trace AI columns can I filter on",
             "signal": "traces",

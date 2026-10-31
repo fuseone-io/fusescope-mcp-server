@@ -175,7 +175,7 @@ func rawInputSchema(schema []byte) mcp.ToolOption {
 	}
 }
 
-// Template fetch configuration for signoz_import_dashboard.
+// Template fetch configuration for fusescope_import_dashboard.
 // templateRepoBaseURLVar is a var (not const) so tests can point it at a
 // local httptest server. Templates are fetched from the SigNoz/dashboards
 // `main` branch — we deliberately do not pin a SHA, so new upstream
@@ -193,14 +193,14 @@ var (
 func (h *Handler) RegisterDashboardHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering dashboard handlers")
 
-	tool := mcp.NewTool("signoz_list_dashboards",
+	tool := mcp.NewTool("fusescope_list_dashboards",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants to discover tenant dashboards, browse their summaries, or find a dashboard id. It returns names, descriptions, tags, timestamps, source, and a total count, not panel/query definitions; use signoz_get_dashboard for one full definition. source is user or integration; only user dashboards can be updated, patched, or deleted. source is not a list-filter column: filter by name, description, tags, creator, timestamps, or locked state, then distinguish user vs integration client-side across pages. When looking for a specific dashboard, page by raising offset by limit until you have covered total before concluding it is absent."),
+		mcp.WithDescription("Use this when the user wants to discover tenant dashboards, browse their summaries, or find a dashboard id. It returns names, descriptions, tags, timestamps, source, and a total count, not panel/query definitions; use fusescope_get_dashboard for one full definition. source is user or integration; only user dashboards can be updated, patched, or deleted. source is not a list-filter column: filter by name, description, tags, creator, timestamps, or locked state, then distinguish user vs integration client-side across pages. When looking for a specific dashboard, page by raising offset by limit until you have covered total before concluding it is absent."),
 		mcp.WithString("limit", mcp.DefaultString("50"), intOrStringType(), mcp.Description("Maximum dashboard summaries per page. Default 50; values above 200 are clamped (the v2 API's server-side cap).")),
 		mcp.WithString("offset", mcp.DefaultString("0"), intOrStringType(), mcp.Description("Number of dashboard summaries to skip. Default 0; raise by limit to page until you reach total.")),
 		mcp.WithString("filter", mcp.Description("Optional server-side filter over dashboard metadata (name, description, tags, creator, timestamps, locked state); omit to list all. "+
-			"Read signoz://dashboard/list-filter-guide for the filter DSL grammar, per-key operators, value formats, and examples. "+
+			"Read fusescope://dashboard/list-filter-guide for the filter DSL grammar, per-key operators, value formats, and examples. "+
 			"Example: \"name CONTAINS 'overview' AND locked = true\".")),
 		mcp.WithString("sort", mcp.Enum("updated_at", "created_at", "name"), mcp.Description("Sort field: 'updated_at' (default), 'created_at', or 'name'.")),
 		mcp.WithString("order", mcp.Enum("asc", "desc"), mcp.Description("Sort order: 'asc' or 'desc' (default 'desc').")),
@@ -208,21 +208,21 @@ func (h *Handler) RegisterDashboardHandlers(s *mcp.Server) {
 
 	h.addTool(s, tool, h.handleListDashboards)
 
-	getDashboardTool := mcp.NewTool("signoz_get_dashboard",
+	getDashboardTool := mcp.NewTool("fusescope_get_dashboard",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants the complete definition of one known tenant dashboard, including its layout, variables, panels, and queries. Use signoz_list_dashboards first when the id is unknown. Do not use this to browse: signoz_list_dashboards lists tenant summaries and signoz_list_dashboard_templates lists curated templates. Get-by-id can return source user, system, or integration; keep source as returned. Only source=user dashboards can be updated, patched, or deleted; system and integration writes fail with a coded upstream error."),
-		mcp.WithString("id", mcp.Required(), mcp.Description("Known dashboard id. Required; use signoz_list_dashboards to discover it. Do not send uuid.")),
+		mcp.WithDescription("Use this when the user wants the complete definition of one known tenant dashboard, including its layout, variables, panels, and queries. Use fusescope_list_dashboards first when the id is unknown. Do not use this to browse: fusescope_list_dashboards lists tenant summaries and fusescope_list_dashboard_templates lists curated templates. Get-by-id can return source user, system, or integration; keep source as returned. Only source=user dashboards can be updated, patched, or deleted; system and integration writes fail with a coded upstream error."),
+		mcp.WithString("id", mcp.Required(), mcp.Description("Known dashboard id. Required; use fusescope_list_dashboards to discover it. Do not send uuid.")),
 	)
 
 	h.addTool(s, getDashboardTool, h.handleGetDashboard)
 
 	createDashboardTool := mcp.NewTool(
-		"signoz_create_dashboard",
+		"fusescope_create_dashboard",
 		withCreateToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants a custom SigNoz dashboard built from a complete title, layout, variables, and panel configuration; use signoz_import_dashboard instead when a curated template fits. "+
-				"Use signoz_create_view instead to save one Explorer query. Before composing the payload, read signoz://dashboard/instructions, signoz://dashboard/widgets-instructions, signoz://dashboard/widgets-examples, and signoz://dashboard/examples (complete worked dashboards), then follow the query-specific resource linked by the widget guide.",
+			"Use this when the user wants a custom SigNoz dashboard built from a complete title, layout, variables, and panel configuration; use fusescope_import_dashboard instead when a curated template fits. "+
+				"Use fusescope_create_view instead to save one Explorer query. Before composing the payload, read fusescope://dashboard/instructions, fusescope://dashboard/widgets-instructions, fusescope://dashboard/widgets-examples, and fusescope://dashboard/examples (complete worked dashboards), then follow the query-specific resource linked by the widget guide.",
 		),
 		rawInputSchema(createDashboardSchema),
 	)
@@ -230,11 +230,11 @@ func (h *Handler) RegisterDashboardHandlers(s *mcp.Server) {
 	h.addTool(s, createDashboardTool, h.handleCreateDashboard)
 
 	updateDashboardTool := mcp.NewTool(
-		"signoz_update_dashboard",
+		"fusescope_update_dashboard",
 		withUpdateToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants to change an existing SigNoz dashboard. This is a full replacement, not a partial patch: fetch it with signoz_get_dashboard, take the \"data\" object out of that response, merge only the requested changes into it, and preserve every other field. Send that object's fields at the top level; the {status, data} response envelope is not accepted as input. For small, targeted edits prefer signoz_patch_dashboard, which avoids re-sending the whole dashboard. "+
-				"Use signoz_update_view instead for a saved Explorer query. Before composing changed panels, read signoz://dashboard/instructions, signoz://dashboard/widgets-instructions, and signoz://dashboard/widgets-examples, then follow the query-specific resource linked by the widget guide.",
+			"Use this when the user wants to change an existing SigNoz dashboard. This is a full replacement, not a partial patch: fetch it with fusescope_get_dashboard, take the \"data\" object out of that response, merge only the requested changes into it, and preserve every other field. Send that object's fields at the top level; the {status, data} response envelope is not accepted as input. For small, targeted edits prefer fusescope_patch_dashboard, which avoids re-sending the whole dashboard. "+
+				"Use fusescope_update_view instead for a saved Explorer query. Before composing changed panels, read fusescope://dashboard/instructions, fusescope://dashboard/widgets-instructions, and fusescope://dashboard/widgets-examples, then follow the query-specific resource linked by the widget guide.",
 		),
 		rawInputSchema(updateDashboardSchema),
 	)
@@ -242,47 +242,47 @@ func (h *Handler) RegisterDashboardHandlers(s *mcp.Server) {
 	h.addTool(s, updateDashboardTool, h.handleUpdateDashboard)
 
 	patchDashboardTool := mcp.NewTool(
-		"signoz_patch_dashboard",
+		"fusescope_patch_dashboard",
 		withPatchToolAnnotations(),
 		mcp.WithDescription(
 			"Apply a partial update to a v2 dashboard using an RFC 6902 JSON Patch, without re-sending the whole dashboard. "+
 				"Supply the dashboard 'id' and 'patch' (an array of {op, path, value} operations). Paths are JSON Pointers into the dashboard's postable shape, "+
 				"e.g. /spec/display/name, /spec/panels/<panelId>, /spec/panels/<panelId>/spec/queries/0, /spec/variables/0, /tags/-. "+
-				"Prefer this over signoz_update_dashboard for targeted changes (renaming, adding/editing one panel or query, tweaking a variable); it is far cheaper than rebuilding the full dashboard. "+
+				"Prefer this over fusescope_update_dashboard for targeted changes (renaming, adding/editing one panel or query, tweaking a variable); it is far cheaper than rebuilding the full dashboard. "+
 				"Apply is lenient (remove on a missing path is a no-op; add creates missing parents) but the result is still validated; locked dashboards are rejected. "+
-				"Read signoz://dashboard/patch-instructions for worked recipes and exact paths (e.g. adding a panel takes two ops).",
+				"Read fusescope://dashboard/patch-instructions for worked recipes and exact paths (e.g. adding a panel takes two ops).",
 		),
 		rawInputSchema(patchDashboardSchema),
 	)
 
 	h.addTool(s, patchDashboardTool, h.handlePatchDashboard)
 
-	deleteDashboardTool := mcp.NewTool("signoz_delete_dashboard",
+	deleteDashboardTool := mcp.NewTool("fusescope_delete_dashboard",
 		withDeleteToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user has confirmed they want to permanently delete one user dashboard. The deletion is irreversible. Use signoz_list_dashboards to discover the id when needed. Only user dashboards can be deleted; upstream returns a coded denial for others. Use signoz_delete_view for saved Explorer views."),
-		mcp.WithString("id", mcp.Required(), mcp.Description("Dashboard id to delete. Required; use signoz_list_dashboards to discover it. Do not send uuid.")),
+		mcp.WithDescription("Use this when the user has confirmed they want to permanently delete one user dashboard. The deletion is irreversible. Use fusescope_list_dashboards to discover the id when needed. Only user dashboards can be deleted; upstream returns a coded denial for others. Use fusescope_delete_view for saved Explorer views."),
+		mcp.WithString("id", mcp.Required(), mcp.Description("Dashboard id to delete. Required; use fusescope_list_dashboards to discover it. Do not send uuid.")),
 	)
 
 	h.addTool(s, deleteDashboardTool, h.handleDeleteDashboard)
 
 	importDashboardTool := mcp.NewTool(
-		"signoz_import_dashboard",
+		"fusescope_import_dashboard",
 		withCreateToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants a new dashboard from a curated SigNoz/dashboards template, not a custom configuration. Pass a known relative template path; if it is unknown, call signoz_list_dashboard_templates first. The server fetches the selected template and creates the dashboard (the v2 API validates it). Use signoz_create_dashboard for a custom layout or queries.",
+			"Use this when the user wants a new dashboard from a curated SigNoz/dashboards template, not a custom configuration. Pass a known relative template path; if it is unknown, call fusescope_list_dashboard_templates first. The server fetches the selected template and creates the dashboard (the v2 API validates it). Use fusescope_create_dashboard for a custom layout or queries.",
 		),
-		mcp.WithString("path", mcp.Required(), mcp.Description("Relative JSON path from signoz_list_dashboard_templates, for example hostmetrics/hostmetrics.json. Do not pass a URL or absolute path.")),
+		mcp.WithString("path", mcp.Required(), mcp.Description("Relative JSON path from fusescope_list_dashboard_templates, for example hostmetrics/hostmetrics.json. Do not pass a URL or absolute path.")),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
 	)
 
 	h.addTool(s, importDashboardTool, h.handleImportDashboard)
 
 	listTemplatesTool := mcp.NewTool(
-		"signoz_list_dashboard_templates",
+		"fusescope_list_dashboard_templates",
 		withReadOnlyToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants to browse curated dashboard templates or discover a path for signoz_import_dashboard. It returns the matching bundled templates with id, title, path, description, category, and keywords, plus their total. Pass searchText with the technology the user named; omit it only to browse the full catalog. It does not list dashboards already created in the tenant; use signoz_list_dashboards for those.",
+			"Use this when the user wants to browse curated dashboard templates or discover a path for fusescope_import_dashboard. It returns the matching bundled templates with id, title, path, description, category, and keywords, plus their total. Pass searchText with the technology the user named; omit it only to browse the full catalog. It does not list dashboards already created in the tenant; use fusescope_list_dashboards for those.",
 		),
 		mcp.WithString("searchText", mcp.Description(`Words matched case-insensitively against each template's id, title, path, category, description, and keywords; a template must match every word. Example: "postgres" or "kubernetes pod". At most 2048 characters. If nothing matches, retry with fewer words. Omit to return the full catalog.`)),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
@@ -300,7 +300,7 @@ func (h *Handler) RegisterDashboardHandlers(s *mcp.Server) {
 const dashboardListMaxLimit = 200
 
 func (h *Handler) handleListDashboards(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	h.logger.DebugContext(ctx, "Tool called: signoz_list_dashboards")
+	h.logger.DebugContext(ctx, "Tool called: fusescope_list_dashboards")
 	limit, offset, limitClamped := paginate.ParseParamsClamped(req.Params.Arguments)
 	// v2 caps the page size tighter than the shared MaxLimit; clamp to the
 	// server cap so the requested limit equals what the server returns and
@@ -351,10 +351,10 @@ func (h *Handler) handleGetDashboard(ctx context.Context, req mcp.CallToolReques
 	}
 	if id == "" {
 		h.logger.WarnContext(ctx, "Empty id parameter")
-		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Provide a dashboard id from signoz_list_dashboards. Example: {"id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"}`), nil
+		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Provide a dashboard id from fusescope_list_dashboards. Example: {"id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"}`), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_get_dashboard", slog.String("id", id))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_get_dashboard", slog.String("id", id))
 	client, base, clientErr := h.getResourceClient(ctx)
 	if clientErr != nil {
 		return clientErr, nil
@@ -427,7 +427,7 @@ func (h *Handler) handleCreateDashboard(ctx context.Context, req mcp.CallToolReq
 		return InternalErrorResult(fmt.Sprintf("Dashboard encode error: %s", err.Error())), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_create_dashboard")
+	h.logger.DebugContext(ctx, "Tool called: fusescope_create_dashboard")
 	client, base, clientErr := h.getResourceClient(ctx)
 	if clientErr != nil {
 		return clientErr, nil
@@ -451,14 +451,14 @@ func (h *Handler) handleImportDashboard(ctx context.Context, req mcp.CallToolReq
 	}
 	path, ok := args["path"].(string)
 	if !ok || strings.TrimSpace(path) == "" {
-		return validationError("path", `must be a non-empty string, e.g. "hostmetrics/hostmetrics.json". Use signoz_list_dashboard_templates to discover available paths.`), nil
+		return validationError("path", `must be a non-empty string, e.g. "hostmetrics/hostmetrics.json". Use fusescope_list_dashboard_templates to discover available paths.`), nil
 	}
 	path = strings.TrimSpace(path)
 	if strings.Contains(path, "..") || strings.HasPrefix(path, "/") || strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://") {
 		return validationError("path", `must be a relative template path within the SigNoz/dashboards repo (e.g. "hostmetrics/hostmetrics.json"), not an absolute path or URL.`), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_import_dashboard", slog.String("path", path))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_import_dashboard", slog.String("path", path))
 
 	body, err := fetchTemplate(ctx, path)
 	if err != nil {
@@ -547,7 +547,7 @@ func (h *Handler) handleListDashboardTemplates(ctx context.Context, req mcp.Call
 	if utf8.RuneCountInString(searchText) > maxTemplateSearchTextRunes {
 		return validationErrorf("searchText", `must be at most %d characters. Pass the technology name, e.g. "postgres".`, maxTemplateSearchTextRunes), nil
 	}
-	h.logger.DebugContext(ctx, "Tool called: signoz_list_dashboard_templates", slog.String("searchText", searchText))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_list_dashboard_templates", slog.String("searchText", searchText))
 
 	entries := searchDashboardTemplates(searchText)
 	// Wrapped in an object because MCP requires structuredContent to be a JSON
@@ -569,8 +569,8 @@ func (h *Handler) handleUpdateDashboard(ctx context.Context, req mcp.CallToolReq
 
 	// The schema takes the dashboard body itself, so name the read envelope rather than failing on a missing id.
 	if _, wrapped := rawConfig["data"].(map[string]any); wrapped {
-		h.logger.WarnContext(ctx, "Received the signoz_get_dashboard response envelope instead of a dashboard body")
-		return errorWithCode(CodeValidationFailed, `Parameter validation failed: pass the dashboard body, not the signoz_get_dashboard response envelope. Extract its "data" object and send that object's fields (schemaVersion, name, tags, spec) at the top level, with "id" as a parameter.`), nil
+		h.logger.WarnContext(ctx, "Received the fusescope_get_dashboard response envelope instead of a dashboard body")
+		return errorWithCode(CodeValidationFailed, `Parameter validation failed: pass the dashboard body, not the fusescope_get_dashboard response envelope. Extract its "data" object and send that object's fields (schemaVersion, name, tags, spec) at the top level, with "id" as a parameter.`), nil
 	}
 
 	id, legacyAlias := dashboardIDFromArgs(rawConfig)
@@ -579,7 +579,7 @@ func (h *Handler) handleUpdateDashboard(ctx context.Context, req mcp.CallToolReq
 	}
 	if id == "" {
 		h.logger.WarnContext(ctx, "Empty id parameter")
-		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Use signoz_list_dashboards to find dashboard ids.`), nil
+		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Use fusescope_list_dashboards to find dashboard ids.`), nil
 	}
 
 	// Keep only updatable body fields so a fetched dashboard's read-only fields don't trip the v2 decoder.
@@ -597,7 +597,7 @@ func (h *Handler) handleUpdateDashboard(ctx context.Context, req mcp.CallToolReq
 		return InternalErrorResult(fmt.Sprintf("Dashboard encode error: %s", err.Error())), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_update_dashboard", slog.String("id", id))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_update_dashboard", slog.String("id", id))
 	client, base, clientErr := h.getResourceClient(ctx)
 	if clientErr != nil {
 		return clientErr, nil
@@ -626,7 +626,7 @@ func (h *Handler) handlePatchDashboard(ctx context.Context, req mcp.CallToolRequ
 	}
 	if id == "" {
 		h.logger.WarnContext(ctx, "Empty id parameter")
-		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Use signoz_list_dashboards to find dashboard ids.`), nil
+		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Use fusescope_list_dashboards to find dashboard ids.`), nil
 	}
 
 	patch, ok := rawConfig["patch"]
@@ -641,7 +641,7 @@ func (h *Handler) handlePatchDashboard(ctx context.Context, req mcp.CallToolRequ
 		return InternalErrorResult(fmt.Sprintf("failed to encode patch: %s", err.Error())), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_patch_dashboard", slog.String("id", id))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_patch_dashboard", slog.String("id", id))
 	client, base, clientErr := h.getResourceClient(ctx)
 	if clientErr != nil {
 		return clientErr, nil
@@ -668,10 +668,10 @@ func (h *Handler) handleDeleteDashboard(ctx context.Context, req mcp.CallToolReq
 	}
 	if id == "" {
 		h.logger.WarnContext(ctx, "Empty id parameter")
-		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Use signoz_list_dashboards to find dashboard ids. Example: {"id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"}`), nil
+		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Use fusescope_list_dashboards to find dashboard ids. Example: {"id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"}`), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_delete_dashboard", slog.String("id", id))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_delete_dashboard", slog.String("id", id))
 	client, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil
@@ -687,9 +687,9 @@ func (h *Handler) handleDeleteDashboard(ctx context.Context, req mcp.CallToolReq
 // registerDashboardResources registers all MCP resources needed for dashboard creation/update.
 func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	clickhouseLogsSchemaResource := mcp.NewResource(
-		"signoz://dashboard/clickhouse-schema-for-logs",
+		"fusescope://dashboard/clickhouse-schema-for-logs",
 		"ClickHouse Logs Schema",
-		mcp.WithResourceDescription("Read this before writing ClickHouse SQL for a dashboard widget over SigNoz logs. It lists tables and columns from the schema bundled with this server. Also read signoz://dashboard/clickhouse-logs-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag."),
+		mcp.WithResourceDescription("Read this before writing ClickHouse SQL for a dashboard widget over SigNoz logs. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-logs-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.LogsSchema))),
 	)
@@ -705,9 +705,9 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	clickhouseLogsExample := mcp.NewResource(
-		"signoz://dashboard/clickhouse-logs-example",
+		"fusescope://dashboard/clickhouse-logs-example",
 		"ClickHouse Logs Examples",
-		mcp.WithResourceDescription("Read this after signoz://dashboard/clickhouse-schema-for-logs when composing a raw ClickHouse logs widget. It covers timestamp and attribute filters, resource CTEs, variables, timeseries/value shapes, and performance patterns."),
+		mcp.WithResourceDescription("Read this after fusescope://dashboard/clickhouse-schema-for-logs when composing a raw ClickHouse logs widget. It covers timestamp and attribute filters, resource CTEs, variables, timeseries/value shapes, and performance patterns."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.ClickhouseSqlQueryForLogs))),
 	)
@@ -723,9 +723,9 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	clickhouseMetricsSchemaResource := mcp.NewResource(
-		"signoz://dashboard/clickhouse-schema-for-metrics",
+		"fusescope://dashboard/clickhouse-schema-for-metrics",
 		"ClickHouse Metrics Schema",
-		mcp.WithResourceDescription("Read this before writing ClickHouse SQL for a dashboard widget over SigNoz metrics. It lists tables and columns from the schema bundled with this server. Also read signoz://dashboard/clickhouse-metrics-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag."),
+		mcp.WithResourceDescription("Read this before writing ClickHouse SQL for a dashboard widget over SigNoz metrics. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-metrics-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.MetricsSchema))),
 	)
@@ -741,9 +741,9 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	clickhouseMetricsExample := mcp.NewResource(
-		"signoz://dashboard/clickhouse-metrics-example",
+		"fusescope://dashboard/clickhouse-metrics-example",
 		"ClickHouse Metrics Examples",
-		mcp.WithResourceDescription("Read this after signoz://dashboard/clickhouse-schema-for-metrics when composing a raw ClickHouse metrics widget. It covers counter rates, error ratios, histogram quantiles, time-series tables, variables, and performance patterns."),
+		mcp.WithResourceDescription("Read this after fusescope://dashboard/clickhouse-schema-for-metrics when composing a raw ClickHouse metrics widget. It covers counter rates, error ratios, histogram quantiles, time-series tables, variables, and performance patterns."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.ClickhouseSqlQueryForMetrics))),
 	)
@@ -759,9 +759,9 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	clickhouseTracesSchemaResource := mcp.NewResource(
-		"signoz://dashboard/clickhouse-schema-for-traces",
+		"fusescope://dashboard/clickhouse-schema-for-traces",
 		"ClickHouse Traces Schema",
-		mcp.WithResourceDescription("Read this before writing ClickHouse SQL for a dashboard widget over SigNoz traces. It lists tables and columns from the schema bundled with this server. Also read signoz://dashboard/clickhouse-traces-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag."),
+		mcp.WithResourceDescription("Read this before writing ClickHouse SQL for a dashboard widget over SigNoz traces. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-traces-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.TracesSchema))),
 	)
@@ -777,9 +777,9 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	clickhouseTracesExample := mcp.NewResource(
-		"signoz://dashboard/clickhouse-traces-example",
+		"fusescope://dashboard/clickhouse-traces-example",
 		"ClickHouse Traces Examples",
-		mcp.WithResourceDescription("Read this after signoz://dashboard/clickhouse-schema-for-traces when composing a raw ClickHouse traces widget. It covers resource filters, timeseries/value/table result shapes, span events, latency analysis, and performance patterns."),
+		mcp.WithResourceDescription("Read this after fusescope://dashboard/clickhouse-schema-for-traces when composing a raw ClickHouse traces widget. It covers resource filters, timeseries/value/table result shapes, span events, latency analysis, and performance patterns."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.ClickhouseSqlQueryForTraces))),
 	)
@@ -795,7 +795,7 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	promqlExample := mcp.NewResource(
-		"signoz://promql/instructions",
+		"fusescope://promql/instructions",
 		"PromQL Instructions",
 		mcp.WithResourceDescription("Read this when composing a PromQL dashboard widget or promql_rule alert. It explains SigNoz's Prometheus 3.x quoted-selector form for dotted OTel metric names, resource labels, examples, and query checks; do not use it for Query Builder or ClickHouse SQL."),
 		mcp.WithMIMEType("text/markdown"),
@@ -813,7 +813,7 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	queryBuilderExample := mcp.NewResource(
-		"signoz://dashboard/query-builder-example",
+		"fusescope://dashboard/query-builder-example",
 		"Query Builder Examples",
 		mcp.WithResourceDescription("Read this when composing a Query Builder dashboard widget. It covers signal-specific aggregations, filters, metric naming, grouped legends, functions, and examples; use the ClickHouse or PromQL resources instead for those query types."),
 		mcp.WithMIMEType("text/markdown"),
@@ -831,9 +831,9 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	dashboardInstructions := mcp.NewResource(
-		"signoz://dashboard/instructions",
+		"fusescope://dashboard/instructions",
 		"Dashboard Basic Instructions",
-		mcp.WithResourceDescription("Read this before creating or fully replacing a dashboard. It explains dashboard fields, metadata, variables, variable chaining, and layout. Also read signoz://dashboard/widgets-instructions for widget and query choices."),
+		mcp.WithResourceDescription("Read this before creating or fully replacing a dashboard. It explains dashboard fields, metadata, variables, variable chaining, and layout. Also read fusescope://dashboard/widgets-instructions for widget and query choices."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.Basics))),
 	)
@@ -849,9 +849,9 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	widgetsInstructions := mcp.NewResource(
-		"signoz://dashboard/widgets-instructions",
+		"fusescope://dashboard/widgets-instructions",
 		"Dashboard Widget Instructions",
-		mcp.WithResourceDescription("Read this when choosing or building dashboard widgets. It explains when to use each panel type, required layout and legend fields, and which detailed guide to read for each query type. Also read signoz://dashboard/instructions."),
+		mcp.WithResourceDescription("Read this when choosing or building dashboard widgets. It explains when to use each panel type, required layout and legend fields, and which detailed guide to read for each query type. Also read fusescope://dashboard/instructions."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.WidgetsInstructions))),
 	)
@@ -867,7 +867,7 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	widgetsExamplesResource := mcp.NewResource(
-		"signoz://dashboard/widgets-examples",
+		"fusescope://dashboard/widgets-examples",
 		"Dashboard Widgets Examples",
 		mcp.WithResourceDescription("Read this after the dashboard and widget instructions when building panels. It provides one worked, server-verified v6 panel payload per panel type (timeseries, area, list, pie, table, value/number) to copy structurally. Verify field names in the target SigNoz workspace."),
 		mcp.WithMIMEType("text/markdown"),
@@ -885,9 +885,9 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	listFilterGuide := mcp.NewResource(
-		"signoz://dashboard/list-filter-guide",
+		"fusescope://dashboard/list-filter-guide",
 		"Dashboard List Filter Guide",
-		mcp.WithResourceDescription("Read this to build the optional filter argument of signoz_list_dashboards. It documents the server-side metadata filter DSL: grammar (terms, AND/OR/NOT, free-text search), the filterable keys (name, description, created_by, created_at, updated_at, locked, and tag keys) with their operators and value formats, and worked examples."),
+		mcp.WithResourceDescription("Read this to build the optional filter argument of fusescope_list_dashboards. It documents the server-side metadata filter DSL: grammar (terms, AND/OR/NOT, free-text search), the filterable keys (name, description, created_by, created_at, updated_at, locked, and tag keys) with their operators and value formats, and worked examples."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.ListFilterGuide))),
 	)
@@ -903,9 +903,9 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	patchInstructions := mcp.NewResource(
-		"signoz://dashboard/patch-instructions",
+		"fusescope://dashboard/patch-instructions",
 		"Dashboard Patch Instructions",
-		mcp.WithResourceDescription("Read this before calling signoz_patch_dashboard. It gives worked RFC 6902 JSON Patch recipes with exact JSON Pointer paths for targeted edits (rename, add/edit/move/remove a panel, edit a query, variables, tags), including the two-op sequences the backend requires (adding a panel needs a panel op plus a grid-item op). For the panel/query/variable JSON to use as a patch value, also read signoz://dashboard/widgets-examples and signoz://dashboard/instructions."),
+		mcp.WithResourceDescription("Read this before calling fusescope_patch_dashboard. It gives worked RFC 6902 JSON Patch recipes with exact JSON Pointer paths for targeted edits (rename, add/edit/move/remove a panel, edit a query, variables, tags), including the two-op sequences the backend requires (adding a panel needs a panel op plus a grid-item op). For the panel/query/variable JSON to use as a patch value, also read fusescope://dashboard/widgets-examples and fusescope://dashboard/instructions."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.PatchInstructions))),
 	)
@@ -921,9 +921,9 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	})
 
 	dashboardExamples := mcp.NewResource(
-		"signoz://dashboard/examples",
+		"fusescope://dashboard/examples",
 		"Dashboard Examples",
-		mcp.WithResourceDescription("Read this when assembling a complete dashboard (panels + layout) with signoz_create_dashboard, replacing one with signoz_update_dashboard, or patching one. It provides the v6 payloads the SigNoz OpenAPI spec publishes: a service overview with a variable, a time series panel and a number panel; a logs table with a text panel; a full replacement; and two JSON Patch arrays. For single-panel shapes see signoz://dashboard/widgets-examples; for layout and variable rules see signoz://dashboard/instructions."),
+		mcp.WithResourceDescription("Read this when assembling a complete dashboard (panels + layout) with fusescope_create_dashboard, replacing one with fusescope_update_dashboard, or patching one. It provides the v6 payloads the SigNoz OpenAPI spec publishes: a service overview with a variable, a time series panel and a number panel; a logs table with a text panel; a full replacement; and two JSON Patch arrays. For single-panel shapes see fusescope://dashboard/widgets-examples; for layout and variable rules see fusescope://dashboard/instructions."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.DashboardExamples))),
 	)
