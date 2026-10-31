@@ -46,7 +46,7 @@ func TestReadinessAndHealthEndpointsTrackDocsIndex(t *testing.T) {
 			reg.Close(context.Background())
 		})
 		h.SetDocsIndex(reg)
-		m := NewMCPServer(logger, h, cfg, nil, nil)
+		m := NewMCPServer(logger, h, cfg, nil)
 		s := m.newSDKServer()
 		h.RegisterDocsHandlers(s)
 
@@ -80,7 +80,7 @@ func TestLivenessEndpointDoesNotRequireReadiness(t *testing.T) {
 		reg.Close(context.Background())
 	})
 	h.SetDocsIndex(reg)
-	m := NewMCPServer(logger, h, cfg, nil, nil)
+	m := NewMCPServer(logger, h, cfg, nil)
 	s := m.newSDKServer()
 	h.RegisterDocsHandlers(s)
 	handler := m.buildHTTP(s).Handler
@@ -134,7 +134,7 @@ func newDocsHTTPHandler(t *testing.T) (http.Handler, *MCPServer) {
 		reg.Close(context.Background())
 	})
 	h.SetDocsIndex(reg)
-	m := NewMCPServer(logger, h, cfg, nil, nil)
+	m := NewMCPServer(logger, h, cfg, nil)
 	s := m.newSDKServer()
 	h.RegisterDocsHandlers(s)
 	return m.buildHTTP(s).Handler, m

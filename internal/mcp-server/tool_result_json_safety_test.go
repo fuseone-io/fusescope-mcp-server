@@ -14,7 +14,6 @@ import (
 	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
 	"github.com/fuseone-io/fusescope-mcp-server/internal/handler/tools"
 	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
-	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics/noopanalytics"
 	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 	"github.com/fuseone-io/fusescope-mcp-server/pkg/toolerrors"
 	official "github.com/modelcontextprotocol/go-sdk/mcp"
@@ -40,7 +39,7 @@ func TestGuardrail_ToolResultsRemainJSONSafeThroughProductionTransport(t *testin
 			cfg := &config.Config{ClientCacheSize: 1, ClientCacheTTL: time.Minute}
 			logger := logpkg.New("error")
 			h := tools.NewHandler(logger, cfg)
-			m := NewMCPServer(logger, h, cfg, noopanalytics.New(), nil)
+			m := NewMCPServer(logger, h, cfg, nil)
 			s := m.newSDKServer()
 
 			h.AddTool(s, mcp.NewTool("json_safety_probe"), func(context.Context, mcp.CallToolRequest) (*mcp.CallToolResult, error) {

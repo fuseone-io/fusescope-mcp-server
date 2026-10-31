@@ -28,8 +28,8 @@ const (
 )
 
 // CallerCorrelationHeaderMaxLen bounds advisory caller-correlation header
-// values. They flow into every log record, span attribute, and Segment
-// payload, so an oversized header multiplies downstream.
+// values. They flow into every log record and span attribute, so an oversized
+// header multiplies downstream.
 const CallerCorrelationHeaderMaxLen = 256
 
 // NormalizeCallerCorrelationValue trims surrounding whitespace and caps the
@@ -50,8 +50,7 @@ func NormalizeCallerCorrelationValue(s string) string {
 }
 
 // NormalizeClientSource collapses the advisory ingress header to a bounded
-// metric-safe taxonomy used consistently across logs, spans, metrics, and
-// analytics.
+// metric-safe taxonomy used consistently across logs, spans and metrics.
 func NormalizeClientSource(s string) string {
 	switch normalized := NormalizeCallerCorrelationValue(s); normalized {
 	case ClientSourceAIAssistant:

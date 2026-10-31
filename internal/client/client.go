@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient"
@@ -37,10 +36,7 @@ const (
 	// DashboardWriteTimeout is used for dashboard create/update operations.
 	DashboardWriteTimeout = 30 * time.Second
 
-	// analyticsIdentityCacheTTL keeps /me out of the hot analytics path;
-	// identity rarely changes, so 10 min is long enough to absorb bursts.
-	analyticsIdentityCacheTTL = 10 * time.Minute
-	errorEnvelopeWarning      = "SigNoz error envelope drift or unsafe guidance detected"
+	errorEnvelopeWarning = "SigNoz error envelope drift or unsafe guidance detected"
 )
 
 var (
@@ -76,18 +72,6 @@ func (e *HTTPStatusError) Error() string {
 	}
 }
 
-// AnalyticsIdentity is the identity tuple used for analytics attribution.
-// UserID holds the service-account ID for API-key sessions, or the SigNoz
-// user ID for auth-token sessions. Name is the service-account name or the
-// user's displayName, respectively.
-type AnalyticsIdentity struct {
-	OrgID     string
-	UserID    string
-	Name      string
-	Email     string
-	Principal string
-}
-
 type SigNoz struct {
 	baseURL        string
 	apiKey         string
@@ -96,13 +80,10 @@ type SigNoz struct {
 	httpClient     *http.Client
 	customHeaders  map[string]string
 
-	identityMu       sync.Mutex
-	cachedIdentity   *AnalyticsIdentity
-	identityCachedAt time.Time
-	webURLMu         sync.Mutex
-	cachedWebURL     string
-	webURLExpiresAt  time.Time
-	meters           *otelpkg.Meters
+	webURLMu        sync.Mutex
+	cachedWebURL    string
+	webURLExpiresAt time.Time
+	meters          *otelpkg.Meters
 }
 
 // sharedTransport is a single process-wide *http.Transport — and therefore a
@@ -208,111 +189,6 @@ func (s *SigNoz) ValidateCredentials(ctx context.Context) error {
 	}
 
 	return s.evaluateValidationResponse(ctx, status, body)
-}
-
-// GetAnalyticsIdentity returns the org + user identity for the current
-// credentials, cached per-client and mutex-serialized so a burst of events
-// produces a single /me roundtrip.
-//
-// Auth-token clients hit /api/v2/users/me (v2 is required — it returns
-// orgId, v1 doesn't). API-key clients hit /api/v1/service_accounts/me.
-func (s *SigNoz) GetAnalyticsIdentity(ctx context.Context) (*AnalyticsIdentity, error) {
-	ctx = s.ensureTenantContext(ctx)
-	s.identityMu.Lock()
-	defer s.identityMu.Unlock()
-
-	if s.cachedIdentity != nil && time.Since(s.identityCachedAt) < analyticsIdentityCacheTTL {
-		if s.meters != nil {
-			attrs := otelpkg.AppendTenantURL(ctx, nil)
-			attrs = otelpkg.AppendClientSource(ctx, attrs)
-			s.meters.IdentityCacheHits.Add(ctx, 1, metric.WithAttributes(attrs...))
-		}
-		return s.cachedIdentity, nil
-	}
-	if s.meters != nil {
-		attrs := otelpkg.AppendTenantURL(ctx, nil)
-		attrs = otelpkg.AppendClientSource(ctx, attrs)
-		s.meters.IdentityCacheMisses.Add(ctx, 1, metric.WithAttributes(attrs...))
-	}
-
-	identity, err := s.fetchAnalyticsIdentity(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	s.cachedIdentity = identity
-	s.identityCachedAt = time.Now()
-	return identity, nil
-}
-
-func (s *SigNoz) fetchAnalyticsIdentity(ctx context.Context) (*AnalyticsIdentity, error) {
-	ctx = s.ensureTenantContext(ctx)
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
-	defer cancel()
-
-	newRequest := apiclient.NewGetMyServiceAccountRequest
-	principal := "service_account"
-	if strings.EqualFold(s.authHeaderName, "Authorization") {
-		newRequest = apiclient.NewGetMyUserRequest
-		principal = "user"
-	}
-
-	req, err := newRequest(s.apiServer())
-	if err != nil {
-		return nil, fmt.Errorf("failed to create identity request: %w", err)
-	}
-	status, body, err := s.doValidationRequest(ctx, req)
-	if err != nil {
-		s.logger.ErrorContext(ctx, "SigNoz analytics identity request failed",
-			slog.String("url", req.URL.String()), logpkg.ErrAttr(err))
-		return nil, fmt.Errorf("failed to reach SigNoz API: %w", err)
-	}
-	if status != http.StatusOK {
-		return nil, s.evaluateValidationResponse(ctx, status, body)
-	}
-
-	identity, err := parseAnalyticsIdentity(body, principal)
-	if err != nil {
-		return nil, fmt.Errorf("parse %s response: %w", req.URL.Path, err)
-	}
-
-	return identity, nil
-}
-
-type analyticsIdentityResponse struct {
-	Data struct {
-		ID          string `json:"id"`
-		Email       string `json:"email"`
-		OrgID       string `json:"orgId"`
-		Name        string `json:"name"`        // service_accounts/me
-		DisplayName string `json:"displayName"` // users/me
-	} `json:"data"`
-}
-
-func parseAnalyticsIdentity(body []byte, principal string) (*AnalyticsIdentity, error) {
-	var resp analyticsIdentityResponse
-	if err := json.Unmarshal(body, &resp); err != nil {
-		return nil, fmt.Errorf("unmarshal response: %w", err)
-	}
-	if resp.Data.ID == "" {
-		return nil, fmt.Errorf("missing data.id")
-	}
-	if resp.Data.OrgID == "" {
-		return nil, fmt.Errorf("missing data.orgId")
-	}
-
-	name := resp.Data.Name
-	if name == "" {
-		name = resp.Data.DisplayName
-	}
-
-	return &AnalyticsIdentity{
-		OrgID:     resp.Data.OrgID,
-		UserID:    resp.Data.ID,
-		Name:      name,
-		Email:     resp.Data.Email,
-		Principal: principal,
-	}, nil
 }
 
 // doValidationRequest sends a generated identity request with auth headers and

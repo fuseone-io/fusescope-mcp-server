@@ -9,7 +9,6 @@ import (
 
 	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
 	"github.com/fuseone-io/fusescope-mcp-server/internal/handler/tools"
-	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics/noopanalytics"
 	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 )
 
@@ -21,7 +20,7 @@ func TestProductionHTTPDeclaredBodyLimitPrecedesAuthentication(t *testing.T) {
 		ClientCacheTTL:  time.Minute,
 		MaxRequestBytes: 16,
 	}
-	m := NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, noopanalytics.New(), nil)
+	m := NewMCPServer(logger, tools.NewHandler(logger, cfg), cfg, nil)
 	handler := m.buildHTTP(m.newSDKServer()).Handler
 
 	oversized := httptest.NewRequest(http.MethodPost, "/mcp", strings.NewReader(strings.Repeat("x", 17)))

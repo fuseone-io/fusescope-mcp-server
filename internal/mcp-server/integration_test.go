@@ -45,7 +45,7 @@ func buildTestServerWithDocs(t *testing.T, docs *docsindex.IndexRegistry) *mcp.S
 		handler.SetDocsIndex(docs)
 	}
 
-	m := NewMCPServer(log, handler, cfg, nil, nil)
+	m := NewMCPServer(log, handler, cfg, nil)
 	s := m.newSDKServer()
 	m.registerHandlers(s)
 	return s

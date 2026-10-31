@@ -23,7 +23,7 @@ func newPanicTransportServer(t *testing.T) (*MCPServer, *mcp.Server) {
 	logger := logpkg.New("error")
 	cfg := &config.Config{URL: "https://tenant.example.com", APIKey: "test-key", ClientCacheSize: 1, ClientCacheTTL: time.Minute, MaxRequestBytes: 1 << 20}
 	h := tools.NewHandler(logger, cfg)
-	server := NewMCPServer(logger, h, cfg, nil, nil)
+	server := NewMCPServer(logger, h, cfg, nil)
 	sdkServer := server.newSDKServer()
 
 	h.AddTool(sdkServer, mcpcontract.NewTool("panic_probe"), func(context.Context, mcpcontract.CallToolRequest) (*mcpcontract.CallToolResult, error) {

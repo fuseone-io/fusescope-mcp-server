@@ -17,9 +17,6 @@ import (
 	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
 	"github.com/fuseone-io/fusescope-mcp-server/internal/handler/tools"
 	mcpserver "github.com/fuseone-io/fusescope-mcp-server/internal/mcp-server"
-	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics"
-	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics/noopanalytics"
-	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics/segmentanalytics"
 	"github.com/fuseone-io/fusescope-mcp-server/pkg/dashboard"
 	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 	otelpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/otel"
@@ -90,25 +87,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	var analyticsInstance analytics.Analytics
-	if cfg.AnalyticsEnabled && cfg.SegmentKey != "" {
-		analyticsInstance, err = segmentanalytics.New(logger, analytics.Config{
-			Enabled: true,
-			Segment: analytics.SegmentConfig{Key: cfg.SegmentKey},
-		})
-		if err != nil {
-			logger.WarnContext(ctx, "Failed to initialize Segment analytics, continuing without analytics", logpkg.ErrAttr(err))
-			analyticsInstance = noopanalytics.New()
-		}
-	} else {
-		analyticsInstance = noopanalytics.New()
-	}
-
 	handler := tools.NewHandler(logger, cfg)
 
 	dashboard.InitClickhouseSchema()
 
-	srv := mcpserver.NewMCPServer(logger, handler, cfg, analyticsInstance, meters)
+	srv := mcpserver.NewMCPServer(logger, handler, cfg, meters)
 
 	runGroup, runCtx := errgroup.WithContext(ctx)
 	runGroup.Go(func() error {
@@ -142,41 +125,20 @@ func main() {
 		shutdownErr = errors.Join(shutdownErr, err)
 	}
 
-	// Join the server goroutine BEFORE draining analytics. Otherwise, a tool
-	// call that is still executing (stdio is especially prone to this, since
-	// srv.Shutdown is a no-op there) can call dispatchAnalytics and
-	// analyticsWG.Add while WaitForAnalytics is running — the sync.WaitGroup
-	// misuse contract forbids Add concurrent with a Wait at counter zero,
-	// and any late dispatches would otherwise race analyticsInstance.Stop.
+	// Join the server goroutine before shutting down the meter provider, so a
+	// tool call still executing (stdio is especially prone to this, since
+	// srv.Shutdown is a no-op there) records against a live provider.
 	// Bounded by shutCtx so a stuck stdio reader cannot hold the process
 	// past the shutdown budget.
 	if !serverDone {
 		select {
 		case err := <-serverErrCh:
 			runErr = err
-			serverDone = true
 		case <-shutCtx.Done():
 			logger.WarnContext(ctx, "Timed out waiting for server goroutine to exit", logpkg.ErrAttr(shutCtx.Err()))
 		}
 	}
 
-	// Only drain the analytics WaitGroup when the run loop is guaranteed to
-	// have stopped producing new dispatches. If the join timed out above,
-	// WaitForAnalytics would spawn a goroutine doing analyticsWG.Wait() that
-	// shutCtx cannot cancel, and a still-alive run loop calling Add(1) would
-	// trip "sync: WaitGroup misuse: Add called concurrently with Wait".
-	if serverDone {
-		if err := srv.WaitForAnalytics(shutCtx); err != nil {
-			logger.ErrorContext(ctx, "Failed while waiting for analytics dispatches", logpkg.ErrAttr(err))
-			shutdownErr = errors.Join(shutdownErr, err)
-		}
-	} else {
-		logger.WarnContext(ctx, "Skipping analytics drain because server goroutine did not exit; late dispatches may be lost")
-	}
-	if err := analyticsInstance.Stop(shutCtx); err != nil {
-		logger.ErrorContext(ctx, "Failed to stop analytics", logpkg.ErrAttr(err))
-		shutdownErr = errors.Join(shutdownErr, err)
-	}
 	if shutdownMeter != nil {
 		if err := shutdownMeter(shutCtx); err != nil {
 			logger.ErrorContext(ctx, "Failed to shutdown meter provider", logpkg.ErrAttr(err))
