@@ -7,7 +7,7 @@
     "method": "tools/call",
     "params": {
       "arguments": {},
-      "name": "signoz_unknown"
+      "name": "fusescope_unknown"
     }
   },
   "httpStatus": 200,
@@ -16,7 +16,7 @@
   "response": {
     "error": {
       "code": -32602,
-      "message": "unknown tool \"signoz_unknown\""
+      "message": "unknown tool \"fusescope_unknown\""
     },
     "id": 0,
     "jsonrpc": "2.0"

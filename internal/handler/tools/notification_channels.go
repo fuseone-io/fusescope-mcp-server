@@ -37,7 +37,7 @@ func (h *Handler) RegisterNotificationChannelHandlers(server *mcp.Server) {
 		mcp.WithDescription("Get one notification channel by ID, including its complete provider config. Use fusescope_list_notification_channels to discover IDs. The response preserves backend-owned fields so an update can retain the full current configuration."),
 		notificationSchemaOption(notificationIDSchema()),
 	), h.handleGetNotificationChannel)
-	h.addTool(server, mcp.NewTool("signoz_delete_notification_channel",
+	h.addTool(server, mcp.NewTool("fusescope_delete_notification_channel",
 		withDeleteToolAnnotations(),
 		mcp.WithDescription("Permanently delete one notification channel by ID after the user has confirmed the exact channel. This tool does not check alert-rule references."),
 		notificationSchemaOption(notificationIDSchema()),
@@ -125,7 +125,7 @@ func (h *Handler) handleDeleteNotificationChannel(ctx context.Context, req mcp.C
 	if result != nil {
 		return result, nil
 	}
-	h.logger.DebugContext(ctx, "Tool called: signoz_delete_notification_channel", slog.String("id", args.ID))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_delete_notification_channel", slog.String("id", args.ID))
 	upstream, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil

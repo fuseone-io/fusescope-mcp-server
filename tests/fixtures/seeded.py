@@ -43,7 +43,7 @@ def create_channel(client: MCPClient, name: str, config: dict) -> str:
 def delete_channel(client: MCPClient, channel_id: str) -> None:
     result = assert_tool_ok(
         client.call_tool(
-            "signoz_delete_notification_channel",
+            "fusescope_delete_notification_channel",
             {"searchContext": f"delete channel {channel_id}", "id": channel_id},
         )
     )

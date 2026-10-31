@@ -473,7 +473,7 @@ HTTP mode exposes unauthenticated probe endpoints. New Kubernetes deployments sh
 | `fusescope_get_notification_channel` | Get all provider-specific settings for one channel by ID |
 | `fusescope_create_notification_channel` | Create a notification channel |
 | `fusescope_update_notification_channel` | Fully replace a fetched channel's config |
-| `signoz_delete_notification_channel` | Permanently delete a confirmed channel by ID |
+| `fusescope_delete_notification_channel` | Permanently delete a confirmed channel by ID |
 
 For detailed usage and examples, see the [full documentation](https://signoz.io/docs/ai/signoz-mcp-server/).
 
@@ -1092,7 +1092,7 @@ Get one channel's canonical `id`, machine `name`, `displayName`, timestamps,
 and full `config`. The `config.spec` can contain plaintext credentials; use it
 for updates without displaying or logging secrets. **Parameter**: `id`.
 
-#### `signoz_delete_notification_channel`
+#### `fusescope_delete_notification_channel`
 
 Permanently delete a confirmed channel by `id`. Resolve and confirm the exact
 channel first; call directly when those steps are already complete. The backend

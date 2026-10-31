@@ -533,7 +533,7 @@ func canonicalChannelSchema(name string) bool {
 	switch name {
 	case "fusescope_create_notification_channel", "fusescope_update_notification_channel",
 		"fusescope_list_notification_channels", "fusescope_get_notification_channel",
-		"signoz_delete_notification_channel":
+		"fusescope_delete_notification_channel":
 		return true
 	default:
 		return false

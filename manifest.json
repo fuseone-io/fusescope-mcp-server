@@ -206,7 +206,7 @@
       "description": "Get one canonical channel including displayName and full provider config; keep returned credentials private"
     },
     {
-      "name": "signoz_delete_notification_channel",
+      "name": "fusescope_delete_notification_channel",
       "description": "Permanently delete a confirmed channel by ID; resolve backend routing-policy dependency errors before retrying"
     }
   ],

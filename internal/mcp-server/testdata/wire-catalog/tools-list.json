@@ -12384,7 +12384,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_delete_notification_channel"
+          "name": "fusescope_delete_notification_channel"
         }
       ],
       "ttlMs": 0

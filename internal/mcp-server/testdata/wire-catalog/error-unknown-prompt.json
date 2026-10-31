@@ -7,7 +7,7 @@
     "method": "prompts/get",
     "params": {
       "arguments": {},
-      "name": "signoz_unknown"
+      "name": "fusescope_unknown"
     }
   },
   "httpStatus": 200,
@@ -16,7 +16,7 @@
   "response": {
     "error": {
       "code": -32602,
-      "message": "unknown prompt \"signoz_unknown\""
+      "message": "unknown prompt \"fusescope_unknown\""
     },
     "id": 0,
     "jsonrpc": "2.0"

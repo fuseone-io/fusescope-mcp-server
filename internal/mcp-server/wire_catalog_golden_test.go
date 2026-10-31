@@ -121,9 +121,9 @@ func TestGuardrail_WireCatalogGoldens(t *testing.T) {
 			{"tool-success-fail-open-input.json", "tools/call", `{"name":"fusescope_list_dashboards","arguments":{"limit":{}}}`},
 			{"tool-error-coded-omitted-arguments.json", "tools/call", `{"name":"fusescope_get_alert"}`},
 			{"tool-error-coded-null-arguments.json", "tools/call", `{"name":"fusescope_get_alert","arguments":null}`},
-			{"error-unknown-tool.json", "tools/call", `{"name":"signoz_unknown","arguments":{}}`},
+			{"error-unknown-tool.json", "tools/call", `{"name":"fusescope_unknown","arguments":{}}`},
 			{"error-unknown-resource.json", "resources/read", `{"uri":"fusescope://unknown"}`},
-			{"error-unknown-prompt.json", "prompts/get", `{"name":"signoz_unknown","arguments":{}}`},
+			{"error-unknown-prompt.json", "prompts/get", `{"name":"fusescope_unknown","arguments":{}}`},
 		}
 		for _, tc := range cases {
 			assertWireGolden(t, tc.file, o.capture(tc.method, tc.params))
