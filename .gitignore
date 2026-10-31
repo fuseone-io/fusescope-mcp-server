@@ -33,6 +33,7 @@ go.work.sum
 !/scripts/test-mcp-protocol.sh
 !/scripts/check-agpl.sh
 !/scripts/check-agpl_test.sh
+!/scripts/release-notes.sh
 
 # env file
 .env
@@ -92,3 +93,6 @@ tests/**/.pytest_cache/
 tests/**/.ruff_cache/
 tests/**/__pycache__/
 tests/**/tmp/
+
+# GoReleaser output
+dist/

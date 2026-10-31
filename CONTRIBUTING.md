@@ -11,9 +11,27 @@ Thanks for contributing to SigNoz MCP Server.
 
 ## Releases
 
-The upstream release workflows were removed with the fork: they published to SigNoz's image
-registry and MCP Registry entry. The FuseScope release process (image registry, binaries, MCP
-Registry identity) is not set up yet.
+Pushing a `vX.Y.Z` tag runs `.github/workflows/release.yaml`. Before tagging, set the version in
+`manifest.json` and `server.json` and add its `CHANGELOG.md` section; the workflow fails otherwise.
+It publishes:
+
+- GoReleaser binaries for Linux, macOS and Windows (amd64, arm64) with SPDX SBOMs, a
+  `checksums.txt` signed with cosign, and build provenance, on a GitHub release whose notes are
+  the CHANGELOG section.
+- `ghcr.io/fuseone-io/fusescope-mcp-server:X.Y.Z` (and `:latest` for non-prereleases) for
+  linux/amd64 and linux/arm64, signed with cosign, with build provenance and an SPDX SBOM
+  attestation per platform; the SBOMs are also attached to the release.
+
+Verify an image with:
+
+```sh
+cosign verify ghcr.io/fuseone-io/fusescope-mcp-server:X.Y.Z \
+  --certificate-identity-regexp '^https://github.com/fuseone-io/fusescope-mcp-server/' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+gh attestation verify oci://ghcr.io/fuseone-io/fusescope-mcp-server:X.Y.Z -R fuseone-io/fusescope-mcp-server
+```
+
+Publishing to the MCP Registry is not set up yet.
 
 ## Required sync for MCP changes
 

@@ -1,7 +1,9 @@
 # Build stage
-FROM golang:1.26-alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:1.26-alpine AS builder
 
 ARG VERSION=dev
+ARG TARGETOS
+ARG TARGETARCH
 
 # Install git and ca-certificates for dependencies
 RUN apk --no-cache add git ca-certificates tzdata
@@ -18,17 +20,23 @@ RUN go mod download
 COPY . .
 
 # Build the application with optimizations
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build \
     -ldflags="-w -s -extldflags=-static -X github.com/fuseone-io/fusescope-mcp-server/pkg/version.Version=${VERSION}" \
     -a -installsuffix cgo \
     -o fusescope-mcp-server \
     ./cmd/server/
 
-# Add MCP registry label
-LABEL io.modelcontextprotocol.server.name="io.github.fuseone-io/fusescope-mcp-server"
-
 # Final stage
-FROM alpine:latest
+FROM alpine:3.24
+
+ARG VERSION=dev
+
+# Add MCP registry label
+LABEL io.modelcontextprotocol.server.name="io.github.fuseone-io/fusescope-mcp-server" \
+    org.opencontainers.image.title="fusescope-mcp-server" \
+    org.opencontainers.image.source="https://github.com/fuseone-io/fusescope-mcp-server" \
+    org.opencontainers.image.licenses="Apache-2.0" \
+    org.opencontainers.image.version="${VERSION}"
 
 # Install ca-certificates
 RUN apk --no-cache add ca-certificates
