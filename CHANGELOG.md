@@ -1,29 +1,27 @@
 # Changelog
 
-All notable changes to the SigNoz MCP Server will be documented in this file.
+All notable changes to the FuseScope MCP Server will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.0] - 2026-10-31
 
+First FuseScope release, forked from SigNoz MCP Server 0.17.0.
 
+### Breaking changes
+- Module and binary renamed to `fusescope-mcp-server`; the image is `ghcr.io/fuseone-io/fusescope-mcp-server`.
+- Tools move from `signoz_*` to `fusescope_*` and resources from `signoz://` to `fusescope://`.
+- Environment variables renamed to `FUSESCOPE_*`; the former `SIGNOZ_*` names still work as deprecated aliases.
+- Segment product analytics removed, with `ANALYTICS_ENABLED` and `SEGMENT_KEY`.
+- Anomaly alert rules are no longer advertised.
+- Docs tools search the FuseScope docs instead of signoz.io.
 
+### Changed
+- The AGPL-3.0 schema migrator is no longer linked; the ClickHouse schema resources are regenerated from the FuseScope schema migrator.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+### Added
+- Release binaries for Linux, macOS and Windows (amd64, arm64) and a signed multi-arch image with SBOMs and build provenance.
 
 ## [0.17.0] - 2026-10-30
 
@@ -526,3 +524,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.15.0]: https://github.com/SigNoz/signoz-mcp-server/compare/v0.14.0...v0.15.0
 [0.16.0]: https://github.com/SigNoz/signoz-mcp-server/compare/v0.15.0...v0.16.0
 [0.17.0]: https://github.com/SigNoz/signoz-mcp-server/compare/v0.16.0...v0.17.0
+[0.18.0]: https://github.com/fuseone-io/fusescope-mcp-server/releases/tag/v0.18.0
