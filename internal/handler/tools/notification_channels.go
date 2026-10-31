@@ -22,13 +22,13 @@ func (h *Handler) RegisterNotificationChannelHandlers(server *mcp.Server) {
 	), h.handleListNotificationChannels)
 	h.addTool(server, mcp.NewTool("fusescope_create_notification_channel",
 		withCreateToolAnnotations(),
-		mcp.WithDescription("Use this when the user wants a new notification channel; use fusescope_update_notification_channel to replace an existing one. The payload is config: {kind, spec} plus name, or generateName=true with displayName. Read fusescope://notification-channel/examples for every kind SigNoz accepts, each kind's spec fields, and a worked payload per kind, unless already read in the same prepared operation. SigNoz rejects an unknown kind, an unknown or missing spec field, and a duplicate name, each with the exact requirement. Minimal example: {\"name\":\"ops-hook\",\"config\":{\"kind\":\"webhook\",\"spec\":{\"url\":\"https://example.com/hook\"}}}. name is an immutable DNS-1123 label; alert routing references displayName (SigNoz defaults it from name). test defaults to false: ask whether the user wants one live test notification and set test=true only if they agree; the channel remains created if the test fails."),
+		mcp.WithDescription("Use this when the user wants a new notification channel; use fusescope_update_notification_channel to replace an existing one. The payload is config: {kind, spec} plus name, or generateName=true with displayName. Read fusescope://notification-channel/examples for every kind FuseScope accepts, each kind's spec fields, and a worked payload per kind, unless already read in the same prepared operation. FuseScope rejects an unknown kind, an unknown or missing spec field, and a duplicate name, each with the exact requirement. Minimal example: {\"name\":\"ops-hook\",\"config\":{\"kind\":\"webhook\",\"spec\":{\"url\":\"https://example.com/hook\"}}}. name is an immutable DNS-1123 label; alert routing references displayName (FuseScope defaults it from name). test defaults to false: ask whether the user wants one live test notification and set test=true only if they agree; the channel remains created if the test fails."),
 		mcp.WithInputSchema[types.CreateNotificationChannelInput](),
 		boolOrStringProperties("test"),
 	), h.handleCreateNotificationChannel)
 	h.addTool(server, mcp.NewTool("fusescope_update_notification_channel",
 		withNonIdempotentUpdateToolAnnotations(),
-		mcp.WithDescription("Use this when the user wants to replace one notification channel's complete config: {kind, spec}; it is a full replacement and may change the provider kind. First call fusescope_get_notification_channel and preserve every setting the user did not ask to change; send only id and config, because name and displayName are immutable. A fetched config is writable as-is; to unset an optional field, omit it, because SigNoz rejects an empty string for template-backed fields such as titles and messages. SigNoz also rejects an unknown kind and an unknown or missing spec field with the exact requirement; fusescope://notification-channel/examples lists every kind's spec fields. Set test=true only when the user wants one live test notification after the update; the default is false and the update remains committed if the test fails."),
+		mcp.WithDescription("Use this when the user wants to replace one notification channel's complete config: {kind, spec}; it is a full replacement and may change the provider kind. First call fusescope_get_notification_channel and preserve every setting the user did not ask to change; send only id and config, because name and displayName are immutable. A fetched config is writable as-is; to unset an optional field, omit it, because FuseScope rejects an empty string for template-backed fields such as titles and messages. FuseScope also rejects an unknown kind and an unknown or missing spec field with the exact requirement; fusescope://notification-channel/examples lists every kind's spec fields. Set test=true only when the user wants one live test notification after the update; the default is false and the update remains committed if the test fails."),
 		mcp.WithInputSchema[types.UpdateNotificationChannelInput](),
 		boolOrStringProperties("test"),
 	), h.handleUpdateNotificationChannel)
@@ -46,7 +46,7 @@ func (h *Handler) RegisterNotificationChannelHandlers(server *mcp.Server) {
 	channelExamples := mcp.NewResource(
 		"fusescope://notification-channel/examples",
 		"Notification Channel Reference and Examples",
-		mcp.WithResourceDescription("Read this before composing config for fusescope_create_notification_channel or fusescope_update_notification_channel unless already read in the same prepared operation. It lists every provider kind SigNoz accepts, each kind's config.spec fields with the required ones marked, and a worked create payload per kind plus two replacement configs."),
+		mcp.WithResourceDescription("Read this before composing config for fusescope_create_notification_channel or fusescope_update_notification_channel unless already read in the same prepared operation. It lists every provider kind FuseScope accepts, each kind's config.spec fields with the required ones marked, and a worked create payload per kind plus two replacement configs."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(notificationchannel.Examples))),
 	)
@@ -247,7 +247,7 @@ func (h *Handler) handleUpdateNotificationChannel(ctx context.Context, req mcp.C
 			return committedNotificationAuthResult(readErr, args.ID, testResult), nil
 		}
 		h.logger.WarnContext(ctx, "Notification channel update read-back failed", slog.String("id", args.ID))
-		notes = append(notes, "note: the update was committed, but SigNoz did not return the read-back state. Fetch the channel again before another update.")
+		notes = append(notes, "note: the update was committed, but FuseScope did not return the read-back state. Fetch the channel again before another update.")
 	} else {
 		result["channel"] = json.RawMessage(channel)
 	}
@@ -385,7 +385,7 @@ func committedNotificationChannelResult(err *client.CommittedNotificationChannel
 	if err.DisplayName != "" {
 		fields["displayName"] = err.DisplayName
 	}
-	return errorWithStructuredContent(CodeUpstreamError, "SigNoz committed the notification channel mutation, but its response could not be validated. Do not repeat the mutation; fetch the known ID instead.", fields)
+	return errorWithStructuredContent(CodeUpstreamError, "FuseScope committed the notification channel mutation, but its response could not be validated. Do not repeat the mutation; fetch the known ID instead.", fields)
 }
 
 func isNotificationHTTPError(err error) bool {

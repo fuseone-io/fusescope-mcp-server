@@ -49,7 +49,7 @@ func (s *SigNoz) GetExternalURL(ctx context.Context) (string, error) {
 				return "", err
 			}
 		}
-		s.logger.WarnContext(ctx, "SigNoz global configuration unavailable; using API URL for resource links", slog.Int("status", status))
+		s.logger.WarnContext(ctx, "FuseScope global configuration unavailable; using API URL for resource links", slog.Int("status", status))
 		s.cachedWebURL = ""
 		s.webURLExpiresAt = time.Now().Add(externalURLRetryTTL)
 		return "", nil
@@ -62,7 +62,7 @@ func (s *SigNoz) GetExternalURL(ctx context.Context) (string, error) {
 		} `json:"data"`
 	}
 	if err := json.Unmarshal(data, &config); err != nil || config.Data == nil || config.Data.ExternalURL == nil {
-		s.logger.WarnContext(ctx, "SigNoz global configuration is missing a readable data.external_url; using API URL for resource links")
+		s.logger.WarnContext(ctx, "FuseScope global configuration is missing a readable data.external_url; using API URL for resource links")
 		s.cachedWebURL = ""
 		s.webURLExpiresAt = time.Now().Add(externalURLRetryTTL)
 		return "", nil
@@ -72,7 +72,7 @@ func (s *SigNoz) GetExternalURL(ctx context.Context) (string, error) {
 	if err != nil {
 		// Never include the configured value or a net/url parse error: malformed
 		// upstream configuration can contain accidentally embedded credentials.
-		s.logger.WarnContext(ctx, "SigNoz global external_url is invalid; using API URL for resource links", slog.String("reason", err.Error()))
+		s.logger.WarnContext(ctx, "FuseScope global external_url is invalid; using API URL for resource links", slog.String("reason", err.Error()))
 		s.cachedWebURL = ""
 		s.webURLExpiresAt = time.Now().Add(externalURLRetryTTL)
 		return "", nil

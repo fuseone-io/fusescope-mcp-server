@@ -35,7 +35,7 @@ type CommittedNotificationChannelError struct {
 }
 
 func (e *CommittedNotificationChannelError) Error() string {
-	return fmt.Sprintf("SigNoz committed the %s but could not parse its response: %v", e.Operation, e.Err)
+	return fmt.Sprintf("FuseScope committed the %s but could not parse its response: %v", e.Operation, e.Err)
 }
 
 func (e *CommittedNotificationChannelError) Unwrap() error { return e.Err }

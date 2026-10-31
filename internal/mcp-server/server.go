@@ -156,7 +156,7 @@ func NewMCPServer(log *slog.Logger, handler *tools.Handler, cfg *config.Config, 
 func (m *MCPServer) Run(ctx context.Context) error {
 	s := m.newSDKServer()
 
-	m.logger.InfoContext(ctx, "Starting SigNoz MCP Server",
+	m.logger.InfoContext(ctx, "Starting FuseScope MCP Server",
 		slog.String("server_name", "FuseScopeMCPServer"),
 		slog.String("transport_mode", m.config.TransportMode))
 
@@ -386,7 +386,7 @@ func (m *MCPServer) receivingMiddleware(isRegisteredTool func(string) bool) mcp.
 		return func(ctx context.Context, method string, request mcp.Request) (result mcp.Result, err error) {
 			start := time.Now()
 			observedMethod := otelpkg.NormalizeMCPMethod(method)
-			ctx, span := otel.Tracer("signoz-mcp-server").Start(ctx, observedMethod, trace.WithSpanKind(trace.SpanKindServer))
+			ctx, span := otel.Tracer("fusescope-mcp-server").Start(ctx, observedMethod, trace.WithSpanKind(trace.SpanKindServer))
 			toolName := ""
 			if method == "tools/call" {
 				toolName = observedToolName(request, isRegisteredTool)
@@ -714,7 +714,7 @@ func (m *MCPServer) enforceInstanceURLAllowlist(ctx context.Context, w http.Resp
 		return true
 	}
 	m.logAuthFailure(ctx, r, http.StatusForbidden, authFailureDisallowedSignozURL, authMode,
-		"Tenant SigNoz URL is not permitted by the server allowlist", slog.String("mcp.tenant_url", signozURL))
+		"Tenant FuseScope URL is not permitted by the server allowlist", slog.String("mcp.tenant_url", signozURL))
 	http.Error(w, util.InstanceURLNotPermittedMessage(), http.StatusForbidden)
 	return false
 }
@@ -869,7 +869,7 @@ func (m *MCPServer) authMiddleware(next http.Handler) http.Handler {
 					// when a SigNoz URL is available; otherwise a stale bearer
 					// token would mask the OAuth challenge flow.
 					if customURL == "" && m.config.URL == "" {
-						m.logAuthFailure(ctx, r, http.StatusUnauthorized, authFailureInvalidOAuthToken, authModeAuthorizationBearer, "Bearer token did not match OAuth token format and no SigNoz URL is available for legacy fallback")
+						m.logAuthFailure(ctx, r, http.StatusUnauthorized, authFailureInvalidOAuthToken, authModeAuthorizationBearer, "Bearer token did not match OAuth token format and no FuseScope URL is available for legacy fallback")
 						m.setOAuthChallenge(w, `error="invalid_token", error_description="access token is invalid"`)
 						http.Error(w, "OAuth access token is invalid", http.StatusUnauthorized)
 						return
@@ -938,8 +938,8 @@ func (m *MCPServer) authMiddleware(next http.Handler) http.Handler {
 			signozURL = m.config.URL
 			m.logger.DebugContext(ctx, "Using URL from environment config", slog.String("mcp.tenant_url", signozURL))
 		} else {
-			m.logAuthFailure(ctx, r, http.StatusBadRequest, authFailureMissingSignozURL, authMode, "No SigNoz URL found in X-SigNoz-URL header or environment")
-			http.Error(w, "SigNoz instance URL is required", http.StatusBadRequest)
+			m.logAuthFailure(ctx, r, http.StatusBadRequest, authFailureMissingSignozURL, authMode, "No FuseScope URL found in X-SigNoz-URL header or environment")
+			http.Error(w, "FuseScope instance URL is required", http.StatusBadRequest)
 			return
 		}
 
@@ -1009,7 +1009,7 @@ func (m *MCPServer) buildHTTP(s *mcp.Server) *http.Server {
 	// ({http.request.method} {http.route}) so each endpoint produces a
 	// distinct, readable span name like "HTTP POST /mcp" instead of every
 	// request collapsing into the default operation name.
-	handler := otelhttp.NewHandler(mux, "signoz-mcp-server",
+	handler := otelhttp.NewHandler(mux, "fusescope-mcp-server",
 		otelhttp.WithSpanNameFormatter(func(_ string, r *http.Request) string {
 			return "HTTP " + r.Method + " " + r.URL.Path
 		}),

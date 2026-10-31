@@ -88,7 +88,7 @@ func TestApplyBounds_BuilderAIQueryGetsDefaultLimitAndNoOrder(t *testing.T) {
 			applied := ApplyBounds(request)
 			spec := querySpec(t, request, 0)
 			require.Equal(t, tc.wantLimit, spec["limit"])
-			require.NotContains(t, spec, "order", "a builder_ai_query must reach SigNoz without an inserted order")
+			require.NotContains(t, spec, "order", "a builder_ai_query must reach FuseScope without an inserted order")
 			require.Equal(t, []AppliedBounds{{QueryIndex: 0, QueryName: `query "A"`, Limit: tc.wantLimit, LimitDefaulted: true}}, applied)
 		})
 	}

@@ -88,13 +88,13 @@ func NewMeters(mp metric.MeterProvider) (*Meters, error) {
 		return nil, err
 	}
 
-	docsSearches, err := meter.Int64Counter("signoz_docs_searches_total", metric.WithDescription("Count of SigNoz docs searches"))
+	docsSearches, err := meter.Int64Counter("fusescope_docs_searches_total", metric.WithDescription("Count of FuseScope docs searches"))
 	if err != nil {
 		return nil, err
 	}
 	docsSearchDuration, err := meter.Float64Histogram(
-		"signoz_docs_search_duration_seconds",
-		metric.WithDescription("Duration of SigNoz docs searches"),
+		"fusescope_docs_search_duration_seconds",
+		metric.WithDescription("Duration of FuseScope docs searches"),
 		metric.WithUnit("s"),
 		metric.WithExplicitBucketBoundaries(.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10),
 	)
@@ -102,42 +102,42 @@ func NewMeters(mp metric.MeterProvider) (*Meters, error) {
 		return nil, err
 	}
 	docsSearchTopScore, err := meter.Float64Histogram(
-		"signoz_docs_search_top_score",
+		"fusescope_docs_search_top_score",
 		metric.WithDescription("Uncalibrated raw Bleve score of the top hit in successful non-empty docs searches"),
 	)
 	if err != nil {
 		return nil, err
 	}
-	docsFetches, err := meter.Int64Counter("signoz_docs_fetches_total", metric.WithDescription("Count of SigNoz docs fetches"))
+	docsFetches, err := meter.Int64Counter("fusescope_docs_fetches_total", metric.WithDescription("Count of FuseScope docs fetches"))
 	if err != nil {
 		return nil, err
 	}
-	docsRefreshes, err := meter.Int64Counter("signoz_docs_refresh_total", metric.WithDescription("Count of SigNoz docs refresh outcomes"))
+	docsRefreshes, err := meter.Int64Counter("fusescope_docs_refresh_total", metric.WithDescription("Count of FuseScope docs refresh outcomes"))
 	if err != nil {
 		return nil, err
 	}
 	docsRefreshDuration, err := meter.Float64Histogram(
-		"signoz_docs_refresh_duration_seconds",
-		metric.WithDescription("Duration of SigNoz docs refreshes"),
+		"fusescope_docs_refresh_duration_seconds",
+		metric.WithDescription("Duration of FuseScope docs refreshes"),
 		metric.WithUnit("s"),
 		metric.WithExplicitBucketBoundaries(.1, .5, 1, 2.5, 5, 10, 30, 60, 120, 300),
 	)
 	if err != nil {
 		return nil, err
 	}
-	docsIndexSizeBytes, err := meter.Int64Gauge("signoz_docs_index_size_bytes", metric.WithDescription("Approximate byte size of indexed SigNoz docs corpus"), metric.WithUnit("By"))
+	docsIndexSizeBytes, err := meter.Int64Gauge("fusescope_docs_index_size_bytes", metric.WithDescription("Approximate byte size of indexed FuseScope docs corpus"), metric.WithUnit("By"))
 	if err != nil {
 		return nil, err
 	}
-	docsIndexDocCount, err := meter.Int64Gauge("signoz_docs_index_doc_count", metric.WithDescription("Number of pages in the active SigNoz docs index"))
+	docsIndexDocCount, err := meter.Int64Gauge("fusescope_docs_index_doc_count", metric.WithDescription("Number of pages in the active FuseScope docs index"))
 	if err != nil {
 		return nil, err
 	}
-	docsIndexGeneration, err := meter.Int64Gauge("signoz_docs_index_generation", metric.WithDescription("Active SigNoz docs index generation"))
+	docsIndexGeneration, err := meter.Int64Gauge("fusescope_docs_index_generation", metric.WithDescription("Active FuseScope docs index generation"))
 	if err != nil {
 		return nil, err
 	}
-	docsSitemapFailures, err := meter.Int64Counter("signoz_docs_sitemap_parse_failures_total", metric.WithDescription("Count of SigNoz docs sitemap parse failures"))
+	docsSitemapFailures, err := meter.Int64Counter("fusescope_docs_sitemap_parse_failures_total", metric.WithDescription("Count of FuseScope docs sitemap parse failures"))
 	if err != nil {
 		return nil, err
 	}

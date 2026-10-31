@@ -27,7 +27,7 @@ func TestIsMetricNotFound404(t *testing.T) {
 		{name: "non-404 status", err: &HTTPStatusError{StatusCode: 500, Body: `{"status":"error"}`}, want: false},
 		{name: "route-level 404 (plain text)", err: &HTTPStatusError{StatusCode: 404, Body: "404 page not found\n"}, want: false},
 		{
-			name: "metric-level 404 (live SigNoz envelope)",
+			name: "metric-level 404 (live FuseScope envelope)",
 			err: &HTTPStatusError{
 				StatusCode: 404,
 				Body:       `{"status":"error","error":{"code":"not_found","errors":[],"message":"metric not found: \"mcp.pr205.nonexistent\"","suggestions":[],"type":"not-found"}}`,

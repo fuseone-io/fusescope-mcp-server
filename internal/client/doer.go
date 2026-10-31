@@ -108,7 +108,7 @@ func (d doer) Do(req *http.Request) (*http.Response, error) {
 		// transport error that discovery callers can treat as a fallback.
 		if (readErr != nil || int64(len(respBody)) > maxResponseBytes) &&
 			(resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden) {
-			s.logger.WarnContext(ctx, "SigNoz auth error response body unreadable; preserving status", slog.Int("status", resp.StatusCode))
+			s.logger.WarnContext(ctx, "FuseScope auth error response body unreadable; preserving status", slog.Int("status", resp.StatusCode))
 			resp.Body = http.NoBody
 			resp.ContentLength = 0
 			return resp, nil
@@ -169,7 +169,7 @@ func (d doer) Do(req *http.Request) (*http.Response, error) {
 		if retryable {
 			attrs = append(attrs, slog.Bool("retries_exhausted", true))
 		}
-		s.logger.WarnContext(ctx, "SigNoz request returned unexpected status", attrs...)
+		s.logger.WarnContext(ctx, "FuseScope request returned unexpected status", attrs...)
 		return resp, nil
 	}
 

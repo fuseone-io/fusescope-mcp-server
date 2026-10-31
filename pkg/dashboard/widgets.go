@@ -68,7 +68,7 @@ Dry-run a panel query [CRITICAL]:
 
 Legend Formatting [CRITICAL]:
 - Query Builder syntax: use {{attribute_name}} placeholders that exactly match groupBy keys.
-- ALWAYS set legend when groupBy is used on series-producing charts. Without legend, SigNoz shows raw query identifiers.
+- ALWAYS set legend when groupBy is used on series-producing charts. Without legend, FuseScope shows raw query identifiers.
 - Single-key example: groupBy service.name -> legend {{service.name}}
 - Multi-key example: groupBy service.name and http.method -> legend {{service.name}} - {{http.method}}
 - Panel rules: timeseries/graph, area, bar, pie, histogram require legend when the query has groupBy.
@@ -111,7 +111,7 @@ Best for: comparing discrete categories (e.g. service names, status codes), or t
 - Bar Chart displays frequency or aggregated values for one or more categories over time or across categories.
 - It supports data from logs, traces, or metrics.
 - You can configure the Y-axis unit, and optionally set "Soft Min/Max" to control vertical scale so small values aren't exaggerated.
-- You can add thresholds to highlight important limits. SigNoz colors the threshold label or tints the panel background when the condition holds. It does NOT support a Grafana-style line marker.
+- You can add thresholds to highlight important limits. FuseScope colors the threshold label or tints the panel background when the condition holds. It does NOT support a Grafana-style line marker.
 
 Histogram panel [CRITICAL]:
 Best for: distribution patterns, skew, and how values cluster across ranges.
@@ -150,7 +150,7 @@ Best for: any metric whose meaning depends on change over time, such as throughp
 - Fill Gaps converts missing timestamps into zeros, useful when sparse data must be interpreted as absence of activity rather than missing samples.
 - Y-axis Unit formats numerical values for readability and domain correctness (bytes, durations, percentages, counts).
 - Soft Min/Max constrains the y-axis so small fluctuations aren't visually amplified or drowned out.
-- Thresholds highlight limits, SLOs, warning levels, or expected baselines. SigNoz colors the threshold label or tints the panel background. It does NOT render a horizontal line at the threshold value.
+- Thresholds highlight limits, SLOs, warning levels, or expected baselines. FuseScope colors the threshold label or tints the panel background. It does NOT render a horizontal line at the threshold value.
 
 Value panel [CRITICAL]:
 Best for: top-level KPIs, summary statistics, or health indicators where only the final aggregated value matters, not the trend.

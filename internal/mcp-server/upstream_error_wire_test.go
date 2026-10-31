@@ -43,13 +43,13 @@ func TestProductionHTTPUpstreamErrorGuidanceWire(t *testing.T) {
 		{
 			name:         "legacy unrecognized proxy",
 			upstreamBody: `{"status":"error","error":"` + unrecognizedCanary + `"}`,
-			wantText:     "SigNoz API error: unexpected status 400",
+			wantText:     "FuseScope API error: unexpected status 400",
 		},
 		{
 			name:         "modern unrecognized proxy",
 			modern:       true,
 			upstreamBody: `{"status":"error","error":"` + unrecognizedCanary + `"}`,
-			wantText:     "SigNoz API error: unexpected status 400",
+			wantText:     "FuseScope API error: unexpected status 400",
 		},
 	}
 

@@ -20,7 +20,7 @@ supplying metadata manually.
 
 ## Aggregation Defaults
 
-The tool fills only the aggregations you leave empty. SigNoz validates the combination you send.
+The tool fills only the aggregations you leave empty. FuseScope validates the combination you send.
 
 ### Time Aggregation (within each series, per time bucket)
 
@@ -59,7 +59,7 @@ default, because the metric type cannot say what the question asks:
 Summing a rate series is not a total count, and averaging per-bucket percentiles is not a
 whole-window percentile. Each formula input query in a scalar request needs its own reduceTo.
 
-### What SigNoz rejects
+### What FuseScope rejects
 
 - A percentile spaceAggregation (p50 to p99) on anything but a histogram.
 - A scalar request whose metric queries lack reduceTo.
@@ -71,7 +71,7 @@ whole-window percentile. Each formula input query in a scalar request needs its 
 
 1. **Counters**: rate gives per-second throughput and increase gives the count added per bucket. max or latest on a cumulative counter reads its running total, not activity in the window.
 2. **Gauges**: avg, max, or latest. rate and increase run but measure how the value changed, which is rarely what a gauge question asks.
-3. **Histograms**: SigNoz stores a histogram named X as X.bucket (type histogram) plus the counters X.count and X.sum; query X.bucket, not X. Leave timeAggregation empty and pick a percentile for latency. To read the buckets instead, use timeAggregation rate with spaceAggregation sum: the result is grouped by le, and the le="+Inf" series is the total observation rate.
+3. **Histograms**: FuseScope stores a histogram named X as X.bucket (type histogram) plus the counters X.count and X.sum; query X.bucket, not X. Leave timeAggregation empty and pick a percentile for latency. To read the buckets instead, use timeAggregation rate with spaceAggregation sum: the result is grouped by le, and the le="+Inf" series is the total observation rate.
 4. **Summaries**: query the .quantile series with both aggregations set, for example avg and max, grouped by quantile; the .count and .sum series are counters.
 5. **Providing only metricType for a counter** → This bypasses metadata auto-fetch and can leave temporality or monotonicity unspecified. Either omit metricType so all metadata is fetched, or pass the matching values from fusescope_list_metrics.
 6. **Setting temporality by hand** → Omit it. The backend resolves cumulative, delta or unspecified from the metric's metadata; a pinned value that does not match the exporter returns no data. Set it only to override the stored metadata.
@@ -112,7 +112,7 @@ Formula C: A / B * 100
 Every standalone ` + "`builder_query`" + ` and every ` + "`builder_formula`" + ` must include a positive limit and
 ` + "`order: [{\"key\":{\"name\":\"__result\"},\"direction\":\"desc\"}]`" + ` unless the task intentionally
 needs another ordering. Standalone queries and formula results use ` + "`limit: 100`" + `. Omit limit and order
-on queries a formula references: SigNoz applies each input's limit before it evaluates the formula, so an
+on queries a formula references: FuseScope applies each input's limit before it evaluates the formula, so an
 input limit silently drops groups from the result. The wire field is ` + "`order`" + `; dashboard/editor payloads use a
 different ` + "`orderBy`" + ` shape.
 
@@ -256,9 +256,9 @@ range, not each time bucket. A short-lived spike can therefore fall outside the 
 
 ---
 
-## Cost Meter (SigNoz usage / billing metrics)
+## Cost Meter (FuseScope usage / billing metrics)
 
-Cost Meter is the data store for the metrics SigNoz meters and bills on. Today these are
+Cost Meter is the data store for the metrics FuseScope meters and bills on. Today these are
 telemetry ingestion volume (logs, spans, and metric data points, by count and by bytes),
 and the set evolves (it may include other billable usage, such as AI credit consumption, in
 future). They answer questions like "which services consume the most telemetry budget?" or

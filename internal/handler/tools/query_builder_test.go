@@ -34,5 +34,5 @@ func TestExecuteBuilderQuery_RejectsMissingStartBeforeCallingSigNoz(t *testing.T
 			require.Contains(t, textContent(t, result), `"query.start" is required`)
 		})
 	}
-	require.Zero(t, upstreamCalls.Load(), "the guard must stop the request before it reaches SigNoz")
+	require.Zero(t, upstreamCalls.Load(), "the guard must stop the request before it reaches FuseScope")
 }

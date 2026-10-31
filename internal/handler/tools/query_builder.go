@@ -24,7 +24,7 @@ func (h *Handler) RegisterQueryBuilderV5Handlers(s *mcp.Server) {
 			"Use this only when dedicated log, trace, and metric tools cannot express the request, such as multi-query requests, formulas, PromQL, or ClickHouse SQL. "+
 				"Use fusescope_search_logs/fusescope_search_traces for raw rows, fusescope_aggregate_logs/fusescope_aggregate_traces for grouped or top-N analysis, and fusescope_query_metrics for ordinary metrics queries. "+
 				"Read the matching fusescope://logs/query-builder-guide, fusescope://traces/query-builder-guide, fusescope://ai/query-builder-guide, or fusescope://metrics-aggregation-guide; formulas require the metrics guide, and PromQL requires fusescope://promql/instructions. fusescope://query-builder/examples has a full request per query and request type. "+
-				"Leave limit unset on each builder_query a formula references, because SigNoz applies an input's limit before the formula runs, dropping series. Give every other builder_query and each builder_formula a positive limit (100 for results) and non-empty spec.order (not dashboard orderBy); the server fills in omitted ones.",
+				"Leave limit unset on each builder_query a formula references, because FuseScope applies an input's limit before the formula runs, dropping series. Give every other builder_query and each builder_formula a positive limit (100 for results) and non-empty spec.order (not dashboard orderBy); the server fills in omitted ones.",
 		),
 		mcp.WithInputSchema[types.ExecuteBuilderQueryInput](),
 	)
@@ -34,7 +34,7 @@ func (h *Handler) RegisterQueryBuilderV5Handlers(s *mcp.Server) {
 	queryBuilderExamples := mcp.NewResource(
 		"fusescope://query-builder/examples",
 		"Query Builder Request Examples",
-		mcp.WithResourceDescription("Read this when composing the query argument of fusescope_execute_builder_query and a complete request shape is still needed after the signal's guide. It provides one query_range request from the SigNoz OpenAPI spec per query type (builder, formula, PromQL, ClickHouse SQL) and request type (raw, scalar, time_series) across logs, traces, and metrics."),
+		mcp.WithResourceDescription("Read this when composing the query argument of fusescope_execute_builder_query and a complete request shape is still needed after the signal's guide. It provides one query_range request from the FuseScope OpenAPI spec per query type (builder, formula, PromQL, ClickHouse SQL) and request type (raw, scalar, time_series) across logs, traces, and metrics."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(querybuilder.Examples))),
 	)

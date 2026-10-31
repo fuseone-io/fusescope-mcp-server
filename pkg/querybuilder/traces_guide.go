@@ -35,7 +35,7 @@ Both accept only "= true". To exclude root spans, filter parent_span_id != '' in
 
 == FIELD DISCOVERY ==
 
-An unknown key may not fail: SigNoz can match a guessed attribute, return the warning
+An unknown key may not fail: FuseScope can match a guessed attribute, return the warning
 "key <name> not found in metadata", and match no rows; read that warning as an absent key.
 Built-in span columns are stable, but resource and span attributes depend
 on this workspace's instrumentation. Do not guess unfamiliar field names. Discover keys, then confirm
@@ -47,7 +47,7 @@ their observed values before filtering:
 
 Span attributes use fieldContext "attribute" everywhere: in the discovery tools and in Query Builder
 selectFields and groupBy entries. Older query payloads spell the same context with the legacy value
-"tag"; translate it to "attribute" for discovery, because SigNoz ignores "tag" when listing keys and
+"tag"; translate it to "attribute" for discovery, because FuseScope ignores "tag" when listing keys and
 returns no values for it. The resource and attribute names below are common examples, not a complete
 catalog for every workspace.
 

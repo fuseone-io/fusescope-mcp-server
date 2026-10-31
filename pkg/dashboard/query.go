@@ -1,7 +1,7 @@
 package dashboard
 
 const ClickhouseSqlQueryForMetrics = `
-SigNoz Metrics ClickHouse Query Examples
+FuseScope Metrics ClickHouse Query Examples
 Source: https://signoz.io/docs/userguide/write-a-metrics-clickhouse-query/
 
 ================================================================================
@@ -263,7 +263,7 @@ Legend Formatting:
 `
 
 const ClickhouseSqlQueryForLogs = `
-	SigNoz Logs ClickHouse Query Examples
+	FuseScope Logs ClickHouse Query Examples
 Source: https://signoz.io/docs/userguide/logs_clickhouse_queries/
 
 ================================================================================
@@ -455,7 +455,7 @@ Indexed vs Non-Indexed Attributes:
 `
 
 const ClickhouseSqlQueryForTraces = `
-	SigNoz Traces ClickHouse Query Examples
+	FuseScope Traces ClickHouse Query Examples
 Source: https://signoz.io/docs/userguide/writing-clickhouse-traces-query/
 
 ================================================================================
@@ -651,8 +651,8 @@ Performance Tips:
 `
 
 const Querybuilder = `
-SigNoz Query Builder Reference
-Consolidated guide for SigNoz Query Builder, search syntax, operators, and advanced querying.
+FuseScope Query Builder Reference
+Consolidated guide for FuseScope Query Builder, search syntax, operators, and advanced querying.
 
 ================================================================================
 METRICS NAMING CONVENTIONS (CRITICAL FOR QUERY BUILDER)
@@ -721,7 +721,7 @@ Common OpenTelemetry Collector Metrics:
   - otelcol_connector_received_items.sum
   - otelcol_connector_produced_items.sum
 
-Common SigNoz Metrics:
+Common FuseScope Metrics:
   - signoz_latency.sum
   - signoz_latency.count
   - signoz_latency.bucket
@@ -753,7 +753,7 @@ Legend Formatting:
   Examples:
     - groupBy service.name -> legend {{service.name}}
     - groupBy service.name and http.method -> legend {{service.name}} - {{http.method}}
-  Without legend, SigNoz shows raw query identifiers.
+  Without legend, FuseScope shows raw query identifiers.
 
 Multi-Query Analysis:
   Combine queries with formulas:

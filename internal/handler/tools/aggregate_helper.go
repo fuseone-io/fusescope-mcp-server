@@ -361,7 +361,7 @@ func extractBackendWarningMessages(response json.RawMessage) []string {
 
 func backendWarningsNote(messages []string) string {
 	var b strings.Builder
-	b.WriteString("note: SigNoz backend returned non-fatal warnings:")
+	b.WriteString("note: FuseScope backend returned non-fatal warnings:")
 	for _, message := range messages {
 		b.WriteString("\n- ")
 		b.WriteString(message)
@@ -380,7 +380,7 @@ func warnBackendWarnings(ctx context.Context, logger *slog.Logger, toolName stri
 		logger = slog.Default()
 	}
 	logger.WarnContext(ctx,
-		"SigNoz query builder returned non-fatal warnings",
+		"FuseScope query builder returned non-fatal warnings",
 		slog.String("tool", toolName),
 		slog.Int("warningCount", len(messages)),
 	)

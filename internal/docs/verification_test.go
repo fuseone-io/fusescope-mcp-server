@@ -66,12 +66,12 @@ func TestSchemaVersionGuard(t *testing.T) {
 
 func TestForcedRefreshBypassesUnchangedSitemapHash(t *testing.T) {
 	verifyNoDocsLeaks(t)
-	entries := []SitemapEntry{{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install SigNoz Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"}}
+	entries := []SitemapEntry{{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install FuseScope Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"}}
 	initial := snapshotForEntries(entries, map[string]string{entries[0].URL: "# Old\n"})
 	initial.SitemapHash = SitemapHash(sitemapForEntries(entries))
 	reg := newTestRegistry(t, initial)
 	srv := docsCorpusServer(t, sitemapForEntries(entries), map[string]PageFetch{
-		"/fusescope-docs/install/docker/": {Status: FetchStatusOK, Body: "# Install SigNoz Using Docker\n\nDocker Compose setup.\n"},
+		"/fusescope-docs/install/docker/": {Status: FetchStatusOK, Body: "# Install FuseScope Using Docker\n\nDocker Compose setup.\n"},
 	})
 	defer srv.Close()
 
@@ -88,7 +88,7 @@ func TestForcedRefreshBypassesUnchangedSitemapHash(t *testing.T) {
 
 func TestSingleflightSerialization(t *testing.T) {
 	verifyNoDocsLeaks(t)
-	entries := []SitemapEntry{{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install SigNoz Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"}}
+	entries := []SitemapEntry{{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install FuseScope Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"}}
 	initial := snapshotForEntries(entries, map[string]string{entries[0].URL: "# Old\n"})
 	initial.SitemapHash = "old"
 	reg := newTestRegistry(t, initial)
@@ -102,7 +102,7 @@ func TestSingleflightSerialization(t *testing.T) {
 			return
 		}
 		pageFetches.Add(1)
-		_, _ = w.Write([]byte("# Install SigNoz Using Docker\n\nDocker Compose setup.\n"))
+		_, _ = w.Write([]byte("# Install FuseScope Using Docker\n\nDocker Compose setup.\n"))
 	}))
 	defer srv.Close()
 
@@ -166,7 +166,7 @@ func TestAtomicSwapRace(t *testing.T) {
 
 func TestShutdownSemantics(t *testing.T) {
 	verifyNoDocsLeaks(t)
-	entries := []SitemapEntry{{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install SigNoz Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"}}
+	entries := []SitemapEntry{{URL: "https://fuseone-io.github.io/fusescope-docs/install/docker/", Title: "Install FuseScope Using Docker", SectionSlug: "install", SectionBreadcrumb: "Install > Docker"}}
 	reg := newTestRegistry(t, snapshotForEntries(entries, map[string]string{entries[0].URL: "# Old\n"}))
 	defer reg.Close(context.Background())
 	started := make(chan struct{})
@@ -553,7 +553,7 @@ func snapshotForEntries(entries []SitemapEntry, bodies map[string]string) Corpus
 
 func sitemapForEntries(entries []SitemapEntry) string {
 	var b strings.Builder
-	b.WriteString("# SigNoz Docs\n")
+	b.WriteString("# FuseScope Docs\n")
 	for _, entry := range entries {
 		fmt.Fprintf(&b, "- [%s](%s)\n", entry.Title, entry.URL)
 	}

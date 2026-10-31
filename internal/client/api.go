@@ -15,9 +15,9 @@ import (
 // ErrNonJSONResponse means SigNoz answered a 2xx with a web page instead of an
 // API payload. Self-hosted SigNoz serves its web app for API routes it doesn't
 // have, and an auth proxy in front of SigNoz serves its login page.
-var ErrNonJSONResponse = errors.New("SigNoz returned an HTML page instead of a JSON API response. " +
-	"This SigNoz version may not support this operation, or a proxy in front of SigNoz (such as a login page) intercepted the request. " +
-	"Check that SigNoz is on the latest release and that the URL points at the SigNoz API")
+var ErrNonJSONResponse = errors.New("FuseScope returned an HTML page instead of a JSON API response. " +
+	"This FuseScope version may not support this operation, or a proxy in front of FuseScope (such as a login page) intercepted the request. " +
+	"Check that FuseScope is on the latest release and that the URL points at the FuseScope API")
 
 // jsonContentType is the request content type for every raw-passthrough body.
 const jsonContentType = "application/json"
@@ -54,7 +54,7 @@ func (s *SigNoz) callAPI(ctx context.Context, timeout time.Duration, call apiCal
 		return nil, err
 	}
 	if strings.Contains(strings.ToLower(contentType), "html") || isHTMLBody(body) {
-		s.logger.WarnContext(ctx, "SigNoz returned a web page instead of JSON",
+		s.logger.WarnContext(ctx, "FuseScope returned a web page instead of JSON",
 			slog.String("url", resp.Request.URL.String()),
 			slog.Int("status", resp.StatusCode),
 			slog.String("content_type", contentType),

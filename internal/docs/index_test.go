@@ -72,7 +72,7 @@ func TestNormalizePagesPreservesURLSectionsForFiltering(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	now := time.Now().UTC()
-	body := "# Deno OpenTelemetry Instrumentation\n\nSend Deno traces, logs, and metrics to SigNoz.\n"
+	body := "# Deno OpenTelemetry Instrumentation\n\nSend Deno traces, logs, and metrics to FuseScope.\n"
 	snapshot := CorpusSnapshot{
 		SchemaVersion: CorpusSchemaVersion,
 		BuiltAt:       now,
@@ -90,7 +90,7 @@ func TestNormalizePagesPreservesURLSectionsForFiltering(t *testing.T) {
 				URL:               "https://fuseone-io.github.io/fusescope-docs/instrumentation/opentelemetry-deno/",
 				Title:             "Deno OpenTelemetry Instrumentation",
 				SectionSlug:       "logs-management",
-				SectionBreadcrumb: "Logs Management > Send Logs to SigNoz > Application Logs > Deno",
+				SectionBreadcrumb: "Logs Management > Send Logs to FuseScope > Application Logs > Deno",
 				HeadingsJSON:      mustJSON(ExtractHeadings(body)),
 				BodyMarkdown:      body,
 				FetchedAt:         now,
@@ -209,11 +209,11 @@ func TestMakeSnippetUsesOriginalOffsetsAfterUnicodeCaseFold(t *testing.T) {
 func testSnapshot() CorpusSnapshot {
 	now := time.Now().UTC()
 	logs := "# Logs Management Overview\n\nSigNoz can receive Docker logs and OpenTelemetry logs.\n"
-	install := "# Install SigNoz Using Docker\n\n## Prerequisites\n\nDocker and Docker Compose are required.\n\n## Start\n\nRun docker compose up.\n"
+	install := "# Install FuseScope Using Docker\n\n## Prerequisites\n\nDocker and Docker Compose are required.\n\n## Start\n\nRun docker compose up.\n"
 	return CorpusSnapshot{
 		SchemaVersion: CorpusSchemaVersion,
 		BuiltAt:       now,
-		SitemapRaw:    "- [Logs Management Overview](https://fuseone-io.github.io/fusescope-docs/logs-management/overview/)\n- [Install SigNoz Using Docker](https://fuseone-io.github.io/fusescope-docs/install/docker/)\n",
+		SitemapRaw:    "- [Logs Management Overview](https://fuseone-io.github.io/fusescope-docs/logs-management/overview/)\n- [Install FuseScope Using Docker](https://fuseone-io.github.io/fusescope-docs/install/docker/)\n",
 		SitemapHash:   "test",
 		Pages: []PageRecord{
 			{
@@ -227,7 +227,7 @@ func testSnapshot() CorpusSnapshot {
 			},
 			{
 				URL:               "https://fuseone-io.github.io/fusescope-docs/install/docker/",
-				Title:             "Install SigNoz Using Docker",
+				Title:             "Install FuseScope Using Docker",
 				SectionSlug:       "install",
 				SectionBreadcrumb: "Install > Docker",
 				HeadingsJSON:      mustJSON(ExtractHeadings(install)),

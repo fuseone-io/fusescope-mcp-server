@@ -27,14 +27,14 @@ and span fields are in fusescope://traces/query-builder-guide.
   and writes (gen_ai.usage.cache_read.input_tokens, gen_ai.usage.cache_creation.input_tokens), as
   the OpenTelemetry GenAI conventions define them, so do not add those again. Cost prices the
   cached part at the model's cache rates.
-- Cost is an estimate in USD. SigNoz stamps signoz.gen_ai.usage.tokens.cost on each span at ingest
+- Cost is an estimate in USD. FuseScope stamps signoz.gen_ai.usage.tokens.cost on each span at ingest
   from the pricing rule active then. Spans of an unpriced model carry no cost, so a null or 0 cost
   means unpriced models, not missing calls; list them with fusescope_get_ai_pricing
   (view=unpriced_models).
 - builder_ai_query span rows (requestType=raw) are only the LLM, tool, and agent spans of AI
   traces, the spans with gen_ai.request.model, gen_ai.tool.name, or gen_ai.agent.name; other spans
   of those traces need builder_query with a trace_id filter.
-- builder_ai_query sees only spans with gen_ai.* keys. At ingest, SigNoz maps common vendor keys
+- builder_ai_query sees only spans with gen_ai.* keys. At ingest, FuseScope maps common vendor keys
   (OpenInference, OpenLLMetry, Vercel AI SDK, and others; for example llm.model_name to
   gen_ai.request.model), so those spans count. A span whose keys no mapping covers is not an AI span
   to it: check the mappings with fusescope_list_ai_attribute_mappings, try a sample span with
@@ -73,15 +73,15 @@ gen_ai.request.model, gen_ai.tool.name, or gen_ai.agent.name.
 
 Where they work:
 - Aggregations (fusescope_aggregate_traces): wrap a per-trace key in a function, e.g.
-  avg(trace.estimated_total_cost) or max(trace.tool_call_count); SigNoz computes each trace's value,
-  then aggregates across traces. Rules SigNoz enforces:
+  avg(trace.estimated_total_cost) or max(trace.tool_call_count); FuseScope computes each trace's value,
+  then aggregates across traces. Rules FuseScope enforces:
   - one call is all trace-level (trace.) or all span-level aggregations, never both;
     avg(trace.estimated_total_cost) with p99(duration_nano) is rejected, so make two calls;
   - no sumIf-style conditions on trace. keys; put the condition in filter.
   count() counts spans and count_distinct(trace_id) counts AI traces; both are span-level, so
   never put them in the same call as a trace. key.
 - Filters: with span rows and trace rows (fusescope_search_traces) and with aggregations. Combine them
-  with span-level conditions using a top-level AND; SigNoz rejects OR or NOT across the two levels.
+  with span-level conditions using a top-level AND; FuseScope rejects OR or NOT across the two levels.
   A span-level condition keeps the traces that have at least one matching span inside the time
   window.
 - orderBy: only trace rows (fusescope_search_traces, requestType=trace) order by a per-trace key, any

@@ -35,7 +35,7 @@ const (
 	// upstreamErrorPrefix marks failures originating from the SigNoz backend
 	// (any client API call), giving the LLM a detectable signal to distinguish
 	// them from a local parameter mistake.
-	upstreamErrorPrefix = "SigNoz API error:"
+	upstreamErrorPrefix = "FuseScope API error:"
 
 	// notAJSONObjectMessage guards read-only tools whose arguments payload is not a JSON object.
 	notAJSONObjectMessage = "invalid arguments format: expected JSON object"
@@ -515,9 +515,9 @@ func appendAuthorizationOperation(res *mcp.CallToolResult, toolName string) {
 	var recovery string
 	switch {
 	case status == http.StatusUnauthorized && code == CodeUnauthorized:
-		recovery = fmt.Sprintf("Authentication failed for `%s`. Re-authenticate with valid SigNoz credentials, then retry only this operation.", toolName)
+		recovery = fmt.Sprintf("Authentication failed for `%s`. Re-authenticate with valid FuseScope credentials, then retry only this operation.", toolName)
 	case status == http.StatusForbidden && code == CodePermissionDenied:
-		recovery = fmt.Sprintf("Permission denied for `%s`. Request access to this SigNoz operation, then retry only this operation.", toolName)
+		recovery = fmt.Sprintf("Permission denied for `%s`. Request access to this FuseScope operation, then retry only this operation.", toolName)
 	default:
 		return
 	}

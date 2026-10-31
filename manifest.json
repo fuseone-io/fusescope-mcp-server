@@ -27,7 +27,7 @@
   "tools": [
     {
       "name": "fusescope_get_org_overview",
-      "description": "Get the current status and overall posture of the SigNoz deployment, with typed telemetry, infrastructure, alert, workspace, authentication, licensing, and configuration projections, the org's feature flags, plus sourceStats containing every reported stats field"
+      "description": "Get the current status and overall posture of the FuseScope deployment, with typed telemetry, infrastructure, alert, workspace, authentication, licensing, and configuration projections, the org's feature flags, plus sourceStats containing every reported stats field"
     },
     {
       "name": "fusescope_list_metrics",
@@ -135,11 +135,11 @@
     },
     {
       "name": "fusescope_search_docs",
-      "description": "Search official SigNoz documentation with 2 to 6 keywords and return ranked pages with URLs and snippets; use fusescope_fetch_doc for a selected page's full content"
+      "description": "Search official FuseScope documentation with 2 to 6 keywords and return ranked pages with URLs and snippets; use fusescope_fetch_doc for a selected page's full content"
     },
     {
       "name": "fusescope_fetch_doc",
-      "description": "Fetch one known official SigNoz documentation page's full Markdown or a requested heading"
+      "description": "Fetch one known official FuseScope documentation page's full Markdown or a requested heading"
     },
     {
       "name": "fusescope_create_view",
@@ -175,7 +175,7 @@
     },
     {
       "name": "fusescope_get_ai_pricing",
-      "description": "Return the per-token AI model prices SigNoz applies at ingest, or the models seen in the last hour that no rule prices"
+      "description": "Return the per-token AI model prices FuseScope applies at ingest, or the models seen in the last hour that no rule prices"
     },
     {
       "name": "fusescope_list_ai_attribute_mappings",
@@ -183,7 +183,7 @@
     },
     {
       "name": "fusescope_test_ai_attribute_mapping",
-      "description": "Run sample spans through the AI attribute mappings without saving anything, to check whether SigNoz treats them as model, tool, or agent calls"
+      "description": "Run sample spans through the AI attribute mappings without saving anything, to check whether FuseScope treats them as model, tool, or agent calls"
     },
     {
       "name": "fusescope_execute_builder_query",
@@ -238,19 +238,19 @@
     {
       "uri": "fusescope://dashboard/clickhouse-schema-for-logs",
       "name": "ClickHouse Logs Schema",
-      "description": "Read this before writing ClickHouse SQL for a dashboard widget over SigNoz logs. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-logs-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag.",
+      "description": "Read this before writing ClickHouse SQL for a dashboard widget over FuseScope logs. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-logs-example. If the live FuseScope instance rejects a table or column, follow that error because the bundled schema may lag.",
       "mimeType": "text/markdown"
     },
     {
       "uri": "fusescope://dashboard/clickhouse-schema-for-metrics",
       "name": "ClickHouse Metrics Schema",
-      "description": "Read this before writing ClickHouse SQL for a dashboard widget over SigNoz metrics. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-metrics-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag.",
+      "description": "Read this before writing ClickHouse SQL for a dashboard widget over FuseScope metrics. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-metrics-example. If the live FuseScope instance rejects a table or column, follow that error because the bundled schema may lag.",
       "mimeType": "text/markdown"
     },
     {
       "uri": "fusescope://dashboard/clickhouse-schema-for-traces",
       "name": "ClickHouse Traces Schema",
-      "description": "Read this before writing ClickHouse SQL for a dashboard widget over SigNoz traces. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-traces-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag.",
+      "description": "Read this before writing ClickHouse SQL for a dashboard widget over FuseScope traces. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-traces-example. If the live FuseScope instance rejects a table or column, follow that error because the bundled schema may lag.",
       "mimeType": "text/markdown"
     },
     {
@@ -274,7 +274,7 @@
     {
       "uri": "fusescope://dashboard/widgets-examples",
       "name": "Dashboard Widgets Examples",
-      "description": "Read this after the dashboard and widget instructions when building panels. It provides one worked, server-verified v6 panel payload per panel type (timeseries, area, list, pie, table, value/number) to copy structurally. Verify field names in the target SigNoz workspace.",
+      "description": "Read this after the dashboard and widget instructions when building panels. It provides one worked, server-verified v6 panel payload per panel type (timeseries, area, list, pie, table, value/number) to copy structurally. Verify field names in the target FuseScope workspace.",
       "mimeType": "text/markdown"
     },
     {
@@ -298,13 +298,13 @@
     {
       "uri": "fusescope://dashboard/examples",
       "name": "Dashboard Examples",
-      "description": "Read this when assembling a complete dashboard (panels + layout) with fusescope_create_dashboard, replacing one with fusescope_update_dashboard, or patching one. It provides the v6 payloads the SigNoz OpenAPI spec publishes: a service overview with a variable, a time series panel and a number panel; a logs table with a text panel; a full replacement; and two JSON Patch arrays. For single-panel shapes see fusescope://dashboard/widgets-examples; for layout and variable rules see fusescope://dashboard/instructions.",
+      "description": "Read this when assembling a complete dashboard (panels + layout) with fusescope_create_dashboard, replacing one with fusescope_update_dashboard, or patching one. It provides the v6 payloads the FuseScope OpenAPI spec publishes: a service overview with a variable, a time series panel and a number panel; a logs table with a text panel; a full replacement; and two JSON Patch arrays. For single-panel shapes see fusescope://dashboard/widgets-examples; for layout and variable rules see fusescope://dashboard/instructions.",
       "mimeType": "text/markdown"
     },
     {
       "uri": "fusescope://docs/sitemap",
-      "name": "SigNoz Docs Sitemap",
-      "description": "Use this resource when an MCP client needs the indexed official SigNoz documentation catalog and page URLs. Use fusescope_search_docs for topical discovery and fusescope_fetch_doc for page content.",
+      "name": "FuseScope Docs Sitemap",
+      "description": "Use this resource when an MCP client needs the indexed official FuseScope documentation catalog and page URLs. Use fusescope_search_docs for topical discovery and fusescope_fetch_doc for page content.",
       "mimeType": "text/markdown"
     },
     {
@@ -322,7 +322,7 @@
     {
       "uri": "fusescope://promql/instructions",
       "name": "PromQL Instructions",
-      "description": "Read this when composing a PromQL dashboard widget or promql_rule alert. It explains SigNoz's Prometheus 3.x quoted-selector form for dotted OTel metric names, resource labels, examples, and query checks; do not use it for Query Builder or ClickHouse SQL.",
+      "description": "Read this when composing a PromQL dashboard widget or promql_rule alert. It explains FuseScope's Prometheus 3.x quoted-selector form for dotted OTel metric names, resource labels, examples, and query checks; do not use it for Query Builder or ClickHouse SQL.",
       "mimeType": "text/markdown"
     },
     {
@@ -352,13 +352,13 @@
     {
       "uri": "fusescope://notification-channel/examples",
       "name": "Notification Channel Reference and Examples",
-      "description": "Read this before composing config for fusescope_create_notification_channel or fusescope_update_notification_channel unless already read in the same prepared operation. It lists every provider kind SigNoz accepts, each kind's config.spec fields with the required ones marked, and a worked create payload per kind plus two replacement configs.",
+      "description": "Read this before composing config for fusescope_create_notification_channel or fusescope_update_notification_channel unless already read in the same prepared operation. It lists every provider kind FuseScope accepts, each kind's config.spec fields with the required ones marked, and a worked create payload per kind plus two replacement configs.",
       "mimeType": "text/markdown"
     },
     {
       "uri": "fusescope://query-builder/examples",
       "name": "Query Builder Request Examples",
-      "description": "Read this when composing the query argument of fusescope_execute_builder_query and a complete request shape is still needed after the signal's guide. It provides one query_range request from the SigNoz OpenAPI spec per query type (builder, formula, PromQL, ClickHouse SQL) and request type (raw, scalar, time_series) across logs, traces, and metrics.",
+      "description": "Read this when composing the query argument of fusescope_execute_builder_query and a complete request shape is still needed after the signal's guide. It provides one query_range request from the FuseScope OpenAPI spec per query type (builder, formula, PromQL, ClickHouse SQL) and request type (raw, scalar, time_series) across logs, traces, and metrics.",
       "mimeType": "text/markdown"
     }
   ],

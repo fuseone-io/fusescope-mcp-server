@@ -221,7 +221,7 @@ func (h *Handler) HandleAuthorizeSubmit(w http.ResponseWriter, r *http.Request) 
 			CodeChallengeMethod: params.CodeChallengeMethod,
 			Scope:               params.Scope,
 			SignozURL:           signozURL,
-			ErrorMessage:        "Enter your SigNoz API key to continue.",
+			ErrorMessage:        "Enter your FuseScope API key to continue.",
 			ErrorCode:           "invalid_request",
 		})
 		return
@@ -237,7 +237,7 @@ func (h *Handler) HandleAuthorizeSubmit(w http.ResponseWriter, r *http.Request) 
 			CodeChallengeMethod: params.CodeChallengeMethod,
 			Scope:               params.Scope,
 			SignozURL:           signozURL,
-			ErrorMessage:        "Enter a valid SigNoz URL, for example your-instance.signoz.cloud.",
+			ErrorMessage:        "Enter a valid FuseScope URL, for example fusescope.example.com.",
 			ErrorCode:           "invalid_request",
 		})
 		return
@@ -276,7 +276,7 @@ func (h *Handler) HandleAuthorizeSubmit(w http.ResponseWriter, r *http.Request) 
 				CodeChallengeMethod: params.CodeChallengeMethod,
 				Scope:               params.Scope,
 				SignozURL:           normalizedURL,
-				ErrorMessage:        "We couldn't sign in to that SigNoz instance. Check the URL and API key, then try again.",
+				ErrorMessage:        "We couldn't sign in to that FuseScope instance. Check the URL and API key, then try again.",
 				ErrorCode:           "access_denied",
 			})
 		case errors.Is(err, client.ErrInstanceNotFound):
@@ -289,7 +289,7 @@ func (h *Handler) HandleAuthorizeSubmit(w http.ResponseWriter, r *http.Request) 
 				CodeChallengeMethod: params.CodeChallengeMethod,
 				Scope:               params.Scope,
 				SignozURL:           normalizedURL,
-				ErrorMessage:        "We couldn't find a SigNoz workspace at that URL. If your trial or subscription has ended, the workspace may have been deactivated — check your workspace status or contact SigNoz support.",
+				ErrorMessage:        "We couldn't find a FuseScope API at that URL. Check that the URL points at your FuseScope instance, then try again.",
 				ErrorCode:           "invalid_request",
 				FailureReason:       authFailureInstanceNotFound,
 			})
@@ -303,7 +303,7 @@ func (h *Handler) HandleAuthorizeSubmit(w http.ResponseWriter, r *http.Request) 
 				CodeChallengeMethod: params.CodeChallengeMethod,
 				Scope:               params.Scope,
 				SignozURL:           normalizedURL,
-				ErrorMessage:        "We couldn't reach that SigNoz instance. Check the URL and try again.",
+				ErrorMessage:        "We couldn't reach that FuseScope instance. Check the URL and try again.",
 				ErrorCode:           "temporarily_unavailable",
 				FailureReason:       authFailureInstanceUnreachable,
 			})

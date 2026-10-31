@@ -221,7 +221,7 @@ func (h *Handler) RegisterDashboardHandlers(s *mcp.Server) {
 		"fusescope_create_dashboard",
 		withCreateToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants a custom SigNoz dashboard built from a complete title, layout, variables, and panel configuration; use fusescope_import_dashboard instead when a curated template fits. "+
+			"Use this when the user wants a custom FuseScope dashboard built from a complete title, layout, variables, and panel configuration; use fusescope_import_dashboard instead when a curated template fits. "+
 				"Use fusescope_create_view instead to save one Explorer query. Before composing the payload, read fusescope://dashboard/instructions, fusescope://dashboard/widgets-instructions, fusescope://dashboard/widgets-examples, and fusescope://dashboard/examples (complete worked dashboards), then follow the query-specific resource linked by the widget guide.",
 		),
 		rawInputSchema(createDashboardSchema),
@@ -233,7 +233,7 @@ func (h *Handler) RegisterDashboardHandlers(s *mcp.Server) {
 		"fusescope_update_dashboard",
 		withUpdateToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants to change an existing SigNoz dashboard. This is a full replacement, not a partial patch: fetch it with fusescope_get_dashboard, take the \"data\" object out of that response, merge only the requested changes into it, and preserve every other field. Send that object's fields at the top level; the {status, data} response envelope is not accepted as input. For small, targeted edits prefer fusescope_patch_dashboard, which avoids re-sending the whole dashboard. "+
+			"Use this when the user wants to change an existing FuseScope dashboard. This is a full replacement, not a partial patch: fetch it with fusescope_get_dashboard, take the \"data\" object out of that response, merge only the requested changes into it, and preserve every other field. Send that object's fields at the top level; the {status, data} response envelope is not accepted as input. For small, targeted edits prefer fusescope_patch_dashboard, which avoids re-sending the whole dashboard. "+
 				"Use fusescope_update_view instead for a saved Explorer query. Before composing changed panels, read fusescope://dashboard/instructions, fusescope://dashboard/widgets-instructions, and fusescope://dashboard/widgets-examples, then follow the query-specific resource linked by the widget guide.",
 		),
 		rawInputSchema(updateDashboardSchema),
@@ -435,7 +435,7 @@ func (h *Handler) handleCreateDashboard(ctx context.Context, req mcp.CallToolReq
 	data, err := client.CreateDashboardRaw(ctx, cleanJSON)
 
 	if err != nil {
-		h.logUpstreamFailure(ctx, "Failed to create dashboard in SigNoz", err)
+		h.logUpstreamFailure(ctx, "Failed to create dashboard in FuseScope", err)
 		return upstreamError(err), nil
 	}
 
@@ -604,7 +604,7 @@ func (h *Handler) handleUpdateDashboard(ctx context.Context, req mcp.CallToolReq
 	}
 	data, err := client.UpdateDashboardRaw(ctx, id, body)
 	if err != nil {
-		h.logUpstreamFailure(ctx, "Failed to update dashboard in SigNoz", err)
+		h.logUpstreamFailure(ctx, "Failed to update dashboard in FuseScope", err)
 		return upstreamError(err), nil
 	}
 
@@ -648,7 +648,7 @@ func (h *Handler) handlePatchDashboard(ctx context.Context, req mcp.CallToolRequ
 	}
 	data, err := client.PatchDashboardRaw(ctx, id, body)
 	if err != nil {
-		h.logger.ErrorContext(ctx, "Failed to patch dashboard in SigNoz", logpkg.ErrAttr(err))
+		h.logger.ErrorContext(ctx, "Failed to patch dashboard in FuseScope", logpkg.ErrAttr(err))
 		return upstreamError(err), nil
 	}
 
@@ -689,7 +689,7 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	clickhouseLogsSchemaResource := mcp.NewResource(
 		"fusescope://dashboard/clickhouse-schema-for-logs",
 		"ClickHouse Logs Schema",
-		mcp.WithResourceDescription("Read this before writing ClickHouse SQL for a dashboard widget over SigNoz logs. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-logs-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag."),
+		mcp.WithResourceDescription("Read this before writing ClickHouse SQL for a dashboard widget over FuseScope logs. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-logs-example. If the live FuseScope instance rejects a table or column, follow that error because the bundled schema may lag."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.LogsSchema))),
 	)
@@ -725,7 +725,7 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	clickhouseMetricsSchemaResource := mcp.NewResource(
 		"fusescope://dashboard/clickhouse-schema-for-metrics",
 		"ClickHouse Metrics Schema",
-		mcp.WithResourceDescription("Read this before writing ClickHouse SQL for a dashboard widget over SigNoz metrics. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-metrics-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag."),
+		mcp.WithResourceDescription("Read this before writing ClickHouse SQL for a dashboard widget over FuseScope metrics. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-metrics-example. If the live FuseScope instance rejects a table or column, follow that error because the bundled schema may lag."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.MetricsSchema))),
 	)
@@ -761,7 +761,7 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	clickhouseTracesSchemaResource := mcp.NewResource(
 		"fusescope://dashboard/clickhouse-schema-for-traces",
 		"ClickHouse Traces Schema",
-		mcp.WithResourceDescription("Read this before writing ClickHouse SQL for a dashboard widget over SigNoz traces. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-traces-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag."),
+		mcp.WithResourceDescription("Read this before writing ClickHouse SQL for a dashboard widget over FuseScope traces. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-traces-example. If the live FuseScope instance rejects a table or column, follow that error because the bundled schema may lag."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.TracesSchema))),
 	)
@@ -797,7 +797,7 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	promqlExample := mcp.NewResource(
 		"fusescope://promql/instructions",
 		"PromQL Instructions",
-		mcp.WithResourceDescription("Read this when composing a PromQL dashboard widget or promql_rule alert. It explains SigNoz's Prometheus 3.x quoted-selector form for dotted OTel metric names, resource labels, examples, and query checks; do not use it for Query Builder or ClickHouse SQL."),
+		mcp.WithResourceDescription("Read this when composing a PromQL dashboard widget or promql_rule alert. It explains FuseScope's Prometheus 3.x quoted-selector form for dotted OTel metric names, resource labels, examples, and query checks; do not use it for Query Builder or ClickHouse SQL."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(promql.Instructions))),
 	)
@@ -869,7 +869,7 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	widgetsExamplesResource := mcp.NewResource(
 		"fusescope://dashboard/widgets-examples",
 		"Dashboard Widgets Examples",
-		mcp.WithResourceDescription("Read this after the dashboard and widget instructions when building panels. It provides one worked, server-verified v6 panel payload per panel type (timeseries, area, list, pie, table, value/number) to copy structurally. Verify field names in the target SigNoz workspace."),
+		mcp.WithResourceDescription("Read this after the dashboard and widget instructions when building panels. It provides one worked, server-verified v6 panel payload per panel type (timeseries, area, list, pie, table, value/number) to copy structurally. Verify field names in the target FuseScope workspace."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.WidgetExamples))),
 	)
@@ -923,7 +923,7 @@ func (h *Handler) registerDashboardResources(s *mcp.Server) {
 	dashboardExamples := mcp.NewResource(
 		"fusescope://dashboard/examples",
 		"Dashboard Examples",
-		mcp.WithResourceDescription("Read this when assembling a complete dashboard (panels + layout) with fusescope_create_dashboard, replacing one with fusescope_update_dashboard, or patching one. It provides the v6 payloads the SigNoz OpenAPI spec publishes: a service overview with a variable, a time series panel and a number panel; a logs table with a text panel; a full replacement; and two JSON Patch arrays. For single-panel shapes see fusescope://dashboard/widgets-examples; for layout and variable rules see fusescope://dashboard/instructions."),
+		mcp.WithResourceDescription("Read this when assembling a complete dashboard (panels + layout) with fusescope_create_dashboard, replacing one with fusescope_update_dashboard, or patching one. It provides the v6 payloads the FuseScope OpenAPI spec publishes: a service overview with a variable, a time series panel and a number panel; a logs table with a text panel; a full replacement; and two JSON Patch arrays. For single-panel shapes see fusescope://dashboard/widgets-examples; for layout and variable rules see fusescope://dashboard/instructions."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(dashboard.DashboardExamples))),
 	)

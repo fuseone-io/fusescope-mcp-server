@@ -223,7 +223,7 @@ func TestAuthorizeSubmitInstanceFailureGuidance(t *testing.T) {
 <html><head><title>404 : This page does not exist :/</title></head>
 <body>Either the workspace has expired or the workspace does not exist.</body></html>`,
 			wantStatus: http.StatusNotFound,
-			wantBody:   "the workspace may have been deactivated",
+			wantBody:   "find a FuseScope API at that URL",
 			rejectBody: "Check the URL and try again",
 		},
 		{
@@ -231,7 +231,7 @@ func TestAuthorizeSubmitInstanceFailureGuidance(t *testing.T) {
 			status:     http.StatusNotFound,
 			body:       `{"status":"error","message":"not found"}`,
 			wantStatus: http.StatusBadGateway,
-			wantBody:   "We couldn&#39;t reach that SigNoz instance. Check the URL and try again.",
+			wantBody:   "We couldn&#39;t reach that FuseScope instance. Check the URL and try again.",
 		},
 		{
 			name:       "transient 503",
@@ -403,7 +403,7 @@ func TestAuthorizeSubmitRejectsInvalidSigNozCredentials(t *testing.T) {
 	if submitRR.Header().Get("Location") != "" {
 		t.Fatalf("unexpected redirect location %q", submitRR.Header().Get("Location"))
 	}
-	if !strings.Contains(submitRR.Body.String(), "We couldn&#39;t sign in to that SigNoz instance. Check the URL and API key, then try again.") {
+	if !strings.Contains(submitRR.Body.String(), "We couldn&#39;t sign in to that FuseScope instance. Check the URL and API key, then try again.") {
 		t.Fatalf("authorize POST body = %s", submitRR.Body.String())
 	}
 	if !strings.Contains(submitRR.Body.String(), `value="`+signozServer.URL+`"`) {
@@ -688,7 +688,7 @@ func TestRefreshTokenGrantRejectsDisallowedInstanceURL(t *testing.T) {
 		t.Fatalf("status = %d, want %d, body = %s", rr.Code, http.StatusBadRequest, rr.Body.String())
 	}
 	if strings.Contains(rr.Body.String(), "access_token") {
-		t.Fatalf("disallowed SigNoz URL must not be issued tokens, body = %s", rr.Body.String())
+		t.Fatalf("disallowed FuseScope URL must not be issued tokens, body = %s", rr.Body.String())
 	}
 	if !strings.Contains(rr.Body.String(), "invalid_grant") {
 		t.Fatalf("expected invalid_grant error, body = %s", rr.Body.String())

@@ -28,7 +28,7 @@ Examples:
 
 == FIELD NAMES AND CONTEXTS ==
 
-An unknown key may not fail: SigNoz can match guessed attribute and body spellings, return the
+An unknown key may not fail: FuseScope can match guessed attribute and body spellings, return the
 warning "key <name> not found in metadata", and match no rows. Read that warning as an absent key,
 not as an empty result. Do not guess field names. If unsure, call:
   fusescope_get_field_keys(signal="logs", fieldContext="resource")
@@ -45,10 +45,10 @@ Group by and select only keys fusescope_get_field_keys returns. An unknown group
 back as one empty group. A body field (body.<path>) filters everywhere, but group by and
 selection work only for paths fusescope_get_field_keys(signal="logs", fieldContext="body") lists,
 and it lists body paths only where the workspace stores JSON log bodies. For any other body
-path SigNoz answers "can be filtered but not selected or grouped" or "field not found"; filter
+path FuseScope answers "can be filtered but not selected or grouped" or "field not found"; filter
 on the body field and group by an attribute instead.
 
-If a key matches BOTH the resource and attribute contexts, SigNoz defaults to the resource context (and warns). For other multi-context matches, every matching context is ORed together.
+If a key matches BOTH the resource and attribute contexts, FuseScope defaults to the resource context (and warns). For other multi-context matches, every matching context is ORed together.
 Disambiguate explicitly in filter expressions with resource.<key> or attribute.<key> (scope.<key> also exists).
 
 --- 1. Built-in log columns ---
@@ -147,7 +147,7 @@ Use search() when the target field is unknown or the term may appear in several 
 
 Valid scopes are exactly: body, attribute, resource, and log. Invalid scopes hard-error. The
 term is literal (no wildcards or regex). search() scans every column in its scopes, so it is slow
-on wide time ranges: SigNoz returns a warning and may reject a query whose estimated scan is too
+on wide time ranges: FuseScope returns a warning and may reject a query whose estimated scan is too
 large. Narrow the time range, add a scope, or add resource filters. Once fusescope_get_field_keys
 identifies the field, prefer a field predicate:
   body CONTAINS 'timeout'                                   message text

@@ -55,7 +55,7 @@ func (h *Handler) RegisterAlertsHandlers(s *mcp.Server) {
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
 		mcp.WithDescription("Use this when the user wants configured alert-rule summaries, including inactive/OK and disabled rules. It returns rule IDs, names, types, state, severity, labels, and timestamps; use fusescope_get_alert with an ID for the full definition. Do not use it for current firing/silenced/inhibited instances: use fusescope_list_alerts. To find rules by name, label, severity, or state, narrow with filter and states instead of paging through every rule; paginate with limit and offset."),
-		mcp.WithString("filter", mcp.Description(`Filter expression SigNoz applies before paging, at most 1024 characters. Keys: name (the rule title), severity, alert_type, rule_type, created_by, updated_by, and created_at or updated_at with RFC 3339 times (created_at >= '2026-01-02T15:04:05Z'). Any other key is a rule label, matched case-sensitively (cluster = 'prod'); labels.<key> matches only the label. A bare word matches the name, description, or labels, ignoring case. Example: "name CONTAINS 'High Response Time' AND severity IN ('critical', 'error')".`)),
+		mcp.WithString("filter", mcp.Description(`Filter expression FuseScope applies before paging, at most 1024 characters. Keys: name (the rule title), severity, alert_type, rule_type, created_by, updated_by, and created_at or updated_at with RFC 3339 times (created_at >= '2026-01-02T15:04:05Z'). Any other key is a rule label, matched case-sensitively (cluster = 'prod'); labels.<key> matches only the label. A bare word matches the name, description, or labels, ignoring case. Example: "name CONTAINS 'High Response Time' AND severity IN ('critical', 'error')".`)),
 		mcp.WithArray("states", stringOrStringArrayType(), mcp.Description("Only rules in these states: firing, pending, recovering, inactive, nodata, or disabled. Omit for every state.")),
 		mcp.WithString("sort", mcp.Description("Field to sort by: updated_at (default), created_at, name, state, or severity.")),
 		mcp.WithString("order", mcp.Enum("asc", "desc"), mcp.Description("Sort direction. Default: desc.")),
@@ -85,7 +85,7 @@ func (h *Handler) RegisterAlertsHandlers(s *mcp.Server) {
 		mcp.WithString("start", intOrStringType(), mcp.Description("Start timestamp in unix milliseconds (optional, defaults to 6 hours ago).")),
 		mcp.WithString("end", intOrStringType(), mcp.Description("End timestamp in unix milliseconds (optional, defaults to now).")),
 		mcp.WithString("state", mcp.Description("Filter by alert state: inactive, pending, recovering, firing, nodata, or disabled. Omit to return all transitions.")),
-		mcp.WithString("filter", mcp.Description("Filter timeline labels using SigNoz query-builder syntax. Combine conditions with AND, OR, and parentheses; quote string values with single quotes and use operators such as =, !=, IN, and NOT IN. Example: \"severity = 'critical' AND (team = 'payments' OR service.name = 'checkout')\". To discover label keys, first call without a filter and inspect data.items[].labels[].key.name. If a filter returns no matches, retry unfiltered and verify the key spelling; malformed expressions return validation errors.")),
+		mcp.WithString("filter", mcp.Description("Filter timeline labels using FuseScope query-builder syntax. Combine conditions with AND, OR, and parentheses; quote string values with single quotes and use operators such as =, !=, IN, and NOT IN. Example: \"severity = 'critical' AND (team = 'payments' OR service.name = 'checkout')\". To discover label keys, first call without a filter and inspect data.items[].labels[].key.name. If a filter returns no matches, retry unfiltered and verify the key spelling; malformed expressions return validation errors.")),
 		mcp.WithString("cursor", mcp.Description("Opaque continuation cursor. Repeat the original time range, state, filter, and order when fetching the next page. Omit cursor for the first page.")),
 		mcp.WithString("limit", mcp.DefaultString("20"), intOrStringType(), mcp.Description("Rows per page. Default: 20; max: 10000 (higher values are clamped).")),
 		mcp.WithString("order", mcp.DefaultString("asc"), mcp.Enum("asc", "desc"), mcp.Description("Sort order: 'asc' or 'desc' (default: 'asc')")),
@@ -96,9 +96,9 @@ func (h *Handler) RegisterAlertsHandlers(s *mcp.Server) {
 		"fusescope_create_alert",
 		withCreateToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants a new SigNoz alert rule; use fusescope_update_alert to change an existing rule. "+
+			"Use this when the user wants a new FuseScope alert rule; use fusescope_update_alert to change an existing rule. "+
 				"Supports v2alpha1 threshold, PromQL, and metric anomaly alerts. Read fusescope://alert/instructions and fusescope://alert/examples before composing any payload, unless already read in the same prepared operation; for PromQL also read fusescope://promql/instructions. "+
-				"For direct routing, reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If none fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never guess or create automatically. SigNoz rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
+				"For direct routing, reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If none fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never guess or create automatically. FuseScope rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
 		),
 		mcp.WithInputSchema[types.CreateAlertInput](),
 	)
@@ -108,7 +108,7 @@ func (h *Handler) RegisterAlertsHandlers(s *mcp.Server) {
 		"fusescope_update_alert",
 		withUpdateToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants to change an existing SigNoz alert rule; use fusescope_create_alert for a new rule. This is a full replacement: call fusescope_get_alert unless its complete result is available from the same still-current prepared operation, then preserve every unchanged field. Likewise reuse fusescope://alert/instructions, fusescope://alert/examples, and a fully paginated fusescope_list_notification_channels result only from that operation; otherwise read/call them, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If no direct channel fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never create automatically. SigNoz rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
+			"Use this when the user wants to change an existing FuseScope alert rule; use fusescope_create_alert for a new rule. This is a full replacement: call fusescope_get_alert unless its complete result is available from the same still-current prepared operation, then preserve every unchanged field. Likewise reuse fusescope://alert/instructions, fusescope://alert/examples, and a fully paginated fusescope_list_notification_channels result only from that operation; otherwise read/call them, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If no direct channel fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never create automatically. FuseScope rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
 		),
 		mcp.WithInputSchema[types.UpdateAlertInput](),
 	)
@@ -451,7 +451,7 @@ func (h *Handler) handleGetAlertHistory(ctx context.Context, req mcp.CallToolReq
 		if errors.As(err, &statusErr) && statusErr.StatusCode == http.StatusNotFound {
 			result := upstreamError(err)
 			result.Content = append(result.Content, mcp.NewTextContent(
-				`recovery: Verify "id" in the SigNoz UI or, on SigNoz v0.120.0+, with fusescope_list_alert_rules. If the rule exists, upgrade SigNoz to v0.118.0 or later; older versions do not support this tool.`))
+				`recovery: Verify "id" in the FuseScope UI or, on FuseScope v0.120.0+, with fusescope_list_alert_rules. If the rule exists, upgrade FuseScope to v0.118.0 or later; older versions do not support this tool.`))
 			return result, nil
 		}
 		return upstreamError(err), nil
@@ -492,7 +492,7 @@ func (h *Handler) handleCreateAlert(ctx context.Context, req mcp.CallToolRequest
 
 	data, err := client.CreateAlertRule(ctx, payload)
 	if err != nil {
-		h.logUpstreamFailure(ctx, "Failed to create alert rule in SigNoz", err)
+		h.logUpstreamFailure(ctx, "Failed to create alert rule in FuseScope", err)
 		return upstreamError(err), nil
 	}
 
@@ -525,7 +525,7 @@ func (h *Handler) handleUpdateAlert(ctx context.Context, req mcp.CallToolRequest
 	}
 
 	if err := client.UpdateAlertRule(ctx, ruleID, payload); err != nil {
-		h.logUpstreamFailure(ctx, "Failed to update alert rule in SigNoz", err, slog.String("ruleId", ruleID))
+		h.logUpstreamFailure(ctx, "Failed to update alert rule in FuseScope", err, slog.String("ruleId", ruleID))
 		return upstreamError(err), nil
 	}
 
@@ -549,7 +549,7 @@ func (h *Handler) handleDeleteAlert(ctx context.Context, req mcp.CallToolRequest
 	}
 
 	if err := client.DeleteAlertRule(ctx, ruleID); err != nil {
-		h.logUpstreamFailure(ctx, "Failed to delete alert rule in SigNoz", err, slog.String("ruleId", ruleID))
+		h.logUpstreamFailure(ctx, "Failed to delete alert rule in FuseScope", err, slog.String("ruleId", ruleID))
 		return upstreamError(err), nil
 	}
 

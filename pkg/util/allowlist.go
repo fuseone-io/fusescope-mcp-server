@@ -8,7 +8,7 @@ import (
 )
 
 // MCPDocsURL is linked in allowlist rejection messages.
-const MCPDocsURL = "https://signoz.io/docs/ai/signoz-mcp-server/"
+const MCPDocsURL = "https://github.com/fuseone-io/fusescope-mcp-server#readme"
 
 // InstanceURLAllowlist restricts which SigNoz backend hosts a multi-tenant
 // deployment will proxy to (see ParseInstanceURLAllowlist). An empty allowlist
@@ -112,11 +112,10 @@ func stripToHostPattern(pattern string) string {
 	return pattern
 }
 
-// InstanceURLNotPermittedMessage is the rejection message for a SigNoz URL the
-// allowlist refuses: SigNoz Cloud users should use their region's MCP URL and
-// self-hosted users should run their own MCP. Links to the docs.
+// InstanceURLNotPermittedMessage is the rejection message for a FuseScope URL
+// the allowlist refuses. Links to the docs.
 func InstanceURLNotPermittedMessage() string {
-	return fmt.Sprintf("This SigNoz instance is not served by this MCP endpoint. SigNoz Cloud users must use their "+
-		"region's MCP URL (https://mcp.<region>.signoz.cloud/mcp); self-hosted users should run the SigNoz MCP "+
-		"server themselves. Docs: %s", MCPDocsURL)
+	return fmt.Sprintf("This FuseScope instance is not served by this MCP endpoint. Run the FuseScope MCP server "+
+		"for your instance, or ask this endpoint's operator to add its host to FUSESCOPE_INSTANCE_URL_ALLOWLIST. "+
+		"Docs: %s", MCPDocsURL)
 }
