@@ -53,15 +53,15 @@ type Config struct {
 }
 
 const (
-	SignozURL     = "SIGNOZ_URL"
-	SignozApiKey  = "SIGNOZ_API_KEY"
+	FuseScopeURL     = "FUSESCOPE_URL"
+	FuseScopeAPIKey  = "FUSESCOPE_API_KEY"
 	LogLevel      = "LOG_LEVEL"
 	TransportMode = "TRANSPORT_MODE"
 	MCPHost       = "MCP_SERVER_HOST"
 	MCPPort       = "MCP_SERVER_PORT"
 
-	SignozCustomHeaders     = "SIGNOZ_CUSTOM_HEADERS"
-	InstanceURLAllowlistEnv = "SIGNOZ_INSTANCE_URL_ALLOWLIST"
+	FuseScopeCustomHeaders     = "FUSESCOPE_CUSTOM_HEADERS"
+	InstanceURLAllowlistEnv = "FUSESCOPE_INSTANCE_URL_ALLOWLIST"
 	ClientCacheSize         = "CLIENT_CACHE_SIZE"
 	ClientCacheTTL          = "CLIENT_CACHE_TTL_MINUTES"
 
@@ -75,8 +75,8 @@ const (
 	OAuthRefreshTTLMinutes  = "OAUTH_REFRESH_TOKEN_TTL_MINUTES"
 	OAuthAuthCodeTTLSeconds = "OAUTH_AUTH_CODE_TTL_SECONDS"
 
-	DocsRefreshIntervalEnv     = "SIGNOZ_DOCS_REFRESH_INTERVAL"
-	DocsFullRefreshIntervalEnv = "SIGNOZ_DOCS_FULL_REFRESH_INTERVAL"
+	DocsRefreshIntervalEnv     = "FUSESCOPE_DOCS_REFRESH_INTERVAL"
+	DocsFullRefreshIntervalEnv = "FUSESCOPE_DOCS_FULL_REFRESH_INTERVAL"
 
 	MaxRequestBytesEnv = "MCP_MAX_REQUEST_BYTES"
 
@@ -94,7 +94,7 @@ const (
 
 func LoadConfig() (*Config, error) {
 	// Trim trailing slash from URL to prevent double-slash issues in API paths
-	url := strings.TrimSuffix(getEnv(SignozURL, ""), "/")
+	url := strings.TrimSuffix(getEnv(FuseScopeURL, ""), "/")
 
 	cacheSize := getEnvInt(ClientCacheSize, defaultClientCacheSize)
 	cacheTTLMinutes := getEnvInt(ClientCacheTTL, defaultClientCacheTTLMinutes)
@@ -110,9 +110,9 @@ func LoadConfig() (*Config, error) {
 		docsFullRefreshInterval = defaultDocsFullRefreshPeriod
 	}
 
-	// Parse custom headers from SIGNOZ_CUSTOM_HEADERS env var (format: "Key1:Value1,Key2:Value2")
+	// Parse custom headers from FUSESCOPE_CUSTOM_HEADERS env var (format: "Key1:Value1,Key2:Value2")
 	customHeaders := make(map[string]string)
-	if headersStr := getEnv(SignozCustomHeaders, ""); headersStr != "" {
+	if headersStr := getEnv(FuseScopeCustomHeaders, ""); headersStr != "" {
 		for _, pair := range strings.Split(headersStr, ",") {
 			parts := strings.SplitN(pair, ":", 2)
 			if len(parts) != 2 {
@@ -132,7 +132,7 @@ func LoadConfig() (*Config, error) {
 
 	return &Config{
 		URL:                     url,
-		APIKey:                  getEnv(SignozApiKey, ""),
+		APIKey:                  getEnv(FuseScopeAPIKey, ""),
 		LogLevel:                getEnv(LogLevel, "info"),
 		TransportMode:           getEnv(TransportMode, "stdio"),
 		Host:                    getEnv(MCPHost, ""),
@@ -210,11 +210,11 @@ func (c *Config) ValidateConfig() error {
 	// In HTTP mode, API key can come from Authorization header, so it's optional.
 	// In stdio mode, API key must be provided via environment variable.
 	if c.TransportMode == "stdio" && c.APIKey == "" {
-		return fmt.Errorf("SIGNOZ_API_KEY is required for stdio mode")
+		return fmt.Errorf("FUSESCOPE_API_KEY is required for stdio mode")
 	}
 
 	if c.TransportMode == "stdio" && c.URL == "" {
-		return fmt.Errorf("SIGNOZ_URL is required for stdio mode")
+		return fmt.Errorf("FUSESCOPE_URL is required for stdio mode")
 	}
 
 	if c.TransportMode == "http" {

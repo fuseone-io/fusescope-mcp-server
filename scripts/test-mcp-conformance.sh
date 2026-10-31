@@ -167,8 +167,8 @@ env \
   TRANSPORT_MODE=http \
   MCP_SERVER_HOST="$MCP_CONFORMANCE_HOST" \
   MCP_SERVER_PORT="$MCP_CONFORMANCE_PORT" \
-  SIGNOZ_URL=https://example.invalid \
-  SIGNOZ_API_KEY=conformance-test-key \
+  FUSESCOPE_URL=https://example.invalid \
+  FUSESCOPE_API_KEY=conformance-test-key \
   OAUTH_ENABLED=false \
   ANALYTICS_ENABLED=false \
   OTEL_TRACES_EXPORTER=none \

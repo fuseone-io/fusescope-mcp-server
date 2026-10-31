@@ -6,7 +6,7 @@
 
 A Model Context Protocol (MCP) server that gives AI assistants and LLMs access to [FuseScope](https://github.com/fuseone-io/fusescope) observability data. Query metrics, traces, logs, alerts, dashboards, and services in natural language.
 
-This is FuseOne's independent fork of [SigNoz MCP Server](https://github.com/SigNoz/signoz-mcp-server) (Apache-2.0). It does not track upstream; attribution is in [NOTICE](NOTICE). FuseScope keeps SigNoz-compatible APIs, so the server's environment variables and the `SIGNOZ-API-KEY` header keep their SigNoz names.
+This is FuseOne's independent fork of [SigNoz MCP Server](https://github.com/SigNoz/signoz-mcp-server) (Apache-2.0). It does not track upstream; attribution is in [NOTICE](NOTICE). FuseScope keeps SigNoz-compatible APIs, so the `SIGNOZ-API-KEY` and `X-SigNoz-URL` headers keep their SigNoz names; the server's own environment variables use `FUSESCOPE_*`.
 
 **[📖 FuseScope documentation](https://fuseone-io.github.io/fusescope-docs/)**
 
@@ -53,8 +53,8 @@ Run it in HTTP mode:
 docker run -p 8000:8000 \
   -e TRANSPORT_MODE=http \
   -e MCP_SERVER_PORT=8000 \
-  -e SIGNOZ_URL=https://your-fusescope-instance.com \
-  -e SIGNOZ_API_KEY=your-api-key \
+  -e FUSESCOPE_URL=https://your-fusescope-instance.com \
+  -e FUSESCOPE_API_KEY=your-api-key \
   fusescope-mcp-server
 ```
 
@@ -79,8 +79,8 @@ Add this to your MCP client config (`claude_desktop_config.json`, `.cursor/mcp.j
             "command": "/absolute/path/to/signoz-mcp-server",
             "args": [],
             "env": {
-                "SIGNOZ_URL": "https://your-signoz-instance.com",
-                "SIGNOZ_API_KEY": "your-api-key-here",
+                "FUSESCOPE_URL": "https://your-signoz-instance.com",
+                "FUSESCOPE_API_KEY": "your-api-key-here",
                 "LOG_LEVEL": "info"
             }
         }
@@ -108,7 +108,7 @@ A scheduled refresh (default every `6h`) first compares the live sitemap with th
 Recommendations for containerized HTTP deployments:
 
 - Set the memory limit to at least `512Mi`, and monitor memory during refreshes and concurrent requests. The highest measured index-only build peak is 134 MiB above baseline and the resident index is 28 to 36 MiB; rebuilds also retain the serving index. Setting Go's `GOMEMLIMIT` is optional: it can reclaim garbage earlier but cannot shrink live data inside an index batch.
-- Set both `SIGNOZ_DOCS_REFRESH_INTERVAL=0` and `SIGNOZ_DOCS_FULL_REFRESH_INTERVAL=0` when you would rather serve the docs snapshot that shipped with the release than pay any refresh. New docs pages then arrive with the next server upgrade. Setting only the first keeps the daily forced refresh.
+- Set both `FUSESCOPE_DOCS_REFRESH_INTERVAL=0` and `FUSESCOPE_DOCS_FULL_REFRESH_INTERVAL=0` when you would rather serve the docs snapshot that shipped with the release than pay any refresh. New docs pages then arrive with the next server upgrade. Setting only the first keeps the daily forced refresh.
 - Every refresh logs `docs refresh starting` and ends with a completion or failure line, for example `docs refresh no-op; sitemap unchanged`, `docs refresh found no page changes; index kept`, `docs refresh applied delta`, `docs refresh rebuilt index`, or a `docs refresh failed` / `docs full refresh failed` warning. A refresh normally finishes within a few minutes. A container whose last docs line is `docs refresh starting`, `docs refresh fetching pages`, or `docs refresh rebuilding index` and that then restarted most likely died mid-refresh.
 
 #### With OAuth (Multi-Tenant)
@@ -145,8 +145,8 @@ The API key and FuseScope URL only need to be provided in **one** place: the ser
 **Option A — Credentials on the server** (simpler client config):
 
 ```bash
-SIGNOZ_URL=https://your-signoz-instance.com \
-SIGNOZ_API_KEY=your-api-key \
+FUSESCOPE_URL=https://your-signoz-instance.com \
+FUSESCOPE_API_KEY=your-api-key \
 TRANSPORT_MODE=http \
 MCP_SERVER_PORT=8000 \
 ./signoz-mcp-server
@@ -165,7 +165,7 @@ MCP_SERVER_PORT=8000 \
 **Option B — API key on the client** (server holds the URL, client sends the key):
 
 ```bash
-SIGNOZ_URL=https://your-signoz-instance.com \
+FUSESCOPE_URL=https://your-signoz-instance.com \
 TRANSPORT_MODE=http \
 MCP_SERVER_PORT=8000 \
 ./signoz-mcp-server
@@ -936,8 +936,8 @@ Runs a FuseScope Query Builder v5 request that the dedicated tools cannot expres
 
 | Variable          | Description                                                                    | Required                            |
 | ----------------- | ------------------------------------------------------------------------------ | ----------------------------------- |
-| `SIGNOZ_URL`      | FuseScope instance URL                                                            | Yes (stdio); Optional (http with OAuth) |
-| `SIGNOZ_API_KEY`  | FuseScope service-account API key | Yes (stdio); Optional (http with OAuth) |
+| `FUSESCOPE_URL`   | FuseScope instance URL                                                         | Yes (stdio); Optional (http with OAuth) |
+| `FUSESCOPE_API_KEY` | FuseScope service-account API key | Yes (stdio); Optional (http with OAuth) |
 | `LOG_LEVEL`       | Logging level: `info`(default), `debug`, `warn`, `error`                       | No                                  |
 | `TRANSPORT_MODE`  | MCP transport mode: `stdio`(default) or `http`                                 | No                                  |
 | `MCP_SERVER_HOST` | Host/interface for HTTP transport mode (default: empty, which listens on all interfaces). Set to `127.0.0.1` for loopback-only access. | No |
@@ -945,16 +945,16 @@ Runs a FuseScope Query Builder v5 request that the dedicated tools cannot expres
 | `MCP_MAX_REQUEST_BYTES` | Max inbound MCP HTTP request body size in bytes (default: `4194304` / 4 MiB). Bounds memory from a single oversized request. | No |
 | `CLIENT_CACHE_SIZE` | Maximum cached tenant clients in multi-tenant HTTP mode (default: `256`) | No |
 | `CLIENT_CACHE_TTL_MINUTES` | Tenant-client cache lifetime in minutes (default: `30`) | No |
-| `SIGNOZ_DOCS_REFRESH_INTERVAL` | Scheduled incremental docs refresh interval (Go duration, default: `6h`). Set to `0` (or `off`) to disable it. To stop every scheduled refresh and serve the embedded docs index unchanged, set `SIGNOZ_DOCS_FULL_REFRESH_INTERVAL=0` as well. See [Memory footprint](#memory-footprint). | No |
-| `SIGNOZ_DOCS_FULL_REFRESH_INTERVAL` | Scheduled forced full docs refresh interval (Go duration, default: `24h`). Set to `0` (or `off`) to disable only the forced full refresh. | No |
+| `FUSESCOPE_DOCS_REFRESH_INTERVAL` | Scheduled incremental docs refresh interval (Go duration, default: `6h`). Set to `0` (or `off`) to disable it. To stop every scheduled refresh and serve the embedded docs index unchanged, set `FUSESCOPE_DOCS_FULL_REFRESH_INTERVAL=0` as well. See [Memory footprint](#memory-footprint). | No |
+| `FUSESCOPE_DOCS_FULL_REFRESH_INTERVAL` | Scheduled forced full docs refresh interval (Go duration, default: `24h`). Set to `0` (or `off`) to disable only the forced full refresh. | No |
 | `OAUTH_ENABLED`   | Enable OAuth 2.1 authentication flow (`true`/`false`)                          | No (default: `false`)               |
 | `OAUTH_TOKEN_SECRET` | Encryption key for OAuth tokens (min 32 bytes, e.g. `openssl rand -base64 32`) | Yes when `OAUTH_ENABLED=true`    |
 | `OAUTH_ISSUER_URL` | Public URL of this MCP server (used in OAuth metadata discovery)              | Yes when `OAUTH_ENABLED=true`       |
 | `OAUTH_ACCESS_TOKEN_TTL_MINUTES` | Access token lifetime in minutes (default: 60)                  | No                                  |
 | `OAUTH_REFRESH_TOKEN_TTL_MINUTES` | Refresh token lifetime in minutes (default: 43200 / 30d)      | No                                  |
 | `OAUTH_AUTH_CODE_TTL_SECONDS` | Authorization code lifetime in seconds (default: 600 / 10min)      | No                                  |
-| `SIGNOZ_CUSTOM_HEADERS` | Extra HTTP headers added to every API request, useful when FuseScope is behind a reverse proxy requiring auth (e.g. `CF-Access-Client-Id:id.access,CF-Access-Client-Secret:secret`). Format: `Key1:Value1,Key2:Value2` | No |
-| `SIGNOZ_INSTANCE_URL_ALLOWLIST` | Multi-tenant (http) only: comma-separated allowlist of FuseScope backend hosts the server will proxy to. Entries are exact hosts (`fusescope.example.com`) or wildcards (`*.example.com`, which matches any subdomain ending in `.example.com`); a scheme/port/path accidentally included in an entry is tolerated and reduced to the bare host. When set, FuseScope instance URLs that do not match are refused at every ingress: the OAuth setup form and `X-SigNoz-URL` header return HTTP 403, the OAuth token endpoint (incl. existing refresh tokens) returns `invalid_grant`, and `/mcp` requests via an OAuth token return 403. All increment a `disallowed_signoz_url`-tagged failure metric for alerting (not logged per-request, to avoid noise from misconfigured/looping clients) The rejection message still carries the upstream wording, which points to SigNoz Cloud's MCP URLs. Empty/unset allows any host. The operator's own `SIGNOZ_URL` is exempt. | No |
+| `FUSESCOPE_CUSTOM_HEADERS` | Extra HTTP headers added to every API request, useful when FuseScope is behind a reverse proxy requiring auth (e.g. `CF-Access-Client-Id:id.access,CF-Access-Client-Secret:secret`). Format: `Key1:Value1,Key2:Value2` | No |
+| `FUSESCOPE_INSTANCE_URL_ALLOWLIST` | Multi-tenant (http) only: comma-separated allowlist of FuseScope backend hosts the server will proxy to. Entries are exact hosts (`fusescope.example.com`) or wildcards (`*.example.com`, which matches any subdomain ending in `.example.com`); a scheme/port/path accidentally included in an entry is tolerated and reduced to the bare host. When set, FuseScope instance URLs that do not match are refused at every ingress: the OAuth setup form and `X-SigNoz-URL` header return HTTP 403, the OAuth token endpoint (incl. existing refresh tokens) returns `invalid_grant`, and `/mcp` requests via an OAuth token return 403. All increment a `disallowed_signoz_url`-tagged failure metric for alerting (not logged per-request, to avoid noise from misconfigured/looping clients) The rejection message still carries the upstream wording, which points to SigNoz Cloud's MCP URLs. Empty/unset allows any host. The operator's own `FUSESCOPE_URL` is exempt. | No |
 | `ANALYTICS_ENABLED` | Enable product analytics (`true`/`false`; default: `false`) | No |
 | `SEGMENT_KEY` | Segment write key used only when analytics is enabled | No |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP gRPC endpoint for the MCP server's own traces and metrics. Internal telemetry export is disabled when no OTLP endpoint/exporter is configured. For plaintext collectors, use an `http://` endpoint such as `http://localhost:4317`. | No |
@@ -982,7 +982,7 @@ global:
   external_url: https://observe.example.com
 ```
 
-Keep `SIGNOZ_URL` on the MCP server pointed at its reachable API address, such as `http://fusescope:8080`. If the deployment uses a path prefix, include it in the API address as required by FuseScope and your proxy routing. Configure a backend path in `SIGNOZ_URL`: per-request URLs supplied through OAuth or `X-SigNoz-URL` currently support origins only.
+Keep `FUSESCOPE_URL` on the MCP server pointed at its reachable API address, such as `http://fusescope:8080`. If the deployment uses a path prefix, include it in the API address as required by FuseScope and your proxy routing. Configure a backend path in `FUSESCOPE_URL`: per-request URLs supplied through OAuth or `X-SigNoz-URL` currently support origins only.
 
 Browser links use the discovered URL, including any configured base path, while API requests retain their destination and credentials. Each tenant client caches discovery for 15 minutes. An unset external URL uses the request's API URL; unavailable or invalid global configuration logs a warning and retries discovery after one minute. Authentication and permission errors are returned to the client.
 
@@ -1000,7 +1000,7 @@ make bundle
 
 1. Open **Claude Desktop → Settings → Developer → Edit Config → Add bundle.mcpb**
 2. Select `./bundle/bundle.mcpb`
-3. Enter your `SIGNOZ_URL`, `SIGNOZ_API_KEY`, and optionally `LOG_LEVEL`
+3. Enter your `FUSESCOPE_URL`, `FUSESCOPE_API_KEY`, and optionally `LOG_LEVEL`
 4. Restart Claude Desktop
 
 For browser links, configure [FuseScope's global external URL](#browser-links-for-fusescope).

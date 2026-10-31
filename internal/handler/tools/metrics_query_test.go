@@ -165,8 +165,8 @@ func TestQueryMetrics_ReportsIsMonotonicSigNozDidNotReturn(t *testing.T) {
 				}
 			}))
 			t.Cleanup(backend.Close)
-			t.Setenv(config.SignozURL, strings.Replace(backend.URL, "127.0.0.1", "localhost", 1))
-			t.Setenv(config.SignozApiKey, "test-key")
+			t.Setenv(config.FuseScopeURL, strings.Replace(backend.URL, "127.0.0.1", "localhost", 1))
+			t.Setenv(config.FuseScopeAPIKey, "test-key")
 			cfg, err := config.LoadConfig()
 			require.NoError(t, err)
 			h := NewHandler(logpkg.New("error"), cfg)

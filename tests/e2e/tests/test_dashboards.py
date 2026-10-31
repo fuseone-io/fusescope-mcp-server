@@ -243,7 +243,7 @@ def test_dashboard_web_urls_follow_global_config_and_keep_request_backend_routin
         configured = MCPClient(server.mcp_url)
         clients.callback(configured.close)
         routes = [("configured", configured, server.external_url or server.backend_url)]
-        # Per-request routing accepts origins only; the path case uses SIGNOZ_URL.
+        # Per-request routing accepts origins only; the path case uses FUSESCOPE_URL.
         if not urlsplit(server.backend_url).path:
             other_backend = server.backend_url.replace("localhost", "127.0.0.1")
             alternate = MCPClient(server.mcp_url, headers={"X-SigNoz-URL": other_backend})

@@ -206,7 +206,7 @@ func TestEvaluateValidationResponse_DoesNotLogOrReturnRawBody(t *testing.T) {
 		{
 			name:   "HTML 404 keeps instance-not-found classification",
 			status: http.StatusNotFound,
-			body:   "<html>SIGNOZ_API_KEY=validation-secret-canary</html>",
+			body:   "<html>FUSESCOPE_API_KEY=validation-secret-canary</html>",
 			checkError: func(t *testing.T, err error) {
 				assert.ErrorIs(t, err, ErrInstanceNotFound)
 			},
@@ -214,7 +214,7 @@ func TestEvaluateValidationResponse_DoesNotLogOrReturnRawBody(t *testing.T) {
 		{
 			name:   "generic status uses body-free fallback",
 			status: http.StatusInternalServerError,
-			body:   `{"status":"error","message":"SIGNOZ_API_KEY=validation-secret-canary"}`,
+			body:   `{"status":"error","message":"FUSESCOPE_API_KEY=validation-secret-canary"}`,
 			checkError: func(t *testing.T, err error) {
 				assert.Equal(t, "unexpected status 500", err.Error())
 				var statusErr *HTTPStatusError

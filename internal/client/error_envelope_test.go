@@ -199,7 +199,7 @@ func TestParseUpstreamErrorBody_DeduplicatesButStillChecksLateDrift(t *testing.T
 func TestParseUpstreamErrorBody_DropsUnsafeValuesWhole(t *testing.T) {
 	body := `{"status":"error","error":{` +
 		`"type":"access.token:type-secret-canary","code":"api.key:code-secret-canary",` +
-		`"message":"SIGNOZ_API_KEY=message-secret-canary",` +
+		`"message":"FUSESCOPE_API_KEY=message-secret-canary",` +
 		`"url":"https://signoz.io/docs?token=url-secret-canary",` +
 		`"suggestions":["client_secret=suggestion-secret-canary","client_secret: colon-suggestion-secret-canary","refresh token: refresh-colon-secret-canary","authorization: auth123secretcanary","authorization: AWS4-HMAC-SHA256 aws123secretcanary","Bearer abcdefghijk1234","authorization: request editor access","authorization: permission denied","authorization: AWS4-HMAC-SHA256 missing","authorization: AWS4-HMAC-SHA256.","token: signature mismatch"],` +
 		`"errors":[{"message":"<script>detail-canary</script>","suggestions":["![x](https://attacker.test/canary)","keep detail guidance"]},{"message":"api key with key: backend-colon-secret-canary doesn't exist.","suggestions":[]}]` +
