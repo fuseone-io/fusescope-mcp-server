@@ -9,26 +9,11 @@ Thanks for contributing to SigNoz MCP Server.
 3. Run local checks before opening a PR.
 4. Open a pull request with a clear summary and validation steps.
 
-## Releases & the MCP Registry
+## Releases
 
-The server is listed on the official [MCP Registry](https://registry.modelcontextprotocol.io)
-as `io.github.SigNoz/signoz-mcp-server`. The version that gets published lives in the committed
-`server.json`, kept correct by the release process:
-
-1. Run the **prereleaser** (`.github/workflows/pre-release.yaml`, manual dispatch). It raises a PR
-   bumping `manifest.json`, `CHANGELOG.md`, and `server.json` — both `.version` and the pinned OCI
-   image tag (`docker.io/signoz/signoz-mcp-server:vX.Y.Z`).
-2. Merge that PR, then create the GitHub release on the bumped commit so the tag carries the correct
-   `server.json`.
-3. The `vX.Y.Z` tag triggers `.github/workflows/dockerbuildci.yaml`: it builds and pushes the Docker
-   image, then the `publish-mcp-registry` job publishes the **committed** `server.json` to the
-   registry via GitHub OIDC (no secret). It asserts the file matches the tag, waits for the image to
-   be pullable, and is idempotent (skips an already-published version). Pre-release tags (`-rc.N`)
-   are not published.
-
-To publish out of band, re-run the `dockerbuildci` workflow on the release tag, or — from a
-workstation checked out at the tagged commit — run `mcp-publisher login github` (as a SigNoz org
-member) followed by `mcp-publisher publish`.
+The upstream release workflows were removed with the fork: they published to SigNoz's image
+registry and MCP Registry entry. The FuseScope release process (image registry, binaries, MCP
+Registry identity) is not set up yet.
 
 ## Required sync for MCP changes
 
