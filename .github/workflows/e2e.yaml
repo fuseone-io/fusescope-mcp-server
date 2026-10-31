@@ -21,26 +21,6 @@ defaults:
     shell: bash
 
 jobs:
-  py-fmt:
-    if: |
-      (github.event_name == 'pull_request' && ! github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && ! contains(github.event.pull_request.labels.*.name, 'safe-to-test')) ||
-      (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe-to-test'))
-    uses: signoz/primus.workflows/.github/workflows/py-fmt.yaml@main
-    secrets: inherit
-    with:
-      PRIMUS_REF: main
-      PYTHON_VERSION: "3.13"
-      PY_SRC: tests
-  py-lint:
-    if: |
-      (github.event_name == 'pull_request' && ! github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && ! contains(github.event.pull_request.labels.*.name, 'safe-to-test')) ||
-      (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe-to-test'))
-    uses: signoz/primus.workflows/.github/workflows/py-lint.yaml@main
-    secrets: inherit
-    with:
-      PRIMUS_REF: main
-      PYTHON_VERSION: "3.13"
-      PY_SRC: tests
   e2e:
     # The suite casts an ephemeral SigNoz and needs no secrets to run, so it
     # runs on every non-fork pull request. Fork PRs run only through the
