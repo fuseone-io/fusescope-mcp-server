@@ -152,8 +152,8 @@ gen-chschema:
 # The server is Apache-2.0 and must not link the AGPL-3.0 collector or schema migrator.
 check-agpl:
 	@echo "⚖️  Checking for linked AGPL collector packages..."
-	@linked=$$(go list -deps -test ./... | grep -E '^github\.com/(SigNoz/signoz|fuseone-io/fusescope)-otel-collector(/|$$)'); \
-	if [ -n "$$linked" ]; then printf '%s\n' "$$linked"; echo "$${GITHUB_ACTIONS:+::error::}The server links AGPL collector packages."; exit 1; fi
+	@scripts/check-agpl_test.sh
+	@scripts/check-agpl.sh
 
 ##@ Generated SigNoz API client
 
