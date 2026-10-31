@@ -37,7 +37,7 @@ cd fusescope-mcp-server
 make build
 ```
 
-The binary is at `./bin/signoz-mcp-server`. Move it somewhere on your PATH or note its absolute path for the client config below.
+The binary is at `./bin/fusescope-mcp-server`. Move it somewhere on your PATH or note its absolute path for the client config below.
 
 ### Docker
 
@@ -70,13 +70,13 @@ FuseScope's **Settings → MCP Server** page shows the connection details and cl
 
 ### Stdio Mode (Claude Desktop / Cursor / Any MCP Client)
 
-Add this to your MCP client config (`claude_desktop_config.json`, `.cursor/mcp.json`, etc.). Replace the `command` path with the absolute path to your `signoz-mcp-server` binary:
+Add this to your MCP client config (`claude_desktop_config.json`, `.cursor/mcp.json`, etc.). Replace the `command` path with the absolute path to your `fusescope-mcp-server` binary:
 
 ```json
 {
     "mcpServers": {
         "fusescope": {
-            "command": "/absolute/path/to/signoz-mcp-server",
+            "command": "/absolute/path/to/fusescope-mcp-server",
             "args": [],
             "env": {
                 "FUSESCOPE_URL": "https://your-signoz-instance.com",
@@ -121,7 +121,7 @@ MCP_SERVER_PORT=8000 \
 OAUTH_ENABLED=true \
 OAUTH_TOKEN_SECRET=$(openssl rand -base64 32) \
 OAUTH_ISSUER_URL=https://your-public-mcp-url.com \
-./signoz-mcp-server
+./fusescope-mcp-server
 ```
 
 Client config needs just the URL, no keys:
@@ -149,7 +149,7 @@ FUSESCOPE_URL=https://your-signoz-instance.com \
 FUSESCOPE_API_KEY=your-api-key \
 TRANSPORT_MODE=http \
 MCP_SERVER_PORT=8000 \
-./signoz-mcp-server
+./fusescope-mcp-server
 ```
 
 ```json
@@ -168,7 +168,7 @@ MCP_SERVER_PORT=8000 \
 FUSESCOPE_URL=https://your-signoz-instance.com \
 TRANSPORT_MODE=http \
 MCP_SERVER_PORT=8000 \
-./signoz-mcp-server
+./fusescope-mcp-server
 ```
 
 ```json

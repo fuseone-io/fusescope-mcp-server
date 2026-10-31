@@ -1,10 +1,9 @@
 # CLAUDE.md
 
-Go MCP server that gives MCP clients access to SigNoz metrics, logs, traces, alerts, dashboards,
+Go MCP server that gives MCP clients access to FuseScope metrics, logs, traces, alerts, dashboards,
 saved views, notification channels, and docs over stdio and stateless streamable HTTP. It calls the
-SigNoz backend and query-builder (QB) APIs upstream. Downstream, MCP clients, the
-SigNoz/agent-skills repo, and custom agents and clients built on this server consume its tool
-contracts.
+FuseScope backend (SigNoz-compatible APIs) and query-builder (QB) APIs upstream. Downstream, MCP
+clients and custom agents and clients built on this server consume its tool contracts.
 
 ## Commands
 
