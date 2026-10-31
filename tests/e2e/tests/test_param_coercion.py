@@ -19,7 +19,7 @@ def test_services_ns_and_ms_windows(mcp_client: MCPClient, test_id: str, telemet
 
     def visible() -> bool:
         result = mcp_client.call_tool(
-            "signoz_list_services", {"searchContext": "services", "timeRange": "1h", "limit": "1000"}
+            "fusescope_list_services", {"searchContext": "services", "timeRange": "1h", "limit": "1000"}
         )
         return not result.get("isError", False) and service in first_text_block(result)
 
@@ -28,7 +28,7 @@ def test_services_ns_and_ms_windows(mcp_client: MCPClient, test_id: str, telemet
     # Top operations come from a table SigNoz fills after the spans are queryable.
     def operation_visible() -> bool:
         result = mcp_client.call_tool(
-            "signoz_get_service_top_operations", {"searchContext": "top operations", "service": service}
+            "fusescope_get_service_top_operations", {"searchContext": "top operations", "service": service}
         )
         return not result.get("isError", False) and "e2e-operation" in first_text_block(result)
 
@@ -42,12 +42,12 @@ def test_services_ns_and_ms_windows(mcp_client: MCPClient, test_id: str, telemet
     }
     for unit, window in windows.items():
         services = assert_tool_ok(
-            mcp_client.call_tool("signoz_list_services", {"searchContext": "services", "limit": "1000", **window})
+            mcp_client.call_tool("fusescope_list_services", {"searchContext": "services", "limit": "1000", **window})
         )
         assert service in first_text_block(services), f"{unit} window missed the seeded service {service}"
         operations = assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_get_service_top_operations",
+                "fusescope_get_service_top_operations",
                 {"searchContext": f"top operations for {service}", "service": service, **window},
             )
         )

@@ -2,7 +2,7 @@
 
 Source: the request examples published by the SigNoz OpenAPI spec.
 
-## Run a query with signoz_execute_builder_query
+## Run a query with fusescope_execute_builder_query
 
 ### 1. ai_traces_raw — Raw: LLM, tool, and agent spans of one service's AI traces with many tool calls
 

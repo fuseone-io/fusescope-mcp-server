@@ -54,16 +54,16 @@ const (
 func (h *Handler) RegisterAIAttributeMappingHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering AI attribute mapping handlers")
 
-	listTool := mcp.NewTool("signoz_list_ai_attribute_mappings",
+	listTool := mcp.NewTool("fusescope_list_ai_attribute_mappings",
 		withReadOnlyToolAnnotations(),
-		mcp.WithDescription("Use this when the user asks why AI spans show no model, tokens, or cost, or which vendor attributes SigNoz maps to gen_ai.* keys. At ingest, a mapping group runs on spans whose attribute keys contain one of its condition substrings, and each mapper fills one gen_ai.* key from the first source key present, by priority. Mappings apply only to spans ingested afterwards and are changed on the Attribute Mapping tab of AI Observability in SigNoz. To see how a sample span maps, use signoz_test_ai_attribute_mapping; for spans with a model but no cost, use signoz_get_ai_pricing. If incomplete is true, failedGroups names the groups whose mappers could not be read."),
+		mcp.WithDescription("Use this when the user asks why AI spans show no model, tokens, or cost, or which vendor attributes SigNoz maps to gen_ai.* keys. At ingest, a mapping group runs on spans whose attribute keys contain one of its condition substrings, and each mapper fills one gen_ai.* key from the first source key present, by priority. Mappings apply only to spans ingested afterwards and are changed on the Attribute Mapping tab of AI Observability in SigNoz. To see how a sample span maps, use fusescope_test_ai_attribute_mapping; for spans with a model but no cost, use fusescope_get_ai_pricing. If incomplete is true, failedGroups names the groups whose mappers could not be read."),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
 	)
 	h.addTool(s, listTool, h.handleListAIAttributeMappings)
 
-	testTool := mcp.NewTool("signoz_test_ai_attribute_mapping",
+	testTool := mcp.NewTool("fusescope_test_ai_attribute_mapping",
 		withReadOnlyToolAnnotations(),
-		mcp.WithDescription("Use this when the user wants to know whether SigNoz will treat a framework's spans as model, tool, or agent calls, or wants to try a mapping before adding it. It runs sample spans through the mapping groups (the saved ones by default) and returns each span as SigNoz would store it; nothing is saved. A span that gains gen_ai.request.model counts as a model call. To read the saved mappings, use signoz_list_ai_attribute_mappings."),
+		mcp.WithDescription("Use this when the user wants to know whether SigNoz will treat a framework's spans as model, tool, or agent calls, or wants to try a mapping before adding it. It runs sample spans through the mapping groups (the saved ones by default) and returns each span as SigNoz would store it; nothing is saved. A span that gains gen_ai.request.model counts as a model call. To read the saved mappings, use fusescope_list_ai_attribute_mappings."),
 		mcp.WithInputSchema[types.TestAIAttributeMappingInput](),
 	)
 	h.addTool(s, testTool, h.handleTestAIAttributeMapping)
@@ -71,7 +71,7 @@ func (h *Handler) RegisterAIAttributeMappingHandlers(s *mcp.Server) {
 }
 
 func (h *Handler) handleListAIAttributeMappings(ctx context.Context, _ mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	h.logger.DebugContext(ctx, "Tool called: signoz_list_ai_attribute_mappings")
+	h.logger.DebugContext(ctx, "Tool called: fusescope_list_ai_attribute_mappings")
 
 	client, err := h.GetClient(ctx)
 	if err != nil {
@@ -122,7 +122,7 @@ func (h *Handler) handleListAIAttributeMappings(ctx context.Context, _ mcp.CallT
 	}
 	if len(out.FailedGroups) > 0 {
 		out.Incomplete = true
-		out.NextAction = "Retry signoz_list_ai_attribute_mappings; groups in failedGroups have mappers set to null in this result."
+		out.NextAction = "Retry fusescope_list_ai_attribute_mappings; groups in failedGroups have mappers set to null in this result."
 	}
 
 	payload, err := json.Marshal(out)
@@ -137,7 +137,7 @@ func (h *Handler) handleTestAIAttributeMapping(ctx context.Context, req mcp.Call
 	if errResult != nil {
 		return errResult, nil
 	}
-	h.logger.DebugContext(ctx, "Tool called: signoz_test_ai_attribute_mapping")
+	h.logger.DebugContext(ctx, "Tool called: fusescope_test_ai_attribute_mapping")
 
 	client, err := h.GetClient(ctx)
 	if err != nil {

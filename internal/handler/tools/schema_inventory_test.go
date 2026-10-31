@@ -98,13 +98,13 @@ func TestAdvertisedUpdateSchemasAcceptRealWriteBackPayloads(t *testing.T) {
 		for key, value := range auditFields {
 			alert[key] = value
 		}
-		validate("signoz_update_alert", alert)
+		validate("fusescope_update_alert", alert)
 	}
 
 	// A real write-back re-PUTs a fetched v6 dashboard, including server-added
 	// fields the advertised schema doesn't model (id and audit fields). The
 	// schema must stay permissive enough to accept them.
-	validate("signoz_update_dashboard", map[string]any{
+	validate("fusescope_update_dashboard", map[string]any{
 		"id":            "dashboard-1",
 		"schemaVersion": "v6",
 		"name":          "latency",

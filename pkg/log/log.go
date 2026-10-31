@@ -194,7 +194,7 @@ func redactSensitiveValues(value any) any {
 // may contain provider credentials that must not enter telemetry.
 func IsSecretBearingTool(name string) bool {
 	switch name {
-	case "signoz_create_notification_channel", "signoz_update_notification_channel":
+	case "fusescope_create_notification_channel", "fusescope_update_notification_channel":
 		return true
 	default:
 		return false

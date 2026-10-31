@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "signoz": {
+    "fusescope": {
       "command": "/path/to/your/signoz-mcp-server",
       "args": [],
       "env": {

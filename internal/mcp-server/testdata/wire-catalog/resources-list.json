@@ -17,178 +17,178 @@
       "cacheScope": "public",
       "resources": [
         {
-          "description": "Read this before AI observability queries: LLM cost, tokens, models, or tool calls, per call or per trace. It covers queryType builder_ai_query on signoz_search_traces and signoz_aggregate_traces, the trace-level fields and where they work, how cost and token totals are computed (including cache tokens), examples for both tools, and saving a builder_ai_query as an alert. Full requests are in signoz://query-builder/examples.",
+          "description": "Read this before AI observability queries: LLM cost, tokens, models, or tool calls, per call or per trace. It covers queryType builder_ai_query on fusescope_search_traces and fusescope_aggregate_traces, the trace-level fields and where they work, how cost and token totals are computed (including cache tokens), examples for both tools, and saving a builder_ai_query as an alert. Full requests are in fusescope://query-builder/examples.",
           "mimeType": "text/markdown",
           "name": "AI Query Builder Guide",
           "size": 8989,
-          "uri": "signoz://ai/query-builder-guide"
+          "uri": "fusescope://ai/query-builder-guide"
         },
         {
-          "description": "Read this after signoz://alert/instructions only when examples are still needed. Resolve illustrative direct/anomaly names with signoz_list_notification_channels; if none fits, offer signoz_create_notification_channel. Confirmed v2 policy routing may omit direct channels.",
+          "description": "Read this after fusescope://alert/instructions only when examples are still needed. Resolve illustrative direct/anomaly names with fusescope_list_notification_channels; if none fits, offer fusescope_create_notification_channel. Confirmed v2 policy routing may omit direct channels.",
           "mimeType": "text/markdown",
           "name": "Alert Rule Examples",
           "size": 33311,
-          "uri": "signoz://alert/examples"
+          "uri": "fusescope://alert/examples"
         },
         {
-          "description": "Read this before creating or updating an alert unless its current content was already read for the same prepared operation. It explains the query envelopes, threshold tiers, and evaluation specs the input schema does not describe, anomaly scoring, and when to reuse or call signoz_list_notification_channels. Read signoz://alert/examples only when examples are still needed.",
+          "description": "Read this before creating or updating an alert unless its current content was already read for the same prepared operation. It explains the query envelopes, threshold tiers, and evaluation specs the input schema does not describe, anomaly scoring, and when to reuse or call fusescope_list_notification_channels. Read fusescope://alert/examples only when examples are still needed.",
           "mimeType": "text/markdown",
           "name": "Alert Rule Instructions",
           "size": 21472,
-          "uri": "signoz://alert/instructions"
+          "uri": "fusescope://alert/instructions"
         },
         {
-          "description": "Read this after signoz://dashboard/clickhouse-schema-for-logs when composing a raw ClickHouse logs widget. It covers timestamp and attribute filters, resource CTEs, variables, timeseries/value shapes, and performance patterns.",
+          "description": "Read this after fusescope://dashboard/clickhouse-schema-for-logs when composing a raw ClickHouse logs widget. It covers timestamp and attribute filters, resource CTEs, variables, timeseries/value shapes, and performance patterns.",
           "mimeType": "text/markdown",
           "name": "ClickHouse Logs Examples",
           "size": 7531,
-          "uri": "signoz://dashboard/clickhouse-logs-example"
+          "uri": "fusescope://dashboard/clickhouse-logs-example"
         },
         {
-          "description": "Read this before writing ClickHouse SQL for a dashboard widget over SigNoz logs. It lists tables and columns from the schema bundled with this server. Also read signoz://dashboard/clickhouse-logs-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag.",
+          "description": "Read this before writing ClickHouse SQL for a dashboard widget over SigNoz logs. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-logs-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag.",
           "mimeType": "text/markdown",
           "name": "ClickHouse Logs Schema",
           "size": 4505,
-          "uri": "signoz://dashboard/clickhouse-schema-for-logs"
+          "uri": "fusescope://dashboard/clickhouse-schema-for-logs"
         },
         {
-          "description": "Read this after signoz://dashboard/clickhouse-schema-for-metrics when composing a raw ClickHouse metrics widget. It covers counter rates, error ratios, histogram quantiles, time-series tables, variables, and performance patterns.",
+          "description": "Read this after fusescope://dashboard/clickhouse-schema-for-metrics when composing a raw ClickHouse metrics widget. It covers counter rates, error ratios, histogram quantiles, time-series tables, variables, and performance patterns.",
           "mimeType": "text/markdown",
           "name": "ClickHouse Metrics Examples",
           "size": 11224,
-          "uri": "signoz://dashboard/clickhouse-metrics-example"
+          "uri": "fusescope://dashboard/clickhouse-metrics-example"
         },
         {
-          "description": "Read this before writing ClickHouse SQL for a dashboard widget over SigNoz metrics. It lists tables and columns from the schema bundled with this server. Also read signoz://dashboard/clickhouse-metrics-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag.",
+          "description": "Read this before writing ClickHouse SQL for a dashboard widget over SigNoz metrics. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-metrics-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag.",
           "mimeType": "text/markdown",
           "name": "ClickHouse Metrics Schema",
           "size": 7191,
-          "uri": "signoz://dashboard/clickhouse-schema-for-metrics"
+          "uri": "fusescope://dashboard/clickhouse-schema-for-metrics"
         },
         {
-          "description": "Read this after signoz://dashboard/clickhouse-schema-for-traces when composing a raw ClickHouse traces widget. It covers resource filters, timeseries/value/table result shapes, span events, latency analysis, and performance patterns.",
+          "description": "Read this after fusescope://dashboard/clickhouse-schema-for-traces when composing a raw ClickHouse traces widget. It covers resource filters, timeseries/value/table result shapes, span events, latency analysis, and performance patterns.",
           "mimeType": "text/markdown",
           "name": "ClickHouse Traces Examples",
           "size": 8423,
-          "uri": "signoz://dashboard/clickhouse-traces-example"
+          "uri": "fusescope://dashboard/clickhouse-traces-example"
         },
         {
-          "description": "Read this before writing ClickHouse SQL for a dashboard widget over SigNoz traces. It lists tables and columns from the schema bundled with this server. Also read signoz://dashboard/clickhouse-traces-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag.",
+          "description": "Read this before writing ClickHouse SQL for a dashboard widget over SigNoz traces. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-traces-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag.",
           "mimeType": "text/markdown",
           "name": "ClickHouse Traces Schema",
           "size": 17539,
-          "uri": "signoz://dashboard/clickhouse-schema-for-traces"
+          "uri": "fusescope://dashboard/clickhouse-schema-for-traces"
         },
         {
-          "description": "Read this before creating or fully replacing a dashboard. It explains dashboard fields, metadata, variables, variable chaining, and layout. Also read signoz://dashboard/widgets-instructions for widget and query choices.",
+          "description": "Read this before creating or fully replacing a dashboard. It explains dashboard fields, metadata, variables, variable chaining, and layout. Also read fusescope://dashboard/widgets-instructions for widget and query choices.",
           "mimeType": "text/markdown",
           "name": "Dashboard Basic Instructions",
           "size": 7595,
-          "uri": "signoz://dashboard/instructions"
+          "uri": "fusescope://dashboard/instructions"
         },
         {
-          "description": "Read this when assembling a complete dashboard (panels + layout) with signoz_create_dashboard, replacing one with signoz_update_dashboard, or patching one. It provides the v6 payloads the SigNoz OpenAPI spec publishes: a service overview with a variable, a time series panel and a number panel; a logs table with a text panel; a full replacement; and two JSON Patch arrays. For single-panel shapes see signoz://dashboard/widgets-examples; for layout and variable rules see signoz://dashboard/instructions.",
+          "description": "Read this when assembling a complete dashboard (panels + layout) with fusescope_create_dashboard, replacing one with fusescope_update_dashboard, or patching one. It provides the v6 payloads the SigNoz OpenAPI spec publishes: a service overview with a variable, a time series panel and a number panel; a logs table with a text panel; a full replacement; and two JSON Patch arrays. For single-panel shapes see fusescope://dashboard/widgets-examples; for layout and variable rules see fusescope://dashboard/instructions.",
           "mimeType": "text/markdown",
           "name": "Dashboard Examples",
           "size": 14103,
-          "uri": "signoz://dashboard/examples"
+          "uri": "fusescope://dashboard/examples"
         },
         {
-          "description": "Read this to build the optional filter argument of signoz_list_dashboards. It documents the server-side metadata filter DSL: grammar (terms, AND/OR/NOT, free-text search), the filterable keys (name, description, created_by, created_at, updated_at, locked, and tag keys) with their operators and value formats, and worked examples.",
+          "description": "Read this to build the optional filter argument of fusescope_list_dashboards. It documents the server-side metadata filter DSL: grammar (terms, AND/OR/NOT, free-text search), the filterable keys (name, description, created_by, created_at, updated_at, locked, and tag keys) with their operators and value formats, and worked examples.",
           "mimeType": "text/markdown",
           "name": "Dashboard List Filter Guide",
           "size": 3600,
-          "uri": "signoz://dashboard/list-filter-guide"
+          "uri": "fusescope://dashboard/list-filter-guide"
         },
         {
-          "description": "Read this before calling signoz_patch_dashboard. It gives worked RFC 6902 JSON Patch recipes with exact JSON Pointer paths for targeted edits (rename, add/edit/move/remove a panel, edit a query, variables, tags), including the two-op sequences the backend requires (adding a panel needs a panel op plus a grid-item op). For the panel/query/variable JSON to use as a patch value, also read signoz://dashboard/widgets-examples and signoz://dashboard/instructions.",
+          "description": "Read this before calling fusescope_patch_dashboard. It gives worked RFC 6902 JSON Patch recipes with exact JSON Pointer paths for targeted edits (rename, add/edit/move/remove a panel, edit a query, variables, tags), including the two-op sequences the backend requires (adding a panel needs a panel op plus a grid-item op). For the panel/query/variable JSON to use as a patch value, also read fusescope://dashboard/widgets-examples and fusescope://dashboard/instructions.",
           "mimeType": "text/markdown",
           "name": "Dashboard Patch Instructions",
           "size": 4866,
-          "uri": "signoz://dashboard/patch-instructions"
+          "uri": "fusescope://dashboard/patch-instructions"
         },
         {
-          "description": "Read this when choosing or building dashboard widgets. It explains when to use each panel type, required layout and legend fields, and which detailed guide to read for each query type. Also read signoz://dashboard/instructions.",
+          "description": "Read this when choosing or building dashboard widgets. It explains when to use each panel type, required layout and legend fields, and which detailed guide to read for each query type. Also read fusescope://dashboard/instructions.",
           "mimeType": "text/markdown",
           "name": "Dashboard Widget Instructions",
           "size": 14276,
-          "uri": "signoz://dashboard/widgets-instructions"
+          "uri": "fusescope://dashboard/widgets-instructions"
         },
         {
           "description": "Read this after the dashboard and widget instructions when building panels. It provides one worked, server-verified v6 panel payload per panel type (timeseries, area, list, pie, table, value/number) to copy structurally. Verify field names in the target SigNoz workspace.",
           "mimeType": "text/markdown",
           "name": "Dashboard Widgets Examples",
           "size": 30659,
-          "uri": "signoz://dashboard/widgets-examples"
+          "uri": "fusescope://dashboard/widgets-examples"
         },
         {
           "description": "Read this before writing Query Builder v5 JSON for logs or filtering on unfamiliar log fields. It explains filter syntax, field discovery, body, JSON-path, and cross-field search(), row and aggregate queries, stable pagination, limits, ordering, timestamps, and examples for rows, single values, and time series.",
           "mimeType": "text/markdown",
           "name": "Logs Query Builder Guide",
           "size": 14896,
-          "uri": "signoz://logs/query-builder-guide"
+          "uri": "fusescope://logs/query-builder-guide"
         },
         {
-          "description": "Read this before choosing aggregations for signoz_query_metrics or building metrics Query Builder JSON. It explains timeAggregation, spaceAggregation, and reduceTo by metric type; formulas and limits; groupBy and filter label names; top-N selection across the full window; step intervals; examples; and Cost Meter queries.",
+          "description": "Read this before choosing aggregations for fusescope_query_metrics or building metrics Query Builder JSON. It explains timeAggregation, spaceAggregation, and reduceTo by metric type; formulas and limits; groupBy and filter label names; top-N selection across the full window; step intervals; examples; and Cost Meter queries.",
           "mimeType": "text/markdown",
           "name": "Metrics Aggregation Guide",
           "size": 12073,
-          "uri": "signoz://metrics-aggregation-guide"
+          "uri": "fusescope://metrics-aggregation-guide"
         },
         {
-          "description": "Read this before composing config for signoz_create_notification_channel or signoz_update_notification_channel unless already read in the same prepared operation. It lists every provider kind SigNoz accepts, each kind's config.spec fields with the required ones marked, and a worked create payload per kind plus two replacement configs.",
+          "description": "Read this before composing config for fusescope_create_notification_channel or fusescope_update_notification_channel unless already read in the same prepared operation. It lists every provider kind SigNoz accepts, each kind's config.spec fields with the required ones marked, and a worked create payload per kind plus two replacement configs.",
           "mimeType": "text/markdown",
           "name": "Notification Channel Reference and Examples",
           "size": 15402,
-          "uri": "signoz://notification-channel/examples"
+          "uri": "fusescope://notification-channel/examples"
         },
         {
           "description": "Read this when composing a PromQL dashboard widget or promql_rule alert. It explains SigNoz's Prometheus 3.x quoted-selector form for dotted OTel metric names, resource labels, examples, and query checks; do not use it for Query Builder or ClickHouse SQL.",
           "mimeType": "text/markdown",
           "name": "PromQL Instructions",
           "size": 10450,
-          "uri": "signoz://promql/instructions"
+          "uri": "fusescope://promql/instructions"
         },
         {
           "description": "Read this when composing a Query Builder dashboard widget. It covers signal-specific aggregations, filters, metric naming, grouped legends, functions, and examples; use the ClickHouse or PromQL resources instead for those query types.",
           "mimeType": "text/markdown",
           "name": "Query Builder Examples",
           "size": 16908,
-          "uri": "signoz://dashboard/query-builder-example"
+          "uri": "fusescope://dashboard/query-builder-example"
         },
         {
-          "description": "Read this when composing the query argument of signoz_execute_builder_query and a complete request shape is still needed after the signal's guide. It provides one query_range request from the SigNoz OpenAPI spec per query type (builder, formula, PromQL, ClickHouse SQL) and request type (raw, scalar, time_series) across logs, traces, and metrics.",
+          "description": "Read this when composing the query argument of fusescope_execute_builder_query and a complete request shape is still needed after the signal's guide. It provides one query_range request from the SigNoz OpenAPI spec per query type (builder, formula, PromQL, ClickHouse SQL) and request type (raw, scalar, time_series) across logs, traces, and metrics.",
           "mimeType": "text/markdown",
           "name": "Query Builder Request Examples",
           "size": 17892,
-          "uri": "signoz://query-builder/examples"
+          "uri": "fusescope://query-builder/examples"
         },
         {
-          "description": "Read this after signoz://view/instructions when composing a saved view. It provides complete typed spec payloads for traces, logs, metrics, and Cost Meter sources.",
+          "description": "Read this after fusescope://view/instructions when composing a saved view. It provides complete typed spec payloads for traces, logs, metrics, and Cost Meter sources.",
           "mimeType": "text/markdown",
           "name": "Saved View Examples",
           "size": 6742,
-          "uri": "signoz://view/examples"
+          "uri": "fusescope://view/examples"
         },
         {
           "description": "Read this before creating or updating a saved view. It explains view fields, source, the typed spec (schemaVersion v2), Cost Meter views, and how to read a view before replacing it. It does not describe dashboards.",
           "mimeType": "text/markdown",
           "name": "Saved View Instructions",
           "size": 5605,
-          "uri": "signoz://view/instructions"
+          "uri": "fusescope://view/instructions"
         },
         {
-          "description": "Use this resource when an MCP client needs the indexed official SigNoz documentation catalog and page URLs. Use signoz_search_docs for topical discovery and signoz_fetch_doc for page content.",
+          "description": "Use this resource when an MCP client needs the indexed official SigNoz documentation catalog and page URLs. Use fusescope_search_docs for topical discovery and fusescope_fetch_doc for page content.",
           "mimeType": "text/markdown",
           "name": "SigNoz Docs Sitemap",
-          "uri": "signoz://docs/sitemap"
+          "uri": "fusescope://docs/sitemap"
         },
         {
           "description": "Read this before writing Query Builder v5 JSON for traces or filtering on unfamiliar trace fields. It explains filter syntax, field discovery, built-in span fields, row and aggregate queries, limits, ordering, timestamps, and examples for rows, single values, and time series.",
           "mimeType": "text/markdown",
           "name": "Traces Query Builder Guide",
           "size": 11017,
-          "uri": "signoz://traces/query-builder-guide"
+          "uri": "fusescope://traces/query-builder-guide"
         }
       ],
       "ttlMs": 0

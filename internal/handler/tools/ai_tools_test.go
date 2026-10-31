@@ -77,7 +77,7 @@ func TestGetAIPricing_RulesAssembleTheRequestedPageFromUpstreamPages(t *testing.
 		_, _ = fmt.Fprintf(w, `{"status":"success","data":{"items":[%s],"total":%d,"offset":%d,"limit":%d}}`, strings.Join(items, ","), total, offset, limit)
 	})
 
-	result, err := h.handleGetAIPricing(testCtx(), makeToolRequest("signoz_get_ai_pricing", map[string]any{"limit": "150", "searchText": "gpt"}))
+	result, err := h.handleGetAIPricing(testCtx(), makeToolRequest("fusescope_get_ai_pricing", map[string]any{"limit": "150", "searchText": "gpt"}))
 	if err != nil || result.IsError {
 		t.Fatalf("unexpected failure: err=%v result=%v", err, result.Content)
 	}
@@ -117,7 +117,7 @@ func TestGetAIPricing_UnpricedModelsFilterAndPageLocally(t *testing.T) {
 			{"modelName":"claude-haiku-4","provider":"anthropic","spanCount":3}]}}`))
 	})
 
-	result, err := h.handleGetAIPricing(testCtx(), makeToolRequest("signoz_get_ai_pricing", map[string]any{"view": "unpriced_models", "searchText": "Anthropic", "limit": 1}))
+	result, err := h.handleGetAIPricing(testCtx(), makeToolRequest("fusescope_get_ai_pricing", map[string]any{"view": "unpriced_models", "searchText": "Anthropic", "limit": 1}))
 	if err != nil || result.IsError {
 		t.Fatalf("unexpected failure: err=%v result=%v", err, result.Content)
 	}
@@ -140,7 +140,7 @@ func TestGetAIPricing_PermissionDeniedIsCoded(t *testing.T) {
 		w.WriteHeader(http.StatusForbidden)
 		_, _ = w.Write([]byte(forbiddenBody))
 	})
-	result, err := h.handleGetAIPricing(testCtx(), makeToolRequest("signoz_get_ai_pricing", map[string]any{}))
+	result, err := h.handleGetAIPricing(testCtx(), makeToolRequest("fusescope_get_ai_pricing", map[string]any{}))
 	if err != nil {
 		t.Fatalf("unexpected Go error: %v", err)
 	}
@@ -160,7 +160,7 @@ func TestGetAIPricing_RejectsInvalidArgumentsBeforeCallingSigNoz(t *testing.T) {
 	} {
 		t.Run(tc.field, func(t *testing.T) {
 			h, requests := newAIToolsHandler(t, func(http.ResponseWriter, *http.Request) {})
-			result, _ := h.handleGetAIPricing(testCtx(), makeToolRequest("signoz_get_ai_pricing", tc.args))
+			result, _ := h.handleGetAIPricing(testCtx(), makeToolRequest("fusescope_get_ai_pricing", tc.args))
 			if got := resultCode(t, result); got != CodeValidationFailed || !strings.Contains(resultText(t, result), `"`+tc.field+`"`) {
 				t.Fatalf("code = %q text = %q, want a %s validation error", got, resultText(t, result), tc.field)
 			}
@@ -175,7 +175,7 @@ func TestGetAIPricing_RulesWithoutTotalAreAnUpstreamError(t *testing.T) {
 	h, _ := newAIToolsHandler(t, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(`{"status":"success","data":{"items":[{"id":"rule-1"}]}}`))
 	})
-	result, _ := h.handleGetAIPricing(testCtx(), makeToolRequest("signoz_get_ai_pricing", map[string]any{}))
+	result, _ := h.handleGetAIPricing(testCtx(), makeToolRequest("fusescope_get_ai_pricing", map[string]any{}))
 	if got := resultCode(t, result); got != CodeUpstreamError {
 		t.Fatalf("code = %q, want %q: a page without a total must not look complete", got, CodeUpstreamError)
 	}
@@ -200,7 +200,7 @@ func TestListAIAttributeMappings_OneGroupFailingLeavesTheOthersAndSaysSo(t *test
 		}
 	})
 
-	result, err := h.handleListAIAttributeMappings(testCtx(), makeToolRequest("signoz_list_ai_attribute_mappings", map[string]any{}))
+	result, err := h.handleListAIAttributeMappings(testCtx(), makeToolRequest("fusescope_list_ai_attribute_mappings", map[string]any{}))
 	if err != nil || result.IsError {
 		t.Fatalf("unexpected failure: err=%v result=%v", err, result.Content)
 	}
@@ -244,7 +244,7 @@ func TestListAIAttributeMappings_UnreadableMappersAreReportedAsFailed(t *testing
 			_, _ = w.Write([]byte(`{"status":"success","data":{}}`))
 		}
 	})
-	result, err := h.handleListAIAttributeMappings(testCtx(), makeToolRequest("signoz_list_ai_attribute_mappings", map[string]any{}))
+	result, err := h.handleListAIAttributeMappings(testCtx(), makeToolRequest("fusescope_list_ai_attribute_mappings", map[string]any{}))
 	if err != nil || result.IsError {
 		t.Fatalf("unexpected failure: err=%v result=%v", err, result.Content)
 	}
@@ -259,7 +259,7 @@ func TestListAIAttributeMappings_UnreadableGroupListIsAnUpstreamError(t *testing
 	h, _ := newAIToolsHandler(t, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(`{"status":"success","data":{}}`))
 	})
-	result, _ := h.handleListAIAttributeMappings(testCtx(), makeToolRequest("signoz_list_ai_attribute_mappings", map[string]any{}))
+	result, _ := h.handleListAIAttributeMappings(testCtx(), makeToolRequest("fusescope_list_ai_attribute_mappings", map[string]any{}))
 	if got := resultCode(t, result); got != CodeUpstreamError {
 		t.Fatalf("code = %q, want %q: an unreadable group list must not look like no groups", got, CodeUpstreamError)
 	}
@@ -274,7 +274,7 @@ func TestListAIAttributeMappings_PermissionDeniedOnMappersFailsTheWholeCall(t *t
 		w.WriteHeader(http.StatusForbidden)
 		_, _ = w.Write([]byte(forbiddenBody))
 	})
-	result, err := h.handleListAIAttributeMappings(testCtx(), makeToolRequest("signoz_list_ai_attribute_mappings", map[string]any{}))
+	result, err := h.handleListAIAttributeMappings(testCtx(), makeToolRequest("fusescope_list_ai_attribute_mappings", map[string]any{}))
 	if err != nil {
 		t.Fatalf("unexpected Go error: %v", err)
 	}
@@ -295,7 +295,7 @@ func TestTestAIAttributeMapping_DefaultsToTheSavedGroups(t *testing.T) {
 	})
 	spans := []any{map[string]any{"attributes": map[string]any{"llm.model_name": "gpt-4o"}}}
 
-	result, err := h.handleTestAIAttributeMapping(testCtx(), makeToolRequest("signoz_test_ai_attribute_mapping", map[string]any{"spans": spans}))
+	result, err := h.handleTestAIAttributeMapping(testCtx(), makeToolRequest("fusescope_test_ai_attribute_mapping", map[string]any{"spans": spans}))
 	if err != nil || result.IsError {
 		t.Fatalf("unexpected failure: err=%v result=%v", err, result.Content)
 	}
@@ -334,7 +334,7 @@ func TestTestAIAttributeMapping_SendsProvidedGroupsVerbatim(t *testing.T) {
 	}}
 	spans := []any{map[string]any{"attributes": map[string]any{"model": "gpt-4o"}}}
 
-	result, err := h.handleTestAIAttributeMapping(testCtx(), makeToolRequest("signoz_test_ai_attribute_mapping", map[string]any{"spans": spans, "groups": groups}))
+	result, err := h.handleTestAIAttributeMapping(testCtx(), makeToolRequest("fusescope_test_ai_attribute_mapping", map[string]any{"spans": spans, "groups": groups}))
 	if err != nil || result.IsError {
 		t.Fatalf("unexpected failure: err=%v result=%v", err, result.Content)
 	}
@@ -353,7 +353,7 @@ func TestTestAIAttributeMapping_UpstreamRejectionKeepsSigNozGuidance(t *testing.
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = w.Write([]byte(`{"status":"error","error":{"code":"mapping_invalid_input","type":"invalid-input","message":"'spans' must contain at least one span"}}`))
 	})
-	result, err := h.handleTestAIAttributeMapping(testCtx(), makeToolRequest("signoz_test_ai_attribute_mapping", map[string]any{"spans": []any{}, "groups": []any{}}))
+	result, err := h.handleTestAIAttributeMapping(testCtx(), makeToolRequest("fusescope_test_ai_attribute_mapping", map[string]any{"spans": []any{}, "groups": []any{}}))
 	if err != nil {
 		t.Fatalf("unexpected Go error: %v", err)
 	}
@@ -380,7 +380,7 @@ func TestTestAIAttributeMapping_ResponseWithoutOneSpanPerSampleIsAnUpstreamError
 				_, _ = w.Write([]byte(`{"status":"success","data":` + tc.data + `}`))
 			})
 			spans := []any{map[string]any{"attributes": map[string]any{"a": "1"}}, map[string]any{"attributes": map[string]any{"b": "2"}}}
-			result, err := h.handleTestAIAttributeMapping(testCtx(), makeToolRequest("signoz_test_ai_attribute_mapping",
+			result, err := h.handleTestAIAttributeMapping(testCtx(), makeToolRequest("fusescope_test_ai_attribute_mapping",
 				map[string]any{"spans": spans, "groups": []any{}}))
 			if err != nil {
 				t.Fatalf("unexpected Go error: %v", err)
@@ -399,7 +399,7 @@ func TestTestAIAttributeMapping_ForwardsLargeIntegersExactly(t *testing.T) {
 	raw := `{"spans":[{"attributes":{"llm.model_name":"gpt-4o","request.id":9007199254740993}}],"groups":[]}`
 	handler := mcp.AdaptToolHandler(h.handleTestAIAttributeMapping)
 	result, err := handler(testCtx(), &sdkmcp.CallToolRequest{Params: &sdkmcp.CallToolParamsRaw{
-		Name: "signoz_test_ai_attribute_mapping", Arguments: json.RawMessage(raw)}})
+		Name: "fusescope_test_ai_attribute_mapping", Arguments: json.RawMessage(raw)}})
 	if err != nil || result.IsError {
 		t.Fatalf("unexpected failure: err=%v", err)
 	}

@@ -531,8 +531,8 @@ func normalizeToolSchemas(tool *mcp.Tool) {
 // legacy best-effort input normalization used by other tools.
 func canonicalChannelSchema(name string) bool {
 	switch name {
-	case "signoz_create_notification_channel", "signoz_update_notification_channel",
-		"signoz_list_notification_channels", "signoz_get_notification_channel",
+	case "fusescope_create_notification_channel", "fusescope_update_notification_channel",
+		"fusescope_list_notification_channels", "fusescope_get_notification_channel",
 		"signoz_delete_notification_channel":
 		return true
 	default:

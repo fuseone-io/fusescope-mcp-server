@@ -17,7 +17,7 @@ func TestDocsHandlers(t *testing.T) {
 
 	t.Run("index not ready", func(t *testing.T) {
 		h := newTestHandler(nil)
-		result, err := h.handleSearchDocs(ctx, makeToolRequest("signoz_search_docs", map[string]any{"query": "docker"}))
+		result, err := h.handleSearchDocs(ctx, makeToolRequest("fusescope_search_docs", map[string]any{"query": "docker"}))
 		require.NoError(t, err)
 		require.True(t, result.IsError)
 		require.Equal(t, docsindex.CodeIndexNotReady, result.StructuredContent.(map[string]any)["code"])
@@ -27,7 +27,7 @@ func TestDocsHandlers(t *testing.T) {
 	defer cleanup()
 
 	t.Run("search section filter and snippet", func(t *testing.T) {
-		result, err := h.handleSearchDocs(ctx, makeToolRequest("signoz_search_docs", map[string]any{
+		result, err := h.handleSearchDocs(ctx, makeToolRequest("fusescope_search_docs", map[string]any{
 			"query":        "docker collector logs",
 			"section_slug": "logs-management",
 			"limit":        5,
@@ -41,7 +41,7 @@ func TestDocsHandlers(t *testing.T) {
 	})
 
 	t.Run("search docs requires searchText not filter", func(t *testing.T) {
-		result, err := h.handleSearchDocs(ctx, makeToolRequest("signoz_search_docs", map[string]any{
+		result, err := h.handleSearchDocs(ctx, makeToolRequest("fusescope_search_docs", map[string]any{
 			"filter": "docker collector logs",
 			"limit":  5,
 		}))
@@ -51,7 +51,7 @@ func TestDocsHandlers(t *testing.T) {
 	})
 
 	t.Run("search docs accepts canonical searchText", func(t *testing.T) {
-		result, err := h.handleSearchDocs(ctx, makeToolRequest("signoz_search_docs", map[string]any{
+		result, err := h.handleSearchDocs(ctx, makeToolRequest("fusescope_search_docs", map[string]any{
 			"searchText":   "docker collector logs",
 			"section_slug": "logs-management",
 			"limit":        5,
@@ -67,7 +67,7 @@ func TestDocsHandlers(t *testing.T) {
 		// Distinguishable inputs: searchText matches real docs while the legacy
 		// query is a term no document contains. Non-empty results prove
 		// searchText won; preferring query would return nothing.
-		result, err := h.handleSearchDocs(ctx, makeToolRequest("signoz_search_docs", map[string]any{
+		result, err := h.handleSearchDocs(ctx, makeToolRequest("fusescope_search_docs", map[string]any{
 			"searchText": "docker collector logs",
 			"query":      "qqxxzzqq-no-such-term",
 			"limit":      5,
@@ -79,7 +79,7 @@ func TestDocsHandlers(t *testing.T) {
 	})
 
 	t.Run("invalid query syntax falls back to matching text", func(t *testing.T) {
-		result, err := h.handleSearchDocs(ctx, makeToolRequest("signoz_search_docs", map[string]any{
+		result, err := h.handleSearchDocs(ctx, makeToolRequest("fusescope_search_docs", map[string]any{
 			"searchText": `"docker`,
 		}))
 		require.NoError(t, err)
@@ -90,7 +90,7 @@ func TestDocsHandlers(t *testing.T) {
 	t.Run("search cancellation preserves cause", func(t *testing.T) {
 		canceledCtx, cancel := context.WithCancel(ctx)
 		cancel()
-		result, err := h.handleSearchDocs(canceledCtx, makeToolRequest("signoz_search_docs", map[string]any{
+		result, err := h.handleSearchDocs(canceledCtx, makeToolRequest("fusescope_search_docs", map[string]any{
 			"searchText": "docker",
 		}))
 		require.NoError(t, err)
@@ -100,7 +100,7 @@ func TestDocsHandlers(t *testing.T) {
 	t.Run("fetch deadline preserves cause", func(t *testing.T) {
 		expiredCtx, cancel := context.WithDeadline(ctx, time.Now().Add(-time.Second))
 		defer cancel()
-		result, err := h.handleFetchDoc(expiredCtx, makeToolRequest("signoz_fetch_doc", map[string]any{
+		result, err := h.handleFetchDoc(expiredCtx, makeToolRequest("fusescope_fetch_doc", map[string]any{
 			"url": "/docs/install/docker/",
 		}))
 		require.NoError(t, err)
@@ -108,34 +108,34 @@ func TestDocsHandlers(t *testing.T) {
 	})
 
 	t.Run("fetch errors", func(t *testing.T) {
-		result, err := h.handleFetchDoc(ctx, makeToolRequest("signoz_fetch_doc", map[string]any{"url": "https://example.com/docs/logs/"}))
+		result, err := h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "https://example.com/docs/logs/"}))
 		require.NoError(t, err)
 		require.Equal(t, docsindex.CodeOutOfScopeURL, result.StructuredContent.(map[string]any)["code"])
 
-		result, err = h.handleFetchDoc(ctx, makeToolRequest("signoz_fetch_doc", map[string]any{"url": "signoz://traces/query-builder-guide"}))
+		result, err = h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "fusescope://traces/query-builder-guide"}))
 		require.NoError(t, err)
 		require.Equal(t, docsindex.CodeOutOfScopeURL, result.StructuredContent.(map[string]any)["code"])
-		require.Contains(t, result.Content[0].(*mcp.TextContent).Text, "signoz:// URIs are MCP resources: read them with resources/read, not signoz_fetch_doc.")
+		require.Contains(t, result.Content[0].(*mcp.TextContent).Text, "fusescope:// URIs are MCP resources: read them with resources/read, not fusescope_fetch_doc.")
 
-		result, err = h.handleFetchDoc(ctx, makeToolRequest("signoz_fetch_doc", map[string]any{"url": "https://signoz.io/docs/missing/"}))
+		result, err = h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "https://signoz.io/docs/missing/"}))
 		require.NoError(t, err)
 		require.Equal(t, docsindex.CodeDocNotFound, result.StructuredContent.(map[string]any)["code"])
 
-		result, err = h.handleFetchDoc(ctx, makeToolRequest("signoz_fetch_doc", map[string]any{"url": "/docs/logs-management/send-logs-to-signoz/", "heading": "missing-heading"}))
+		result, err = h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "/docs/logs-management/send-logs-to-signoz/", "heading": "missing-heading"}))
 		require.NoError(t, err)
 		require.Equal(t, docsindex.CodeHeadingMissing, result.StructuredContent.(map[string]any)["code"])
 		require.NotEmpty(t, result.StructuredContent.(map[string]any)["available_headings"])
 	})
 
 	t.Run("fetch truncation and duplicate heading disambiguation", func(t *testing.T) {
-		result, err := h.handleFetchDoc(ctx, makeToolRequest("signoz_fetch_doc", map[string]any{"url": "/docs/large/"}))
+		result, err := h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "/docs/large/"}))
 		require.NoError(t, err)
 		require.False(t, result.IsError)
 		fetched := result.StructuredContent.(docsindex.FetchResult)
 		require.Equal(t, "size", fetched.TruncationReason)
 		require.LessOrEqual(t, len(fetched.Content), 256*1024)
 
-		result, err = h.handleFetchDoc(ctx, makeToolRequest("signoz_fetch_doc", map[string]any{"url": "/docs/duplicate-headings/", "heading": "setup-2"}))
+		result, err = h.handleFetchDoc(ctx, makeToolRequest("fusescope_fetch_doc", map[string]any{"url": "/docs/duplicate-headings/", "heading": "setup-2"}))
 		require.NoError(t, err)
 		fetched = result.StructuredContent.(docsindex.FetchResult)
 		require.Equal(t, "setup-2", fetched.Heading)

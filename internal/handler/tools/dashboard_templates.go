@@ -29,7 +29,7 @@ func init() {
 	}
 }
 
-// maxTemplateSearchTextRunes matches signoz_search_docs. The search scans every
+// maxTemplateSearchTextRunes matches fusescope_search_docs. The search scans every
 // template per word and never calls SigNoz, so an unverified key reaches it.
 const maxTemplateSearchTextRunes = 2048
 

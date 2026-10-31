@@ -28,7 +28,7 @@ func TestExecuteBuilderQuery_RejectsMissingStartBeforeCallingSigNoz(t *testing.T
 		t.Run(name, func(t *testing.T) {
 			var args map[string]any
 			require.NoError(t, json.Unmarshal([]byte(arguments), &args))
-			result, err := h.handleExecuteBuilderQuery(testCtx(), makeToolRequest("signoz_execute_builder_query", args))
+			result, err := h.handleExecuteBuilderQuery(testCtx(), makeToolRequest("fusescope_execute_builder_query", args))
 			require.NoError(t, err)
 			require.Equal(t, CodeValidationFailed, resultCode(t, result))
 			require.Contains(t, textContent(t, result), `"query.start" is required`)

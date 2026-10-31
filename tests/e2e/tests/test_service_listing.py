@@ -1,4 +1,4 @@
-"""signoz_list_services against the services endpoint of the pinned SigNoz.
+"""fusescope_list_services against the services endpoint of the pinned SigNoz.
 
 Services come back sorted by name, so offset pages neither skip nor repeat
 one, and a name containing `@` keeps its statistics.
@@ -13,7 +13,7 @@ def list_services(mcp_client: MCPClient, limit: int, offset: int = 0) -> dict:
     return first_block_json(
         assert_tool_ok(
             mcp_client.call_tool(
-                "signoz_list_services",
+                "fusescope_list_services",
                 {"searchContext": "list services", "timeRange": "1h", "limit": str(limit), "offset": str(offset)},
             )
         )

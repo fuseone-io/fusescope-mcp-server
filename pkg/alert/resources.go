@@ -1,6 +1,6 @@
 package alert
 
-// Instructions is the MCP resource content for signoz://alert/instructions.
+// Instructions is the MCP resource content for fusescope://alert/instructions.
 const Instructions = `# SigNoz Alert Rule — Instructions
 
 ## Overview
@@ -10,10 +10,10 @@ The alert is created via POST /api/v2/rules.
 Every rule type (threshold_rule, promql_rule, anomaly_rule) uses schemaVersion **v2alpha1**: structured thresholds + evaluation + notificationSettings. Always set schemaVersion="v2alpha1" explicitly: SigNoz treats an omitted schemaVersion as the retired v1 schema and then requires the v1 condition fields instead.
 
 ## Before Creating or Updating an Alert
-1. Read signoz://alert/examples for complete payloads unless already read for the same prepared operation.
-2. Update is a full replacement. Reuse signoz_get_alert only from the same still-current prepared operation; refresh if state may have changed, then preserve unchanged fields.
-3. Use signoz_get_field_keys to discover filter/groupBy attributes, reusing results from that operation.
-4. NOTIFICATION ROUTING: Reuse a fully paginated signoz_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. The list is config-free, defaults to 20 rows, and accepts at most 200 per page; follow its filtered total. The immutable routing identity is displayName, not machine name. For v2 direct routing, every threshold tier needs an exact returned displayName: SigNoz rejects a tier with no channels and a channel name that does not exist. Top-level preferredChannels plays no part in v2 routing (SigNoz stores it unused), so omit it. If no direct channel fits, show the returned choices and ask; if none exists, offer signoz_create_notification_channel with settings the user provides. Never guess or create automatically. Channel create and update default test to false; set test=true only when the user asks to send a test. Confirmed v2 policy routing sets notificationSettings.usePolicy=true and may omit tier channels.
+1. Read fusescope://alert/examples for complete payloads unless already read for the same prepared operation.
+2. Update is a full replacement. Reuse fusescope_get_alert only from the same still-current prepared operation; refresh if state may have changed, then preserve unchanged fields.
+3. Use fusescope_get_field_keys to discover filter/groupBy attributes, reusing results from that operation.
+4. NOTIFICATION ROUTING: Reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. The list is config-free, defaults to 20 rows, and accepts at most 200 per page; follow its filtered total. The immutable routing identity is displayName, not machine name. For v2 direct routing, every threshold tier needs an exact returned displayName: SigNoz rejects a tier with no channels and a channel name that does not exist. Top-level preferredChannels plays no part in v2 routing (SigNoz stores it unused), so omit it. If no direct channel fits, show the returned choices and ask; if none exists, offer fusescope_create_notification_channel with settings the user provides. Never guess or create automatically. Channel create and update default test to false; set test=true only when the user asks to send a test. Confirmed v2 policy routing sets notificationSettings.usePolicy=true and may omit tier channels.
 
 ## Quick Workflow: From User Intent to Payload
 A repeatable mental model for going from a user request ("alert me when login p99 > 2s") to a valid payload:
@@ -74,7 +74,7 @@ The same rule applies to dotted label names in by(...) and in matchers:
     rate({"payment_latency_ms.bucket", "deployment.environment"="prod"}[5m])
   )
 
-For the full guide (syntax, examples by metric type, anti-pattern table, pre-flight checklist for histogram alerts) read signoz://promql/instructions. Always read it before writing a promql_rule query.
+For the full guide (syntax, examples by metric type, anti-pattern table, pre-flight checklist for histogram alerts) read fusescope://promql/instructions. Always read it before writing a promql_rule query.
 
 ### Formula query spec (envelope type=builder_formula)
 - name: formula identifier (F1, F2, …)
@@ -177,7 +177,7 @@ condition.thresholds defines one or more routing tiers. Each tier can route to d
 - **recoveryTarget**: hysteresis value to avoid flapping (e.g. target=80%, recoveryTarget=75%). null uses the target itself as the recovery point.
 - **matchType**: canonical at_least_once, all_the_times, on_average, in_total, last. Aliases accepted: avg (=on_average), sum (=in_total).
 - **op**: canonical above, below, equal, not_equal, above_or_equal, below_or_equal, outside_bounds. Short forms accepted: eq, not_eq, above_or_eq, below_or_eq. Symbolic accepted: >, <, =, !=, >=, <=.
-- **channels**: existing notification channel displayName values for this tier. Direct v2 routing requires at least one exact returned displayName from signoz_list_notification_channels on every tier; top-level preferredChannels is not a fallback. Reuse only a same-operation, still-current list result; otherwise call the fully paginated tool, refreshing if state may have changed. With notificationSettings.usePolicy=true, tier channels may be omitted, but supplied displayName values are still validated.
+- **channels**: existing notification channel displayName values for this tier. Direct v2 routing requires at least one exact returned displayName from fusescope_list_notification_channels on every tier; top-level preferredChannels is not a fallback. Reuse only a same-operation, still-current list result; otherwise call the fully paginated tool, refreshing if state may have changed. With notificationSettings.usePolicy=true, tier channels may be omitted, but supplied displayName values are still validated.
 
 ### Choosing targetUnit
 - Set targetUnit when the threshold value is in a different unit from the query series. Example: the series emits nanoseconds (compositeQuery.unit="ns") but you want to threshold at "5 seconds". Set target=5, targetUnit="s". SigNoz converts during evaluation.
@@ -292,7 +292,7 @@ Required fields:
 - **Scoring**: anomaly_score = (actual_value − predicted_value) / stddev(current_season), so it is negative when the value falls below the forecast. Each tier compares this signed score with its op and target: op="above", target=3 fires on a rise of more than 3 standard deviations; op="below", target=-3 fires on a drop of more than 3; op="outside_bounds", target=3 compares the absolute score and fires on either.
 - **evalWindow** selects the period being evaluated (e.g. 5m); seasonality controls separate historical lookbacks. Check data coverage across those lookbacks before choosing an anomaly rule. Increasing evalWindow does not supply missing history.
 
-See signoz://alert/examples → "metric_anomaly" for a complete payload.
+See fusescope://alert/examples → "metric_anomaly" for a complete payload.
 
 ## Set These Explicitly
 The payload is forwarded to SigNoz exactly as composed, and SigNoz fills in very little (version="v5" and notificationSettings.usePolicy=false). Everything else is on the author:
@@ -301,7 +301,7 @@ The payload is forwarded to SigNoz exactly as composed, and SigNoz fills in very
 - panelType: set "graph"; SigNoz stores an empty value when omitted.
 - selectedQueryName: set it on every rule to the query or formula the rule alerts on, even when there is only one query.
 - labels.severity and annotations: SigNoz adds no defaults; include them so routing tiers and notification text work.
-- Omit server-populated fields (createdAt, updatedAt, createdBy, updatedBy) and the injected webUrl, also when composing an update from a signoz_get_alert result.
+- Omit server-populated fields (createdAt, updatedAt, createdBy, updatedBy) and the injected webUrl, also when composing an update from a fusescope_get_alert result.
 
 ## Further Reading
 User-facing docs. Cite these back to the user when they want to understand a concept in depth:

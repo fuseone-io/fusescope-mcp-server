@@ -31,9 +31,9 @@ Examples:
 An unknown key may not fail: SigNoz can match guessed attribute and body spellings, return the
 warning "key <name> not found in metadata", and match no rows. Read that warning as an absent key,
 not as an empty result. Do not guess field names. If unsure, call:
-  signoz_get_field_keys(signal="logs", fieldContext="resource")
-  signoz_get_field_keys(signal="logs", fieldContext="attribute")
-  signoz_get_field_values(signal="logs", name="<field>")
+  fusescope_get_field_keys(signal="logs", fieldContext="resource")
+  fusescope_get_field_keys(signal="logs", fieldContext="attribute")
+  fusescope_get_field_values(signal="logs", name="<field>")
 
 Log keys are workspace-specific: logs have no spec-mandated resource attributes, so even
 service.name exists only when the log pipeline sets it. A filter on a key this workspace's
@@ -41,9 +41,9 @@ logs never carried usually returns no rows with the "not found in metadata" warn
 deployments reject it with "key ... not found" instead); discover valid keys as above and use
 an existing one (e.g. k8s.deployment.name) instead of retrying the same filter.
 
-Group by and select only keys signoz_get_field_keys returns. An unknown groupBy key can come
+Group by and select only keys fusescope_get_field_keys returns. An unknown groupBy key can come
 back as one empty group. A body field (body.<path>) filters everywhere, but group by and
-selection work only for paths signoz_get_field_keys(signal="logs", fieldContext="body") lists,
+selection work only for paths fusescope_get_field_keys(signal="logs", fieldContext="body") lists,
 and it lists body paths only where the workspace stores JSON log bodies. For any other body
 path SigNoz answers "can be filtered but not selected or grouped" or "field not found"; filter
 on the body field and group by an attribute instead.
@@ -77,7 +77,7 @@ Examples:
 --- 2. Resource attributes (dot notation, fieldContext: "resource") ---
 
 OTel resource attributes describe the emitting service, host, pod, or deployment.
-Discover real keys first with signoz_get_field_keys(signal="logs", fieldContext="resource").
+Discover real keys first with fusescope_get_field_keys(signal="logs", fieldContext="resource").
 
 Common examples:
   service.name
@@ -99,7 +99,7 @@ groupBy/selectFields entry:
 
 Log attributes are key-value fields attached to individual log records.
 They vary by application and collector pipeline, so discover them before use:
-  signoz_get_field_keys(signal="logs", fieldContext="attribute")
+  fusescope_get_field_keys(signal="logs", fieldContext="attribute")
 
 Common examples when instrumented:
   http.method
@@ -148,7 +148,7 @@ Use search() when the target field is unknown or the term may appear in several 
 Valid scopes are exactly: body, attribute, resource, and log. Invalid scopes hard-error. The
 term is literal (no wildcards or regex). search() scans every column in its scopes, so it is slow
 on wide time ranges: SigNoz returns a warning and may reject a query whose estimated scan is too
-large. Narrow the time range, add a scope, or add resource filters. Once signoz_get_field_keys
+large. Narrow the time range, add a scope, or add resource filters. Once fusescope_get_field_keys
 identifies the field, prefer a field predicate:
   body CONTAINS 'timeout'                                   message text
   attribute.error.type = 'TimeoutError'                     structured attribute
@@ -160,7 +160,7 @@ backslash, then wrap in single quotes. Double-quoted terms follow the same escap
   search('it\'s')            term: it's
   search('C:\\logs')        term: C:\logs
 
-The signoz_search_logs searchText parameter escapes the literal for you. With the default
+The fusescope_search_logs searchText parameter escapes the literal for you. With the default
 searchScope (body) it builds body CONTAINS; attribute, resource, and all build search(). When
 searchText and filter are both supplied they combine with AND. In a hand-written filter, % and _
 inside CONTAINS or LIKE act as wildcards; write \\% and \\_ to match them literally.

@@ -1,6 +1,6 @@
 """query_metrics forwards aggregation combinations for SigNoz to validate.
 
-Pins the combinations signoz://metrics-aggregation-guide teaches beyond the
+Pins the combinations fusescope://metrics-aggregation-guide teaches beyond the
 type defaults: a running total from a counter, and histogram buckets read
 with rate and sum.
 """
@@ -24,7 +24,7 @@ def _scalar_values(body: str) -> list[float]:
 # the metric until ingestion lands; the aggregation passthrough is under test.
 def _scalar(mcp_client: MCPClient, metric: str, extra: dict) -> dict:
     return mcp_client.call_tool(
-        "signoz_query_metrics",
+        "fusescope_query_metrics",
         {"searchContext": f"query {metric}", "metricName": metric, "timeRange": "1h", "requestType": "scalar", **extra},
     )
 
@@ -106,7 +106,7 @@ def test_metadata_lookup_matches_the_exact_name(mcp_client: MCPClient, test_id: 
 
     def resolved() -> dict:
         result = mcp_client.call_tool(
-            "signoz_query_metrics",
+            "fusescope_query_metrics",
             {
                 "searchContext": f"query {gauge}",
                 "metricName": gauge,
@@ -123,18 +123,18 @@ def test_metadata_lookup_matches_the_exact_name(mcp_client: MCPClient, test_id: 
     )
 
     missing = mcp_client.call_tool(
-        "signoz_query_metrics",
+        "fusescope_query_metrics",
         {"searchContext": f"query {prefix}", "metricName": prefix, "timeRange": "1h"},
     )
     assert missing.get("isError", False), f"the prefix of {gauge} resolved as a metric: {note_blocks(missing)}"
     assert result_code(missing) == "VALIDATION_FAILED", f"unexpected code: {missing}"
-    assert "Search for the right name with signoz_list_metrics" in first_text_block(missing), first_text_block(missing)
+    assert "Search for the right name with fusescope_list_metrics" in first_text_block(missing), first_text_block(missing)
 
 
 def test_scalar_requires_an_explicit_reduce_to(mcp_client: MCPClient, test_id: str, telemetry: None) -> None:
     """Pins the reduceTo contract the tool teaches: no default, and SigNoz rejects a scalar query without it."""
     result = mcp_client.call_tool(
-        "signoz_query_metrics",
+        "fusescope_query_metrics",
         {
             "searchContext": "scalar query without a reducer",
             "metricName": f"mcp_e2e_reduce_{test_id.replace('-', '_')}",

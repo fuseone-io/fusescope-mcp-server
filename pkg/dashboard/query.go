@@ -790,7 +790,7 @@ Metrics-Specific Features:
 
   Cost Meter (usage/billing metrics):
     Set source: "meter" on a metrics builder query to chart Cost Meter metrics
-    (e.g. signoz.meter.log.size). Discover the current set via signoz_list_metrics
+    (e.g. signoz.meter.log.size). Discover the current set via fusescope_list_metrics
     with source=meter. Meter data is bucketed hourly.
 
 ================================================================================
@@ -883,7 +883,7 @@ For logs, name the field instead of writing a bare word or quoted phrase:
   search('timeout')                          // every searchable field, when no single field holds the term
 
 search() scans every column in its scopes and is slow over wide time ranges; see
-signoz://logs/query-builder-guide for its scopes.
+fusescope://logs/query-builder-guide for its scopes.
 
 Escaping:
   Only escape these two:

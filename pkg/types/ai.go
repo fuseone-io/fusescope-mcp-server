@@ -4,7 +4,7 @@ import (
 	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
 )
 
-// TestAIAttributeMappingInput is the signoz_test_ai_attribute_mapping input
+// TestAIAttributeMappingInput is the fusescope_test_ai_attribute_mapping input
 // schema: the generated span mapper test request fields plus searchContext.
 // groups is optional here because the handler fills in the saved groups.
 type TestAIAttributeMappingInput struct {

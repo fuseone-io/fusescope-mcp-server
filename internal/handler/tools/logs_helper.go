@@ -10,7 +10,7 @@ import (
 	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
 )
 
-const logsLegacyQueryAliasError = `parameter validation failed: "query" is not accepted by log tools; use "filter" with a Query Builder filter expression (see signoz://logs/query-builder-guide)`
+const logsLegacyQueryAliasError = `parameter validation failed: "query" is not accepted by log tools; use "filter" with a Query Builder filter expression (see fusescope://logs/query-builder-guide)`
 
 // readLogFilterExpr reads the canonical filter parameter for log tools.
 func readLogFilterExpr(args map[string]any) (string, error) {
@@ -147,7 +147,7 @@ var logSelectFieldContexts = []struct{ prefix, context string }{
 }
 
 // parseLogSelectFields returns the core log columns plus any extra fields the
-// caller named, the same contract as signoz_search_traces. It accepts an array
+// caller named, the same contract as fusescope_search_traces. It accepts an array
 // of names or a comma-separated string; a resource., attribute., log., or
 // body. prefix sets the field context, and an unprefixed name is left for
 // SigNoz to resolve.

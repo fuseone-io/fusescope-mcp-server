@@ -44,7 +44,7 @@ func (h *Handler) handleQueryMetrics(ctx context.Context, req mcp.CallToolReques
 		return errorWithCode(CodeValidationFailed, err.Error()), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_query_metrics",
+	h.logger.DebugContext(ctx, "Tool called: fusescope_query_metrics",
 		slog.String("metricName", mqr.MetricName),
 		slog.String("metricType", mqr.MetricType))
 
@@ -64,7 +64,7 @@ func (h *Handler) handleQueryMetrics(ctx context.Context, req mcp.CallToolReques
 			return upstreamError(fmt.Errorf(
 				"could not auto-fetch metric metadata for %q: %w. "+
 					"Provide metricType, temporality, and isMonotonic manually "+
-					"(get them from signoz_list_metrics)",
+					"(get them from fusescope_list_metrics)",
 				mqr.MetricName, fetchErr)), nil
 		}
 		if meta != nil {
@@ -243,8 +243,8 @@ func (h *Handler) handleQueryMetrics(ctx context.Context, req mcp.CallToolReques
 		}
 	}
 	backendWarnings := extractBackendWarningMessages(result)
-	warnBackendWarnings(ctx, h.logger, "signoz_query_metrics", backendWarnings)
-	warnUnparsedWarningEnvelope(ctx, h.logger, "signoz_query_metrics", result, len(backendWarnings))
+	warnBackendWarnings(ctx, h.logger, "fusescope_query_metrics", backendWarnings)
+	warnUnparsedWarningEnvelope(ctx, h.logger, "fusescope_query_metrics", result, len(backendWarnings))
 
 	// JSON-first: the raw backend payload is block 0 (matching the search/
 	// aggregate siblings); decisions/warnings go into a SEPARATE note block
@@ -492,7 +492,7 @@ func metricNotFoundMessage(metricName, formulaQuery string) string {
 	if formulaQuery != "" {
 		subject = fmt.Sprintf("Metric %q in formula query %q", metricName, formulaQuery)
 	}
-	return subject + " was not found in this workspace. Search for the right name with signoz_list_metrics, " +
+	return subject + " was not found in this workspace. Search for the right name with fusescope_list_metrics, " +
 		"using part of the name as searchText (for example \"cpu\"), then retry with the exact name. " +
 		"A histogram named X is stored as X.bucket."
 }

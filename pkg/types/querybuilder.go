@@ -4,7 +4,7 @@ import (
 	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
 )
 
-// ExecuteBuilderQueryInput is the signoz_execute_builder_query input schema: the
+// ExecuteBuilderQueryInput is the fusescope_execute_builder_query input schema: the
 // generated QueryRangeRequest under "query" plus the searchContext envelope
 // field, so the schema follows the pinned SigNoz spec with no hand-kept copy.
 type ExecuteBuilderQueryInput struct {

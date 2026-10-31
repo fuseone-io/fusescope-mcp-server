@@ -361,9 +361,9 @@ func missingKeyGuidance(keys []string, signal string) string {
 		b.WriteString(" Log attributes are workspace-specific: logs have no spec-mandated resource attributes, so even standard keys like service.name are only present when the log pipeline sets them.")
 	}
 	if signal != "" {
-		fmt.Fprintf(&b, ` Discover valid keys with signoz_get_field_keys (signal=%q; fieldContext="resource" for resource attributes), then retry with an existing key`, signal)
+		fmt.Fprintf(&b, ` Discover valid keys with fusescope_get_field_keys (signal=%q; fieldContext="resource" for resource attributes), then retry with an existing key`, signal)
 	} else {
-		b.WriteString(` Discover valid keys with signoz_get_field_keys for the queried signal (fieldContext="resource" for resource attributes), then retry with an existing key`)
+		b.WriteString(` Discover valid keys with fusescope_get_field_keys for the queried signal (fieldContext="resource" for resource attributes), then retry with an existing key`)
 	}
 	if signal == "logs" {
 		b.WriteString(" (for service scoping, workspaces without service.name often carry k8s.deployment.name or k8s.container.name)")

@@ -110,12 +110,12 @@ func TestHTTPServesCorrectModernHeadersAndHeaderlessLegacyRequests(t *testing.T)
 
 	const id = 41
 	baseBody := protocolRequestJSON(t, id, "tools/call", modernParams(nil, map[string]any{
-		"name":      "signoz_search_docs",
+		"name":      "fusescope_search_docs",
 		"arguments": map[string]any{"searchText": "docker"},
 	}))
 
 	t.Run("correct modern headers are served", func(t *testing.T) {
-		response := protocolPOST(t, oracle.handler, baseBody, modernHeaders("tools/call", "signoz_search_docs"))
+		response := protocolPOST(t, oracle.handler, baseBody, modernHeaders("tools/call", "fusescope_search_docs"))
 		if response.status != http.StatusOK || response.wire["result"] == nil {
 			t.Fatalf("correct modern request failed: status=%d body=%s", response.status, response.body)
 		}

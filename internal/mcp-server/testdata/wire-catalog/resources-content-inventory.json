@@ -1,11 +1,11 @@
 [
   {
-    "identity": "signoz://ai/query-builder-guide",
+    "identity": "fusescope://ai/query-builder-guide",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://ai/query-builder-guide",
+        "uri": "fusescope://ai/query-builder-guide",
         "mimeType": "text/markdown",
         "serializedLength": 9317,
         "sha256": "cbe793842485c9a08f9f071f71ebe47049b5c8bae4b2de3339750eab173ad333"
@@ -13,12 +13,12 @@
     ]
   },
   {
-    "identity": "signoz://alert/examples",
+    "identity": "fusescope://alert/examples",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://alert/examples",
+        "uri": "fusescope://alert/examples",
         "mimeType": "text/markdown",
         "serializedLength": 36976,
         "sha256": "04f735ae6dda8a8425d986ff56ed3f65a08c2260675ba362964d608891de72b7"
@@ -26,12 +26,12 @@
     ]
   },
   {
-    "identity": "signoz://alert/instructions",
+    "identity": "fusescope://alert/instructions",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://alert/instructions",
+        "uri": "fusescope://alert/instructions",
         "mimeType": "text/markdown",
         "serializedLength": 22267,
         "sha256": "75b0dd21c2e8586b3ed8c9ae525c08535307940cc13148ec2f7a6858a315f368"
@@ -39,12 +39,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/clickhouse-logs-example",
+    "identity": "fusescope://dashboard/clickhouse-logs-example",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/clickhouse-logs-example",
+        "uri": "fusescope://dashboard/clickhouse-logs-example",
         "mimeType": "text/markdown",
         "serializedLength": 7896,
         "sha256": "a777972b29a83213e5717369356895a5e228b01b680ed111f49fa8ca18396d79"
@@ -52,12 +52,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/clickhouse-metrics-example",
+    "identity": "fusescope://dashboard/clickhouse-metrics-example",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/clickhouse-metrics-example",
+        "uri": "fusescope://dashboard/clickhouse-metrics-example",
         "mimeType": "text/markdown",
         "serializedLength": 11746,
         "sha256": "eda92044dc9d2359157e80400ccfffe2c0729e8b6ff07a413be7ad9fd0a9a0cd"
@@ -65,12 +65,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/clickhouse-schema-for-logs",
+    "identity": "fusescope://dashboard/clickhouse-schema-for-logs",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/clickhouse-schema-for-logs",
+        "uri": "fusescope://dashboard/clickhouse-schema-for-logs",
         "mimeType": "text/markdown",
         "serializedLength": 4766,
         "sha256": "9cf73ec9c7685233b902760514d4f4a8a7bb75f72c70411c2ba56333fae91853"
@@ -78,12 +78,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/clickhouse-schema-for-metrics",
+    "identity": "fusescope://dashboard/clickhouse-schema-for-metrics",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/clickhouse-schema-for-metrics",
+        "uri": "fusescope://dashboard/clickhouse-schema-for-metrics",
         "mimeType": "text/markdown",
         "serializedLength": 7538,
         "sha256": "db92d7396852e159f932aade804158c7c4c84f5d43a056f3ee5ed1c76b5422c1"
@@ -91,12 +91,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/clickhouse-schema-for-traces",
+    "identity": "fusescope://dashboard/clickhouse-schema-for-traces",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/clickhouse-schema-for-traces",
+        "uri": "fusescope://dashboard/clickhouse-schema-for-traces",
         "mimeType": "text/markdown",
         "serializedLength": 18124,
         "sha256": "f078c74e2795a7acbdcedde0d8a1d2291b4adf3c23cd48cdef265156cd274434"
@@ -104,12 +104,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/clickhouse-traces-example",
+    "identity": "fusescope://dashboard/clickhouse-traces-example",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/clickhouse-traces-example",
+        "uri": "fusescope://dashboard/clickhouse-traces-example",
         "mimeType": "text/markdown",
         "serializedLength": 8774,
         "sha256": "8179e4cc5ac81bd79547765a57f40887842a4973472576420f237a16597a3f74"
@@ -117,12 +117,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/examples",
+    "identity": "fusescope://dashboard/examples",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/examples",
+        "uri": "fusescope://dashboard/examples",
         "mimeType": "text/markdown",
         "serializedLength": 15536,
         "sha256": "7606d78451e7c4d313779cdc274acdcd306a88d2447a004abd58250167c0e776"
@@ -130,12 +130,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/instructions",
+    "identity": "fusescope://dashboard/instructions",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/instructions",
+        "uri": "fusescope://dashboard/instructions",
         "mimeType": "text/markdown",
         "serializedLength": 7803,
         "sha256": "e848a5d58c78eb6a2e84973fe1f84218bf1e8b09e8ea95c361bbbf1632d8fb39"
@@ -143,12 +143,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/list-filter-guide",
+    "identity": "fusescope://dashboard/list-filter-guide",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/list-filter-guide",
+        "uri": "fusescope://dashboard/list-filter-guide",
         "mimeType": "text/markdown",
         "serializedLength": 3782,
         "sha256": "226f37b3b1252736f8f305fc7d391da519c5d470a27f2c3853f22108e8bf38f5"
@@ -156,12 +156,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/patch-instructions",
+    "identity": "fusescope://dashboard/patch-instructions",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/patch-instructions",
+        "uri": "fusescope://dashboard/patch-instructions",
         "mimeType": "text/markdown",
         "serializedLength": 5379,
         "sha256": "1352848bd541f2477c799c7ea507ccbcf619c8087c6649901a1e71eec31f1bbb"
@@ -169,12 +169,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/query-builder-example",
+    "identity": "fusescope://dashboard/query-builder-example",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/query-builder-example",
+        "uri": "fusescope://dashboard/query-builder-example",
         "mimeType": "text/markdown",
         "serializedLength": 17751,
         "sha256": "e4174aac51850acd8c0904f9e192e2fb7ae31d525028d16b4ac6ee92fc680e67"
@@ -182,12 +182,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/widgets-examples",
+    "identity": "fusescope://dashboard/widgets-examples",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/widgets-examples",
+        "uri": "fusescope://dashboard/widgets-examples",
         "mimeType": "text/markdown",
         "serializedLength": 33604,
         "sha256": "dd3d32fcf9f7993336bde88e6973905e7179b9e5177226b63343035506ee1236"
@@ -195,12 +195,12 @@
     ]
   },
   {
-    "identity": "signoz://dashboard/widgets-instructions",
+    "identity": "fusescope://dashboard/widgets-instructions",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://dashboard/widgets-instructions",
+        "uri": "fusescope://dashboard/widgets-instructions",
         "mimeType": "text/markdown",
         "serializedLength": 14669,
         "sha256": "8f5663a1394f2add036c5732ddd1723dc0ba86c424214f5a946e43585ad5c4b2"
@@ -208,12 +208,12 @@
     ]
   },
   {
-    "identity": "signoz://docs/sitemap",
+    "identity": "fusescope://docs/sitemap",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://docs/sitemap",
+        "uri": "fusescope://docs/sitemap",
         "mimeType": "text/markdown",
         "serializedLength": 194,
         "sha256": "6fa5cc3f25bead23c2fd5889480b873186c16070f3bb1314a7ba8e7957925804"
@@ -221,12 +221,12 @@
     ]
   },
   {
-    "identity": "signoz://logs/query-builder-guide",
+    "identity": "fusescope://logs/query-builder-guide",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://logs/query-builder-guide",
+        "uri": "fusescope://logs/query-builder-guide",
         "mimeType": "text/markdown",
         "serializedLength": 15981,
         "sha256": "d39cdc5f5215a3107cf230969a074d6ec13836be459f925036901453d44fc36d"
@@ -234,12 +234,12 @@
     ]
   },
   {
-    "identity": "signoz://metrics-aggregation-guide",
+    "identity": "fusescope://metrics-aggregation-guide",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://metrics-aggregation-guide",
+        "uri": "fusescope://metrics-aggregation-guide",
         "mimeType": "text/markdown",
         "serializedLength": 12900,
         "sha256": "ced7c89b335757a0b9e4306eb9b2b94d775981b5e96e0c8f6bbc1bddf73201af"
@@ -247,12 +247,12 @@
     ]
   },
   {
-    "identity": "signoz://notification-channel/examples",
+    "identity": "fusescope://notification-channel/examples",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://notification-channel/examples",
+        "uri": "fusescope://notification-channel/examples",
         "mimeType": "text/markdown",
         "serializedLength": 16170,
         "sha256": "ad58b7f7f977b271f52ba140bf07ef809907aea9ed0504ce85f7443847c01a52"
@@ -260,12 +260,12 @@
     ]
   },
   {
-    "identity": "signoz://promql/instructions",
+    "identity": "fusescope://promql/instructions",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://promql/instructions",
+        "uri": "fusescope://promql/instructions",
         "mimeType": "text/markdown",
         "serializedLength": 10903,
         "sha256": "475ae5dfaf511e81032dcbce49fc205785905e2d785379d8b02006e8000ac29e"
@@ -273,12 +273,12 @@
     ]
   },
   {
-    "identity": "signoz://query-builder/examples",
+    "identity": "fusescope://query-builder/examples",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://query-builder/examples",
+        "uri": "fusescope://query-builder/examples",
         "mimeType": "text/markdown",
         "serializedLength": 20010,
         "sha256": "0d4daff0693d0ec4f14dfa533c82d89cb57236fce27174a13d36e8acd308aaa8"
@@ -286,12 +286,12 @@
     ]
   },
   {
-    "identity": "signoz://traces/query-builder-guide",
+    "identity": "fusescope://traces/query-builder-guide",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://traces/query-builder-guide",
+        "uri": "fusescope://traces/query-builder-guide",
         "mimeType": "text/markdown",
         "serializedLength": 11939,
         "sha256": "6f2a2a55bed78eb758883e8e5e414264a7860fdbb72b7c8e25049cced24e129b"
@@ -299,12 +299,12 @@
     ]
   },
   {
-    "identity": "signoz://view/examples",
+    "identity": "fusescope://view/examples",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://view/examples",
+        "uri": "fusescope://view/examples",
         "mimeType": "text/markdown",
         "serializedLength": 7592,
         "sha256": "171ce27307b1875b20679f9d56cd92846d5daca5a949bf586a3e39228d14a793"
@@ -312,12 +312,12 @@
     ]
   },
   {
-    "identity": "signoz://view/instructions",
+    "identity": "fusescope://view/instructions",
     "contents": [
       {
         "index": 0,
         "kind": "text",
-        "uri": "signoz://view/instructions",
+        "uri": "fusescope://view/instructions",
         "mimeType": "text/markdown",
         "serializedLength": 6027,
         "sha256": "0eb546a3c38079cca781645f1e283b25732a7af2ebc7afb789963c4824913882"

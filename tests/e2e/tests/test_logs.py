@@ -23,14 +23,14 @@ def _decoded_rows_contain(result: dict, expected: str) -> bool:
 
 
 def test_seeded_logs_are_searchable(mcp_client: MCPClient, test_id: str, telemetry: None) -> None:
-    """Logs seeded over OTLP become visible through signoz_search_logs."""
+    """Logs seeded over OTLP become visible through fusescope_search_logs."""
     service = f"mcp-e2e-{test_id}"
     marker = f"mcp-e2e-marker-{test_id}"
     seed_logs(service, marker, count=3)
 
     def search() -> bool:
         result = mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {
                 "searchContext": f"find the e2e marker log line {marker}",
                 "searchText": marker,
@@ -39,15 +39,15 @@ def test_seeded_logs_are_searchable(mcp_client: MCPClient, test_id: str, telemet
             },
         )
         if result.get("isError", False):
-            logger.info("signoz_search_logs errored, retrying: %s", text_blocks(result)[:200])
+            logger.info("fusescope_search_logs errored, retrying: %s", text_blocks(result)[:200])
             return False
         return marker in text_blocks(result)
 
-    wait_for(search, f"seeded log marker {marker} visible via signoz_search_logs")
+    wait_for(search, f"seeded log marker {marker} visible via fusescope_search_logs")
 
     result = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {
                 "searchContext": f"find logs from service {service}",
                 "service": service,
@@ -63,7 +63,7 @@ def test_seeded_logs_are_searchable(mcp_client: MCPClient, test_id: str, telemet
 def test_body_regexp_with_doubled_backslashes_matches_the_message(
     mcp_client: MCPClient, test_id: str, telemetry: None
 ) -> None:
-    """The body REGEXP example in signoz://dashboard/query-builder-example matches as taught."""
+    """The body REGEXP example in fusescope://dashboard/query-builder-example matches as taught."""
     marker = f"mcp-e2e-regexp-{test_id}"
     seed_logs(f"mcp-e2e-{test_id}", f"[SnapshotGenerator id=42] {marker}")
     # A filter literal doubles each backslash, so SigNoz receives the regex ^\[SnapshotGenerator id=\d+\].
@@ -71,7 +71,7 @@ def test_body_regexp_with_doubled_backslashes_matches_the_message(
 
     def found() -> bool:
         result = mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {"searchContext": "find snapshot generator logs", "filter": expression, "timeRange": "1h", "limit": "10"},
         )
         assert not result.get("isError", False), f"body REGEXP was rejected: {text_blocks(result)[:400]}"
@@ -101,7 +101,7 @@ def test_explicit_search_scopes_quoting_and_warning_round_trip(
 
     def search(filter_expression: str, **arguments: str) -> dict:
         return mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {
                 "searchContext": f"search the seeded log with {filter_expression}",
                 "filter": filter_expression,
@@ -117,7 +117,7 @@ def test_explicit_search_scopes_quoting_and_warning_round_trip(
 
     def body_visible(expected: str) -> bool:
         result = mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {
                 "searchContext": "wait for the seeded row through its service only",
                 "service": service,
@@ -140,7 +140,7 @@ def test_explicit_search_scopes_quoting_and_warning_round_trip(
 
     search_text_result = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {
                 "searchContext": "find the exact escaped body through body-only searchText",
                 "searchText": body_token,
@@ -176,7 +176,7 @@ def test_explicit_search_scopes_quoting_and_warning_round_trip(
     # searchText is body-only and must not silently become cross-field search().
     missed = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {
                 "searchContext": "body-only searchText must miss an attribute-only token",
                 "searchText": attribute_token,
@@ -210,7 +210,7 @@ def test_missing_filter_key_returns_no_rows_with_the_taught_warning(
 
     def visible() -> bool:
         result = mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {"searchContext": "seeded logs", "service": service, "timeRange": "1h", "limit": "5"},
         )
         return not result.get("isError", False) and bool(query_range_rows(first_text_block(result)))
@@ -220,7 +220,7 @@ def test_missing_filter_key_returns_no_rows_with_the_taught_warning(
     missing_key = f"mcp_e2e_absent_{test_id.replace('-', '_')}"
     filtered = assert_tool_ok(
         mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {
                 "searchContext": "filter on a key the workspace never carried",
                 "service": service,
@@ -243,7 +243,7 @@ def test_unlisted_body_field_cannot_be_grouped(mcp_client: MCPClient, test_id: s
 
     def seeded_rows() -> list:
         result = mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {"searchContext": "find the seeded JSON-body logs", "service": service, "timeRange": "1h"},
         )
         assert_tool_ok(result)
@@ -252,7 +252,7 @@ def test_unlisted_body_field_cannot_be_grouped(mcp_client: MCPClient, test_id: s
     wait_for(lambda: seeded_rows() or None, "seeded JSON-body logs searchable")
 
     listed = mcp_client.call_tool(
-        "signoz_get_field_keys",
+        "fusescope_get_field_keys",
         {"searchContext": "which body fields can I group by", "signal": "logs", "fieldContext": "body"},
     )
     assert_tool_ok(listed)
@@ -262,7 +262,7 @@ def test_unlisted_body_field_cannot_be_grouped(mcp_client: MCPClient, test_id: s
     )
 
     grouped = mcp_client.call_tool(
-        "signoz_aggregate_logs",
+        "fusescope_aggregate_logs",
         {
             "searchContext": "group by a JSON body field",
             "service": service,
@@ -289,7 +289,7 @@ def test_search_scope_without_search_text_is_ignored_with_a_note(
 
     def search(**arguments) -> dict:
         return mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {"searchContext": "seeded logs", "service": service, "timeRange": "1h", "limit": "5", **arguments},
         )
 
@@ -314,7 +314,7 @@ def test_severity_shortcut_matches_any_case_as_a_prefix(mcp_client: MCPClient, t
 
     def search(**arguments: str) -> list[dict]:
         result = mcp_client.call_tool(
-            "signoz_search_logs",
+            "fusescope_search_logs",
             {"searchContext": "warning logs", "service": service, "timeRange": "1h", **arguments},
         )
         return query_range_rows(first_text_block(assert_tool_ok(result)))

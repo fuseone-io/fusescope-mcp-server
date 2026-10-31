@@ -16,10 +16,10 @@ func (h *Handler) RegisterLogsHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering logs handlers")
 
 	// aggregate_logs: compute statistics over logs with GROUP BY
-	aggregateLogsTool := mcp.NewTool("signoz_aggregate_logs",
+	aggregateLogsTool := mcp.NewTool("fusescope_aggregate_logs",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants aggregate statistics over logs (counts, rates, averages, percentiles, or grouped/top-N breakdowns) rather than individual log records. Use signoz_search_logs for log rows and message inspection; use signoz_execute_builder_query only for queries this tool cannot express. Log fields are workspace-specific, so read signoz://logs/query-builder-guide and discover unfamiliar keys with signoz_get_field_keys. Defaults to the last 1 hour."),
+		mcp.WithDescription("Use this when the user wants aggregate statistics over logs (counts, rates, averages, percentiles, or grouped/top-N breakdowns) rather than individual log records. Use fusescope_search_logs for log rows and message inspection; use fusescope_execute_builder_query only for queries this tool cannot express. Log fields are workspace-specific, so read fusescope://logs/query-builder-guide and discover unfamiliar keys with fusescope_get_field_keys. Defaults to the last 1 hour."),
 		mcp.WithString("aggregations", mcp.Required(), stringOrStringArrayType(), mcp.Description(logsAggregationsParamDescription)),
 		mcp.WithString("groupBy", stringOrStringArrayType(), mcp.Description(logsGroupByParamDescription)),
 		mcp.WithString("having", mcp.Description(havingParamDescription)),
@@ -40,10 +40,10 @@ func (h *Handler) RegisterLogsHandlers(s *mcp.Server) {
 
 	// search_logs: log search with optional filters
 	// ToDo: use this function for error logs or logs by service
-	searchLogsTool := mcp.NewTool("signoz_search_logs",
+	searchLogsTool := mcp.NewTool("fusescope_search_logs",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants individual log records or messages matching text, service, severity, or field filters. It returns paginated rows, not counts, trends, or grouped breakdowns; use signoz_aggregate_logs for those, and signoz_execute_builder_query only for queries this tool cannot express. Rows carry a default set of log columns; to include other attributes, such as service.name, name them in selectFields. A field missing from a row was not selected. You do not need the guide when using only searchText, service, severity, time, or pagination. Read signoz://logs/query-builder-guide before filtering on unfamiliar fields. Defaults to the last 1 hour."),
+		mcp.WithDescription("Use this when the user wants individual log records or messages matching text, service, severity, or field filters. It returns paginated rows, not counts, trends, or grouped breakdowns; use fusescope_aggregate_logs for those, and fusescope_execute_builder_query only for queries this tool cannot express. Rows carry a default set of log columns; to include other attributes, such as service.name, name them in selectFields. A field missing from a row was not selected. You do not need the guide when using only searchText, service, severity, time, or pagination. Read fusescope://logs/query-builder-guide before filtering on unfamiliar fields. Defaults to the last 1 hour."),
 		mcp.WithString("filter", mcp.Description(logsFilterParamDescription)),
 		mcp.WithString("service", mcp.Description(searchLogsServiceParamDescription)),
 		mcp.WithString("severity", mcp.Description(searchLogsSeverityParamDescription)),
@@ -106,7 +106,7 @@ func (h *Handler) handleAggregateLogs(ctx context.Context, req mcp.CallToolReque
 		return InternalErrorResult("failed to marshal query payload: " + err.Error()), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_aggregate_logs",
+	h.logger.DebugContext(ctx, "Tool called: fusescope_aggregate_logs",
 		slog.String("aggregation", reqData.AggregationExpr),
 		slog.String("filter", reqData.FilterExpression))
 
@@ -120,7 +120,7 @@ func (h *Handler) handleAggregateLogs(ctx context.Context, req mcp.CallToolReque
 		return upstreamQueryError(err, "logs"), nil
 	}
 
-	return aggregateResult(ctx, h.logger, "signoz_aggregate_logs", result, reqData.LimitClamped, aggregateNotes(reqData)...), nil
+	return aggregateResult(ctx, h.logger, "fusescope_aggregate_logs", result, reqData.LimitClamped, aggregateNotes(reqData)...), nil
 }
 
 func (h *Handler) handleSearchLogs(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
@@ -153,7 +153,7 @@ func (h *Handler) handleSearchLogs(ctx context.Context, req mcp.CallToolRequest)
 		return InternalErrorResult("failed to marshal query payload: " + err.Error()), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_search_logs",
+	h.logger.DebugContext(ctx, "Tool called: fusescope_search_logs",
 		slog.String("filter", reqData.FilterExpression))
 
 	client, err := h.GetClient(ctx)
@@ -170,5 +170,5 @@ func (h *Handler) handleSearchLogs(ctx context.Context, req mcp.CallToolRequest)
 	if reqData.SearchScopeIgnored {
 		notes = append(notes, searchScopeIgnoredNote)
 	}
-	return rawSearchResult(ctx, h.logger, "signoz_search_logs", result, reqData.Limit, reqData.Offset, reqData.LimitClamped, notes...), nil
+	return rawSearchResult(ctx, h.logger, "fusescope_search_logs", result, reqData.Limit, reqData.Offset, reqData.LimitClamped, notes...), nil
 }

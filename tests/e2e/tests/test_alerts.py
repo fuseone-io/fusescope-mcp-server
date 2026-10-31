@@ -1,7 +1,7 @@
 """Alert-rule contract against real SigNoz — the taught v2alpha1 authoring flow.
 
 The MCP server forwards alert payloads verbatim; SigNoz is the only validator.
-These tests pin the claims the tool descriptions and signoz://alert resources
+These tests pin the claims the tool descriptions and fusescope://alert resources
 publish against the pinned release: the explicit v2alpha1 payload the
 instructions teach round-trips through create/get/update/delete, SigNoz rejects
 direct routing to a channel that does not exist, and the history endpoint keeps
@@ -58,7 +58,7 @@ def threshold_rule(name: str, *, alert_type: str = "METRIC_BASED_ALERT", channel
 
 
 def create_rule(client: MCPClient, rule: dict) -> str:
-    result = client.call_tool("signoz_create_alert", {"searchContext": f"create alert {rule['alert']}", **rule})
+    result = client.call_tool("fusescope_create_alert", {"searchContext": f"create alert {rule['alert']}", **rule})
     assert_tool_ok(result)
     payload = first_block_json(result)
     rule_id = (payload.get("data") or {}).get("id")
@@ -67,11 +67,11 @@ def create_rule(client: MCPClient, rule: dict) -> str:
 
 
 def delete_rule(client: MCPClient, rule_id: str) -> None:
-    assert_tool_ok(client.call_tool("signoz_delete_alert", {"searchContext": f"delete rule {rule_id}", "id": rule_id}))
+    assert_tool_ok(client.call_tool("fusescope_delete_alert", {"searchContext": f"delete rule {rule_id}", "id": rule_id}))
 
 
 def listed_rule_names(client: MCPClient) -> set:
-    result = client.call_tool("signoz_list_alert_rules", {"searchContext": "list alert rules", "limit": "1000"})
+    result = client.call_tool("fusescope_list_alert_rules", {"searchContext": "list alert rules", "limit": "1000"})
     assert_tool_ok(result)
     payload = first_block_json(result)
     data = payload.get("data")
@@ -85,7 +85,7 @@ def test_alert_crud_round_trip(mcp_client: MCPClient, test_id: str) -> None:
     rule_id = create_rule(mcp_client, threshold_rule(name))
     try:
         fetched = assert_tool_ok(
-            mcp_client.call_tool("signoz_get_alert", {"searchContext": f"get rule {name}", "id": rule_id})
+            mcp_client.call_tool("fusescope_get_alert", {"searchContext": f"get rule {name}", "id": rule_id})
         )
         rule = first_block_json(fetched).get("data")
         assert isinstance(rule, dict), f"get_alert envelope drifted: {fetched}"
@@ -93,7 +93,7 @@ def test_alert_crud_round_trip(mcp_client: MCPClient, test_id: str) -> None:
         assert rule.get("alertType") == "METRIC_BASED_ALERT"
         assert rule.get("schemaVersion") == "v2alpha1", f"schemaVersion did not round-trip: {rule.get('schemaVersion')}"
         by_alias = assert_tool_ok(
-            mcp_client.call_tool("signoz_get_alert", {"searchContext": f"get rule {name} by alias", "ruleId": rule_id})
+            mcp_client.call_tool("fusescope_get_alert", {"searchContext": f"get rule {name} by alias", "ruleId": rule_id})
         )
         assert first_block_json(by_alias)["data"].get("alert") == name, "the legacy ruleId alias read another rule"
 
@@ -102,12 +102,12 @@ def test_alert_crud_round_trip(mcp_client: MCPClient, test_id: str) -> None:
         updated = {k: v for k, v in rule.items() if k not in SERVER_POPULATED_FIELDS}
         updated["description"] = "updated by e2e"
         result = mcp_client.call_tool(
-            "signoz_update_alert", {"searchContext": f"update rule {name}", "id": rule_id, **updated}
+            "fusescope_update_alert", {"searchContext": f"update rule {name}", "id": rule_id, **updated}
         )
         assert_tool_ok(result)
 
         refetched = assert_tool_ok(
-            mcp_client.call_tool("signoz_get_alert", {"searchContext": f"re-get rule {name}", "id": rule_id})
+            mcp_client.call_tool("fusescope_get_alert", {"searchContext": f"re-get rule {name}", "id": rule_id})
         )
         assert first_block_json(refetched)["data"].get("description") == "updated by e2e"
     finally:
@@ -119,7 +119,7 @@ def test_create_alert_unknown_channel_rejected(mcp_client: MCPClient, test_id: s
     """SigNoz rejects direct routing to a channel that does not exist, as the descriptions teach."""
     name = f"mcp-e2e-{test_id}-ghost-channel"
     result = mcp_client.call_tool(
-        "signoz_create_alert",
+        "fusescope_create_alert",
         {
             "searchContext": "create an alert routed to a channel that does not exist",
             **threshold_rule(name, channels=["mcp-e2e-no-such-channel"]),
@@ -147,7 +147,7 @@ def test_alert_history_envelope(mcp_client: MCPClient, test_id: str) -> None:
     try:
         for order in ("asc", "desc"):
             result = mcp_client.call_tool(
-                "signoz_get_alert_history", {"searchContext": f"history for {name}", "id": rule_id, "order": order}
+                "fusescope_get_alert_history", {"searchContext": f"history for {name}", "id": rule_id, "order": order}
             )
             assert_tool_ok(result)
             data = first_block_json(result).get("data")
@@ -177,7 +177,7 @@ def test_list_alert_rules_filters_in_signoz(mcp_client: MCPClient, test_id: str)
 
         def listed(**args: object) -> list[str]:
             result = assert_tool_ok(
-                mcp_client.call_tool("signoz_list_alert_rules", {"searchContext": "find alert rules", **args})
+                mcp_client.call_tool("fusescope_list_alert_rules", {"searchContext": "find alert rules", **args})
             )
             return [rule["alert"] for rule in first_block_json(result)["data"]]
 

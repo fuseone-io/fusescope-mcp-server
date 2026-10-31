@@ -17,7 +17,7 @@ access to unexported retry, registration, middleware, and server-composition hel
 ## Invariants covered
 
 - MCP names and descriptions stay within reviewed byte budgets; schema shape is constrained by reviewed property inventories and nesting depth.
-- Advertised `signoz://` pointers resolve to non-empty resources with matching metadata.
+- Advertised `fusescope://` pointers resolve to non-empty resources with matching metadata.
 - Tools, resources, templates, and prompts cannot silently overwrite duplicate registrations.
 - Mutating POST requests are not replayed after ambiguous failures; audited read-only POSTs may retry.
 - Tool results remain JSON-safe through the production transport.

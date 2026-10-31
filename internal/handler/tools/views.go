@@ -15,14 +15,14 @@ import (
 )
 
 // RegisterViewHandlers registers the saved-views CRUD tools plus the
-// signoz://view/instructions and signoz://view/examples resources.
+// fusescope://view/instructions and fusescope://view/examples resources.
 func (h *Handler) RegisterViewHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering view handlers")
 
-	listTool := mcp.NewTool("signoz_list_views",
+	listTool := mcp.NewTool("fusescope_list_views",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants to discover saved views or find a view UUID for the Logs, Traces, Metrics, or Cost Meter explorer pages. A view stores one query spec; it is not a multi-widget dashboard. Apply name filters before pagination, and follow pagination.nextOffset while pagination.hasMore is true before concluding a view is absent. Use signoz_get_view for one full definition."),
+		mcp.WithDescription("Use this when the user wants to discover saved views or find a view UUID for the Logs, Traces, Metrics, or Cost Meter explorer pages. A view stores one query spec; it is not a multi-widget dashboard. Apply name filters before pagination, and follow pagination.nextOffset while pagination.hasMore is true before concluding a view is absent. Use fusescope_get_view for one full definition."),
 		mcp.WithString("source", mcp.Description(`Explorer whose views to list, for example "traces", "logs", "metrics", or "meter" (Cost Meter). SigNoz validates the value. Omit to list views from every Explorer.`)),
 		mcp.WithString("name", mcp.Description("Partial, server-side match on the saved-view name. Omit to include every name.")),
 		mcp.WithString("limit", mcp.DefaultString("50"), intOrStringType(), mcp.Description("Maximum number of views to return per page. Default: 50, max: 1000 (higher values are clamped).")),
@@ -30,44 +30,44 @@ func (h *Handler) RegisterViewHandlers(s *mcp.Server) {
 	)
 	h.addTool(s, listTool, h.handleListViews)
 
-	getTool := mcp.NewTool("signoz_get_view",
+	getTool := mcp.NewTool("fusescope_get_view",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user wants the complete definition of one known saved view. Use signoz_list_views first when its UUID is unknown. The returned data object is the required base for signoz_update_view because updates fully replace a view. Do not use this for multi-widget dashboards; use signoz_get_dashboard."),
+		mcp.WithDescription("Use this when the user wants the complete definition of one known saved view. Use fusescope_list_views first when its UUID is unknown. The returned data object is the required base for fusescope_update_view because updates fully replace a view. Do not use this for multi-widget dashboards; use fusescope_get_dashboard."),
 		// Not mcp.Required(): the legacy alias "viewId" must remain a valid call
 		// for schema-aware clients. The handler validates id/viewId presence.
-		mcp.WithString("id", mcp.Description("Saved view UUID. Use signoz_list_views to discover IDs. Required.")),
+		mcp.WithString("id", mcp.Description("Saved view UUID. Use fusescope_list_views to discover IDs. Required.")),
 	)
 	h.addTool(s, getTool, h.handleGetView)
 
-	createTool := mcp.NewTool("signoz_create_view",
+	createTool := mcp.NewTool("fusescope_create_view",
 		withCreateToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants to save one reusable query spec for Logs, Traces, Metrics, or Cost Meter; use signoz_create_dashboard for a multi-widget dashboard. Before composing any payload, you must read both signoz://view/instructions and signoz://view/examples. Do not send server-populated IDs or timestamps.",
+			"Use this when the user wants to save one reusable query spec for Logs, Traces, Metrics, or Cost Meter; use fusescope_create_dashboard for a multi-widget dashboard. Before composing any payload, you must read both fusescope://view/instructions and fusescope://view/examples. Do not send server-populated IDs or timestamps.",
 		),
 		mcp.WithInputSchema[types.CreateViewInput](),
 	)
 	h.addTool(s, createTool, h.handleCreateView)
 
-	updateTool := mcp.NewTool("signoz_update_view",
+	updateTool := mcp.NewTool("fusescope_update_view",
 		withUpdateToolAnnotations(),
 		mcp.WithDescription(
-			"Use this when the user wants to change an existing saved view. This is a full replacement: call signoz_get_view first, modify its data object, preserve every unrequested field, and pass that full object as view. Upstream keeps name immutable on update; the display name lives in spec.displayName. Read signoz://view/instructions and signoz://view/examples when changing source or spec. Keep the UUID only in id; omit server-populated IDs and timestamps from view.",
+			"Use this when the user wants to change an existing saved view. This is a full replacement: call fusescope_get_view first, modify its data object, preserve every unrequested field, and pass that full object as view. Upstream keeps name immutable on update; the display name lives in spec.displayName. Read fusescope://view/instructions and fusescope://view/examples when changing source or spec. Keep the UUID only in id; omit server-populated IDs and timestamps from view.",
 		),
 		mcp.WithInputSchema[types.UpdateViewInput](),
 	)
 	h.addTool(s, updateTool, h.handleUpdateView)
 
-	deleteTool := mcp.NewTool("signoz_delete_view",
+	deleteTool := mcp.NewTool("fusescope_delete_view",
 		withDeleteToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user has confirmed they want to permanently delete one saved view. The deletion is irreversible. Use signoz_list_views to discover the UUID when needed; do not use this for dashboards; delete those with signoz_delete_dashboard."),
-		mcp.WithString("id", mcp.Description("UUID of the saved view to delete. Required; use signoz_list_views to discover it.")),
+		mcp.WithDescription("Use this when the user has confirmed they want to permanently delete one saved view. The deletion is irreversible. Use fusescope_list_views to discover the UUID when needed; do not use this for dashboards; delete those with fusescope_delete_dashboard."),
+		mcp.WithString("id", mcp.Description("UUID of the saved view to delete. Required; use fusescope_list_views to discover it.")),
 	)
 	h.addTool(s, deleteTool, h.handleDeleteView)
 
 	viewInstructions := mcp.NewResource(
-		"signoz://view/instructions",
+		"fusescope://view/instructions",
 		"Saved View Instructions",
 		mcp.WithResourceDescription("Read this before creating or updating a saved view. It explains view fields, source, the typed spec (schemaVersion v2), Cost Meter views, and how to read a view before replacing it. It does not describe dashboards."),
 		mcp.WithMIMEType("text/markdown"),
@@ -84,9 +84,9 @@ func (h *Handler) RegisterViewHandlers(s *mcp.Server) {
 	})
 
 	viewExamples := mcp.NewResource(
-		"signoz://view/examples",
+		"fusescope://view/examples",
 		"Saved View Examples",
-		mcp.WithResourceDescription("Read this after signoz://view/instructions when composing a saved view. It provides complete typed spec payloads for traces, logs, metrics, and Cost Meter sources."),
+		mcp.WithResourceDescription("Read this after fusescope://view/instructions when composing a saved view. It provides complete typed spec payloads for traces, logs, metrics, and Cost Meter sources."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(views.Examples))),
 	)
@@ -127,8 +127,8 @@ func marshalViewBody(args map[string]any) ([]byte, error) {
 }
 
 // unwrapViewEnvelope handles callers who passed the full response of
-// signoz_get_view (shape: {"status":"success","data":{...}}) straight
-// into signoz_create_view / signoz_update_view. If the args look like
+// fusescope_get_view (shape: {"status":"success","data":{...}}) straight
+// into fusescope_create_view / fusescope_update_view. If the args look like
 // that envelope — a `data` field holding an object, and no top-level
 // `source` / `name` — replace args' contents with data's. The
 // tool descriptions explicitly instruct this flow, so supporting it
@@ -175,7 +175,7 @@ func (h *Handler) handleListViews(ctx context.Context, req mcp.CallToolRequest) 
 	name, _ := args["name"].(string)
 	limit, offset, limitClamped := paginate.ParseParamsClamped(req.Params.Arguments)
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_list_views",
+	h.logger.DebugContext(ctx, "Tool called: fusescope_list_views",
 		slog.String("source", source),
 		slog.String("name", name),
 	)
@@ -225,9 +225,9 @@ func (h *Handler) handleGetView(ctx context.Context, req mcp.CallToolRequest) (*
 	viewID := readResourceID(args, "viewId")
 	if viewID == "" {
 		h.logger.WarnContext(ctx, "get_view missing id")
-		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Provide a valid saved view UUID. Use signoz_list_views to see available views.`), nil
+		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Provide a valid saved view UUID. Use fusescope_list_views to see available views.`), nil
 	}
-	h.logger.DebugContext(ctx, "Tool called: signoz_get_view", slog.String("id", viewID))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_get_view", slog.String("id", viewID))
 
 	client, err := h.GetClient(ctx)
 	if err != nil {
@@ -261,7 +261,7 @@ func (h *Handler) handleCreateView(ctx context.Context, req mcp.CallToolRequest)
 		h.logger.ErrorContext(ctx, "Failed to marshal view body", logpkg.ErrAttr(err))
 		return InternalErrorResult("failed to build request body: " + err.Error()), nil
 	}
-	h.logger.DebugContext(ctx, "Tool called: signoz_create_view", slog.String("name", name), slog.String("source", source))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_create_view", slog.String("name", name), slog.String("source", source))
 
 	client, err := h.GetClient(ctx)
 	if err != nil {
@@ -283,25 +283,25 @@ func (h *Handler) handleUpdateView(ctx context.Context, req mcp.CallToolRequest)
 
 	viewID := readResourceID(args, "viewId")
 	if viewID == "" {
-		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Use signoz_list_views to find the UUID.`), nil
+		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Use fusescope_list_views to find the UUID.`), nil
 	}
 
 	// The input schema requires the body under "view". The retired flat shape
 	// ({id, source, spec} at the top level) gets a coded error naming the
-	// replacement, not a bare "view is required". The signoz_get_view envelope
+	// replacement, not a bare "view is required". The fusescope_get_view envelope
 	// ({status, data: {...}}) pasted under "view" is still unwrapped.
 	view, ok := args["view"].(map[string]any)
 	if !ok {
 		for _, legacy := range []string{"source", "spec", "name", "schemaVersion", "generateName"} {
 			if _, present := args[legacy]; present {
-				return errorWithCode(CodeValidationFailed, fmt.Sprintf(`Parameter validation failed: %q is no longer accepted at the top level; pass the saved view under "view", for example {"id": "<uuid>", "view": {"source": "logs", "spec": {...}}}. Call signoz_get_view first and use the "data" object it returns.`, legacy)), nil
+				return errorWithCode(CodeValidationFailed, fmt.Sprintf(`Parameter validation failed: %q is no longer accepted at the top level; pass the saved view under "view", for example {"id": "<uuid>", "view": {"source": "logs", "spec": {...}}}. Call fusescope_get_view first and use the "data" object it returns.`, legacy)), nil
 			}
 		}
 		view = map[string]any{}
 	}
 	unwrapViewEnvelope(view)
 	if len(view) == 0 {
-		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "view" is required. Pass the SavedView body under "view". Call signoz_get_view first and use the "data" field it returns.`), nil
+		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "view" is required. Pass the SavedView body under "view". Call fusescope_get_view first and use the "data" field it returns.`), nil
 	}
 
 	// SigNoz is the only validator of the view body; its rejection comes back
@@ -321,7 +321,7 @@ func (h *Handler) handleUpdateView(ctx context.Context, req mcp.CallToolRequest)
 	if err != nil {
 		return InternalErrorResult("failed to build request body: " + err.Error()), nil
 	}
-	h.logger.DebugContext(ctx, "Tool called: signoz_update_view", slog.String("viewId", viewID), slog.String("source", source))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_update_view", slog.String("viewId", viewID), slog.String("source", source))
 
 	client, err := h.GetClient(ctx)
 	if err != nil {
@@ -347,9 +347,9 @@ func (h *Handler) handleDeleteView(ctx context.Context, req mcp.CallToolRequest)
 	}
 	viewID := readResourceID(args, "viewId")
 	if viewID == "" {
-		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Use signoz_list_views to find the UUID.`), nil
+		return errorWithCode(CodeValidationFailed, `Parameter validation failed: "id" is required. Use fusescope_list_views to find the UUID.`), nil
 	}
-	h.logger.DebugContext(ctx, "Tool called: signoz_delete_view", slog.String("id", viewID))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_delete_view", slog.String("id", viewID))
 
 	client, err := h.GetClient(ctx)
 	if err != nil {

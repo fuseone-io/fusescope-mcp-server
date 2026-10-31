@@ -28,7 +28,7 @@ const (
 )
 
 var toolNamePattern = regexp.MustCompile(`^[a-z0-9_]+$`)
-var advertisedResourcePattern = regexp.MustCompile("signoz://[^\\s\"'<>`]+")
+var advertisedResourcePattern = regexp.MustCompile("fusescope://[^\\s\"'<>`]+")
 
 // These are the server aliases published in first-party setup examples or
 // sent in initialize. Cursor combines alias + separator + tool name and caps
@@ -89,7 +89,7 @@ func TestGuardrail_WireContractBudgets(t *testing.T) {
 		}
 		t.Logf("maximum tool description=%s (%d bytes); maximum parameter description=%s (%d bytes)", maxToolName, maxToolBytes, maxParameterPath, maxParameterBytes)
 
-		for _, toolName := range []string{"signoz_aggregate_logs", "signoz_aggregate_traces"} {
+		for _, toolName := range []string{"fusescope_aggregate_logs", "fusescope_aggregate_traces"} {
 			tool, ok := toolsByName[toolName]
 			if !ok {
 				t.Fatalf("targeted requestType budget tool %s is not registered", toolName)
@@ -108,9 +108,9 @@ func TestGuardrail_WireContractBudgets(t *testing.T) {
 		// Concept handles anchored by docs/client-visible-writing-style.md; the
 		// rest of each description is pinned by the wire catalog.
 		conceptHandles := map[string][]string{
-			"signoz_create_alert":     {"same still-current prepared operation"},
-			"signoz_update_alert":     {"full replacement", "same still-current prepared operation"},
-			"signoz_update_dashboard": {"full replacement"},
+			"fusescope_create_alert":     {"same still-current prepared operation"},
+			"fusescope_update_alert":     {"full replacement", "same still-current prepared operation"},
+			"fusescope_update_dashboard": {"full replacement"},
 		}
 		for toolName, handles := range conceptHandles {
 			tool, ok := toolsByName[toolName]
@@ -256,7 +256,7 @@ func TestGuardrail_AdvertisedResourcePointersResolve(t *testing.T) {
 		referenced[uri] = struct{}{}
 	}
 	if len(referenced) == 0 {
-		t.Fatal("advertised catalog contains no signoz:// resource pointers")
+		t.Fatal("advertised catalog contains no fusescope:// resource pointers")
 	}
 
 	for uri := range referenced {

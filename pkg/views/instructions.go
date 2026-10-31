@@ -1,10 +1,10 @@
 // Package views holds the MCP resource content served at
-// signoz://view/instructions and signoz://view/examples. The content
+// fusescope://view/instructions and fusescope://view/examples. The content
 // teaches an LLM how to construct SavedView payloads before calling
-// signoz_create_view / signoz_update_view.
+// fusescope_create_view / fusescope_update_view.
 package views
 
-// Instructions is the body of signoz://view/instructions.
+// Instructions is the body of fusescope://view/instructions.
 const Instructions = `# SigNoz Saved View Schema (v2 typed spec)
 
 A saved view is a reusable snapshot of an Explorer query. It maps 1:1
@@ -58,8 +58,8 @@ allowed but skipped by the signal check.
   time-series; "table" for grouped tables; "value" for a single number;
   "trace" for a trace waterfall.
 - **Discover unknown fields before writing filters.** Call
-  signoz_get_field_keys with the view's signal and fieldContext; use
-  signoz_get_field_values when observed values help verify a predicate. Do not
+  fusescope_get_field_keys with the view's signal and fieldContext; use
+  fusescope_get_field_values when observed values help verify a predicate. Do not
   copy tenant-specific attributes from an example without checking them.
 - **Always bound and order builder results:** every builder_query must include a
   positive limit and non-empty v5 order. For time-series views,
@@ -69,15 +69,15 @@ allowed but skipped by the signal check.
 
 ## Update flow
 
-signoz_update_view **replaces** the view (upstream is HTTP PUT). To
+fusescope_update_view **replaces** the view (upstream is HTTP PUT). To
 rename the label or tweak one field:
 
-1. Call signoz_get_view with the view's id. It returns
+1. Call fusescope_get_view with the view's id. It returns
    {"status":"success","data":{...SavedView...}}.
 2. Take the **data** object from that response.
 3. Strip server-populated fields (id, createdAt, createdBy, updatedAt, updatedBy) and drop name.
 4. Modify the field(s) you want to change (e.g. spec.displayName).
-5. Call signoz_update_view with { "id": "<id>", "view": <modified data> }.
+5. Call fusescope_update_view with { "id": "<id>", "view": <modified data> }.
 
 (The MCP server strips server-populated fields and name for you if you
 forget, but omitting them up front is clearer.)
@@ -113,5 +113,5 @@ forget, but omitting them up front is clearer.)
       }
     }
 
-See signoz://view/examples for complete payloads per source.
+See fusescope://view/examples for complete payloads per source.
 `

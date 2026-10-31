@@ -61,9 +61,9 @@ func handleDebugServiceErrors(_ context.Context, req mcp.GetPromptRequest) (*mcp
 				Content: &mcp.TextContent{
 					Text: fmt.Sprintf(`Investigate errors for the service "%s" over the last %s. Follow these steps:
 
-1. Use signoz_search_logs with service="%s" and severity="ERROR" and timeRange="%s" to find recent error logs. If it returns no rows with a `+"`key service.name not found in metadata`"+` warning, or fails with `+"`key service.name not found`"+`, this workspace's logs don't carry that attribute. Call signoz_get_field_keys(signal="logs", fieldContext="resource") to discover available keys, pick a suitable one (e.g. k8s.deployment.name), confirm the matching value with signoz_get_field_values, and retry; or search without a service filter.
-2. Use signoz_aggregate_traces with error="true", service="%s", aggregation="count", groupBy="name", timeRange="%s" to see which operations are failing.
-3. Use signoz_get_service_top_operations with service="%s" to see its operations ranked by p99 latency.
+1. Use fusescope_search_logs with service="%s" and severity="ERROR" and timeRange="%s" to find recent error logs. If it returns no rows with a `+"`key service.name not found in metadata`"+` warning, or fails with `+"`key service.name not found`"+`, this workspace's logs don't carry that attribute. Call fusescope_get_field_keys(signal="logs", fieldContext="resource") to discover available keys, pick a suitable one (e.g. k8s.deployment.name), confirm the matching value with fusescope_get_field_values, and retry; or search without a service filter.
+2. Use fusescope_aggregate_traces with error="true", service="%s", aggregation="count", groupBy="name", timeRange="%s" to see which operations are failing.
+3. Use fusescope_get_service_top_operations with service="%s" to see its operations ranked by p99 latency.
 4. Summarize: what errors are occurring, which operations are affected, and what the likely root cause is.`, service, timeRange, service, timeRange, service, timeRange, service),
 				},
 			},
@@ -86,10 +86,10 @@ func handleLatencyAnalysis(_ context.Context, req mcp.GetPromptRequest) (*mcp.Ge
 				Content: &mcp.TextContent{
 					Text: fmt.Sprintf(`Analyze p99 latency for the service "%s" over the last %s. Follow these steps:
 
-1. Use signoz_aggregate_traces with service="%s", aggregations=["p99(duration_nano)"], groupBy="name", timeRange="%s" to find the slowest operations.
-2. Use signoz_aggregate_traces with service="%s", aggregations=["p99(duration_nano)"], requestType="time_series", timeRange="%s" to see how latency has changed over time.
-3. Use signoz_search_traces with service="%s", minDuration="1s", timeRange="%s" to find specific slow traces (>1s).
-4. For the slowest trace found, use signoz_get_trace_details to examine the span breakdown.
+1. Use fusescope_aggregate_traces with service="%s", aggregations=["p99(duration_nano)"], groupBy="name", timeRange="%s" to find the slowest operations.
+2. Use fusescope_aggregate_traces with service="%s", aggregations=["p99(duration_nano)"], requestType="time_series", timeRange="%s" to see how latency has changed over time.
+3. Use fusescope_search_traces with service="%s", minDuration="1s", timeRange="%s" to find specific slow traces (>1s).
+4. For the slowest trace found, use fusescope_get_trace_details to examine the span breakdown.
 5. Summarize: which operations are slow, whether latency is trending up, and what spans contribute most to latency.`, service, timeRange, service, timeRange, service, timeRange, service, timeRange),
 				},
 			},
@@ -114,9 +114,9 @@ Period 1: %s
 Period 2: %s
 
 Steps:
-1. Use signoz_list_metrics with searchText="%s" to confirm the metric exists and get its type.
-2. Use signoz_query_metrics to query the metric for period 1.
-3. Use signoz_query_metrics to query the metric for period 2.
+1. Use fusescope_list_metrics with searchText="%s" to confirm the metric exists and get its type.
+2. Use fusescope_query_metrics to query the metric for period 1.
+3. Use fusescope_query_metrics to query the metric for period 2.
 4. Compare the values and summarize: did the metric increase, decrease, or stay stable? Are there any anomalies?`, metricName, period1, period2, metricName),
 				},
 			},
@@ -135,12 +135,12 @@ func handleIncidentTriage(_ context.Context, req mcp.GetPromptRequest) (*mcp.Get
 				Content: &mcp.TextContent{
 					Text: fmt.Sprintf(`Triage the alert with rule ID "%s". Follow these steps:
 
-1. Use signoz_get_alert with id="%s" to get the alert configuration and understand what it monitors.
-2. Use signoz_get_alert_history with id="%s" and timeRange="6h" to see when it started firing.
+1. Use fusescope_get_alert with id="%s" to get the alert configuration and understand what it monitors.
+2. Use fusescope_get_alert_history with id="%s" and timeRange="6h" to see when it started firing.
 3. Based on the alert's signal type:
-   - If logs-based: use signoz_search_logs to find related error logs around the alert trigger time.
-   - If traces-based: use signoz_aggregate_traces to analyze error rates or latency around the trigger time.
-   - If metrics-based: use signoz_query_metrics to see the metric trend around the trigger time.
+   - If logs-based: use fusescope_search_logs to find related error logs around the alert trigger time.
+   - If traces-based: use fusescope_aggregate_traces to analyze error rates or latency around the trigger time.
+   - If metrics-based: use fusescope_query_metrics to see the metric trend around the trigger time.
 4. Summarize: what triggered the alert, when it started, what the current state is, and recommended next steps.`, alertID, alertID, alertID),
 				},
 			},

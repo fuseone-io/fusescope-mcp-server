@@ -49,8 +49,8 @@ func upstreamSpecs(t *testing.T, tool string, args map[string]any) (string, map[
 	ctx := util.SetAPIKey(util.SetSigNozURL(testCtx(), cfg.URL), cfg.APIKey)
 
 	handle := map[string]mcp.ToolHandlerFunc{
-		"signoz_aggregate_logs": h.handleAggregateLogs,
-		"signoz_query_metrics":  h.handleQueryMetrics,
+		"fusescope_aggregate_logs": h.handleAggregateLogs,
+		"fusescope_query_metrics":  h.handleQueryMetrics,
 	}[tool]
 	result, err := handle(ctx, makeToolRequest(tool, args))
 	require.NoError(t, err)
@@ -85,7 +85,7 @@ func groupByNames(spec map[string]any) []string {
 
 func TestQueryTools_SendResultShapingUpstream(t *testing.T) {
 	t.Run("aggregate_logs forwards several aggregations, having, and functions", func(t *testing.T) {
-		_, specs := upstreamSpecs(t, "signoz_aggregate_logs", map[string]any{
+		_, specs := upstreamSpecs(t, "fusescope_aggregate_logs", map[string]any{
 			"aggregations": []any{"count()", "count_distinct(severity_text)"},
 			"groupBy":      "service.name",
 			"having":       " count() > 1 ",
@@ -100,7 +100,7 @@ func TestQueryTools_SendResultShapingUpstream(t *testing.T) {
 	})
 
 	t.Run("aggregate_logs reads JSON-string aggregations and an array groupBy", func(t *testing.T) {
-		_, specs := upstreamSpecs(t, "signoz_aggregate_logs", map[string]any{
+		_, specs := upstreamSpecs(t, "fusescope_aggregate_logs", map[string]any{
 			"aggregations": `[" avg(duration) ", ""]`,
 			"groupBy":      []any{"service.name", " severity_text "},
 			"timeRange":    "1h",
@@ -112,14 +112,14 @@ func TestQueryTools_SendResultShapingUpstream(t *testing.T) {
 	})
 
 	t.Run("groupBy sent as a JSON-encoded array string is read as that array", func(t *testing.T) {
-		_, specs := upstreamSpecs(t, "signoz_aggregate_logs", map[string]any{
+		_, specs := upstreamSpecs(t, "fusescope_aggregate_logs", map[string]any{
 			"aggregations": "count()",
 			"groupBy":      ` ["http.route", "response_status_code"] `,
 			"timeRange":    "1h",
 		})
 		require.Equal(t, []string{"http.route", "response_status_code"}, groupByNames(specs["A"]))
 
-		_, specs = upstreamSpecs(t, "signoz_query_metrics", map[string]any{
+		_, specs = upstreamSpecs(t, "fusescope_query_metrics", map[string]any{
 			"metricName": "http_requests_total",
 			"metricType": "gauge",
 			"groupBy":    `["service.name"]`,
@@ -134,7 +134,7 @@ func TestQueryTools_SendResultShapingUpstream(t *testing.T) {
 	})
 
 	t.Run("query_metrics bounds the formula result and reads typed formulaQueries", func(t *testing.T) {
-		text, specs := upstreamSpecs(t, "signoz_query_metrics", map[string]any{
+		text, specs := upstreamSpecs(t, "fusescope_query_metrics", map[string]any{
 			"metricName":  "http_requests_total",
 			"metricType":  "gauge",
 			"limit":       "50000",

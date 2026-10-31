@@ -28,7 +28,7 @@ doc against it.
 ## What a test buys in this repo
 
 This server's API is its wire contract i.e tool schemas, descriptions, coded errors, result
-shapes, and `signoz://` resources. LLM clients call it, and SigNoz/agent-skills is written
+shapes, and `fusescope://` resources. LLM clients call it, and SigNoz/agent-skills is written
 against it; the skills hardcode tool names and payload shapes in what they teach, which is
 why a contract change can need a companion skills change (CMP-3 in `CLAUDE.md`).
 Most production code translates between that contract and the SigNoz APIs. The expensive
@@ -203,7 +203,7 @@ wrote these tests. When you touch one, fix it or delete it.
   checks.
 - **A hand-rebuilt copy of the real artifact.**
   [`TestIntOrStringType_DocsLimitAdvertisesUnion`](https://github.com/SigNoz/signoz-mcp-server/blob/767fdc98dbe9b7e1122912b16bed9284ce8ce97b/internal/handler/tools/params_test.go#L45-L48)
-  constructs its own `mcp.NewTool("signoz_search_docs", ...)` with `intOrStringType()`
+  constructs its own `mcp.NewTool("fusescope_search_docs", ...)` with `intOrStringType()`
   and asserts the copy advertises the union. The registered tool could lose the union and
   this stays green. `internal/handler/tools/schema_inventory_test.go` shows the correct form;
   it reads the registered tools and pins what their schemas actually carry.

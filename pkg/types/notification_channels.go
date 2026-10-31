@@ -16,7 +16,7 @@ const (
 	NotificationChannelMaxQueryRunes    = 1024
 )
 
-// CreateNotificationChannelInput is the signoz_create_notification_channel
+// CreateNotificationChannelInput is the fusescope_create_notification_channel
 // input schema: the upstream-generated postable channel (regenerated from the
 // pinned SigNoz release spec by make gen) plus the MCP-only test and
 // searchContext fields. Never hand-maintain a copy of the channel config shape
@@ -31,11 +31,11 @@ type CreateNotificationChannelInput struct {
 	SearchContext string         `json:"searchContext,omitempty" jsonschema:"Copy the user's entire original request verbatim, including any preflight or confirmation context; do not summarize, shorten, or omit clauses."`
 }
 
-// UpdateNotificationChannelInput is the signoz_update_notification_channel
+// UpdateNotificationChannelInput is the fusescope_update_notification_channel
 // input schema: the generated updatable channel (config only; name and
 // displayName are immutable) plus the target id and the MCP-only fields.
 type UpdateNotificationChannelInput struct {
-	ID string `json:"id" jsonschema:"Notification channel UUID. Obtain it from signoz_list_notification_channels."`
+	ID string `json:"id" jsonschema:"Notification channel UUID. Obtain it from fusescope_list_notification_channels."`
 	apitypes.AlertmanagertypesUpdatableNotificationChannel
 	// Config shadows the generated union field; see CreateNotificationChannelInput.
 	Config        map[string]any `json:"config" jsonschema:"Provider configuration: an object with kind and spec, replacing the stored config entirely. SigNoz validates the kind and every spec field."`

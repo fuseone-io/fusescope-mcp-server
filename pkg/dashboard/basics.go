@@ -1,14 +1,14 @@
 package dashboard
 
 // Basics is the v6 (Perses-schema) dashboard basics guide served at
-// signoz://dashboard/instructions: dashboard display (title/tags/description),
+// fusescope://dashboard/instructions: dashboard display (title/tags/description),
 // the grid layout (positions + the content.$ref panel linkage), and variable
 // configuration (incl. the rule to always ask which panels a variable applies to).
 const Basics = `
 Follow these rules and examples; refer to the links below when required
 
 Critical:
-For full query patterns and signal-specific instructions, consult the schema resources, widget examples and the panels-and-queries guide (signoz://dashboard/widgets-instructions).
+For full query patterns and signal-specific instructions, consult the schema resources, widget examples and the panels-and-queries guide (fusescope://dashboard/widgets-instructions).
 
 Basics:
 Dashboard Title: set spec.display.name to a descriptive name for your dashboard. Do NOT set the top-level "name" when creating a dashboard; it is an immutable machine label the server generates from spec.display.name; however it has to be set when updating a dashboard with the full payload. schemaVersion must be "v6". 
@@ -71,7 +71,7 @@ Default to DYNAMIC Variables:
 - Set the plugin spec's signal to one of: traces, logs, metrics.
 - Set the plugin spec's name to the attribute key (e.g., "service.name", "deployment.environment", "k8s.namespace.name").
 - When you know the attribute (e.g., the user says "filter by service" → use service.name, "filter by environment" → use deployment.environment), create the DynamicVariable directly without extra API calls.
-- When the right attribute is NOT obvious, call signoz_get_field_keys with the relevant signal and fieldContext=resource to discover available resource attributes, then pick the best match. Optionally call signoz_get_field_values to preview values and confirm the attribute is populated. Use the discovered attribute as the plugin spec's name.
+- When the right attribute is NOT obvious, call fusescope_get_field_keys with the relevant signal and fieldContext=resource to discover available resource attributes, then pick the best match. Optionally call fusescope_get_field_values to preview values and confirm the attribute is populated. Use the discovered attribute as the plugin spec's name.
 
 Other Variable Types (use only when DYNAMIC is not suitable):
 - CustomVariable (plugin.kind signoz/CustomVariable): for short, fixed enumerations via a comma-separated customValue. Use when the set of values is static and known upfront (e.g., "production,staging,development").
@@ -91,7 +91,7 @@ Applying Variables to Panels [Critical — MUST prompt the user]:
 - Present the current panels as a list (id + title) and offer two choices: (a) apply to all panels, or (b) pick a subset. Wait for the user's selection before generating any queries that reference the variable.
 - Only inject $<var_name> into the filter expressions / queries of panels the user selected; leave the rest untouched.
 - Rationale: variables often apply to a subset of panels (e.g., a service.name filter belongs on RED panels but not on a global latency heatmap). Silent auto-injection produces dashboards that look valid syntactically but over-filter unrelated panels.
-- This applies to both signoz_create_dashboard (introducing a variable at creation time) and signoz_update_dashboard (adding a variable to an existing dashboard).
+- This applies to both fusescope_create_dashboard (introducing a variable at creation time) and fusescope_update_dashboard (adding a variable to an existing dashboard).
 
 Links:
 - Dashboard: https://signoz.io/docs/userguide/manage-dashboards/

@@ -23,7 +23,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants aggregate statistics over logs (counts, rates, averages, percentiles, or grouped/top-N breakdowns) rather than individual log records. Use signoz_search_logs for log rows and message inspection; use signoz_execute_builder_query only for queries this tool cannot express. Log fields are workspace-specific, so read signoz://logs/query-builder-guide and discover unfamiliar keys with signoz_get_field_keys. Defaults to the last 1 hour.",
+          "description": "Use this when the user wants aggregate statistics over logs (counts, rates, averages, percentiles, or grouped/top-N breakdowns) rather than individual log records. Use fusescope_search_logs for log rows and message inspection; use fusescope_execute_builder_query only for queries this tool cannot express. Log fields are workspace-specific, so read fusescope://logs/query-builder-guide and discover unfamiliar keys with fusescope_get_field_keys. Defaults to the last 1 hour.",
           "inputSchema": {
             "properties": {
               "aggregations": {
@@ -44,7 +44,7 @@
                 ]
               },
               "filter": {
-                "description": "Filter expression text in SigNoz search syntax, not {\"expression\": ...} (see signoz://logs/query-builder-guide). Combine conditions with AND, OR, and parentheses. An unknown key may not fail: no rows plus a `key ... not found in metadata` warning means the key is absent. Ambiguous keys default to resource; prefix attribute.\u003ckey\u003e or resource.\u003ckey\u003e to choose. Log keys are workspace-specific; even service.name exists only when the log pipeline sets it. Discover keys and values with signoz_get_field_keys and signoz_get_field_values first. For message text use body CONTAINS 'term'. Only when you don't know which field holds a term, use search('term') for every field or search('term', attribute); scopes (body, attribute, resource, log) are ORed. search() is slow and may be rejected over wide time ranges. There is no key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%', and EXISTS or NOT EXISTS. Example: \"service.name = 'payment-svc' AND severity_text = 'ERROR'\". Combined with service/severity params using AND.",
+                "description": "Filter expression text in SigNoz search syntax, not {\"expression\": ...} (see fusescope://logs/query-builder-guide). Combine conditions with AND, OR, and parentheses. An unknown key may not fail: no rows plus a `key ... not found in metadata` warning means the key is absent. Ambiguous keys default to resource; prefix attribute.\u003ckey\u003e or resource.\u003ckey\u003e to choose. Log keys are workspace-specific; even service.name exists only when the log pipeline sets it. Discover keys and values with fusescope_get_field_keys and fusescope_get_field_values first. For message text use body CONTAINS 'term'. Only when you don't know which field holds a term, use search('term') for every field or search('term', attribute); scopes (body, attribute, resource, log) are ORed. search() is slow and may be rejected over wide time ranges. There is no key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%', and EXISTS or NOT EXISTS. Example: \"service.name = 'payment-svc' AND severity_text = 'ERROR'\". Combined with service/severity params using AND.",
                 "type": "string"
               },
               "functions": {
@@ -94,7 +94,7 @@
                 ]
               },
               "groupBy": {
-                "description": "Field names to group results by, as an array or a comma-separated string (e.g. [\"service.name\", \"severity_text\"] or 'service.name, severity_text'). Leave empty for a single aggregate value. Group by keys signoz_get_field_keys returns; an unknown key can come back as one empty group. A body field (body.\u003cpath\u003e) can be grouped only when signoz_get_field_keys(signal=\"logs\", fieldContext=\"body\") lists it; otherwise SigNoz rejects it with `can be filtered but not selected or grouped` or `field not found`, so filter on it instead.",
+                "description": "Field names to group results by, as an array or a comma-separated string (e.g. [\"service.name\", \"severity_text\"] or 'service.name, severity_text'). Leave empty for a single aggregate value. Group by keys fusescope_get_field_keys returns; an unknown key can come back as one empty group. A body field (body.\u003cpath\u003e) can be grouped only when fusescope_get_field_keys(signal=\"logs\", fieldContext=\"body\") lists it; otherwise SigNoz rejects it with `can be filtered but not selected or grouped` or `field not found`, so filter on it instead.",
                 "items": {
                   "type": "string"
                 },
@@ -133,11 +133,11 @@
                 "type": "string"
               },
               "service": {
-                "description": "Shortcut filter for service name. Equivalent to adding service.name = '\u003cvalue\u003e' to filter. When this workspace's logs lack service.name, the call usually returns no rows with a `key service.name not found in metadata` warning instead of failing; discover keys with signoz_get_field_keys(signal=\"logs\", fieldContext=\"resource\") and filter on an available key instead.",
+                "description": "Shortcut filter for service name. Equivalent to adding service.name = '\u003cvalue\u003e' to filter. When this workspace's logs lack service.name, the call usually returns no rows with a `key service.name not found in metadata` warning instead of failing; discover keys with fusescope_get_field_keys(signal=\"logs\", fieldContext=\"resource\") and filter on an available key instead.",
                 "type": "string"
               },
               "severity": {
-                "description": "Shortcut filter for severity_text, matched in any case and as a prefix, so WARN also matches warning and Warning; pass the short form (ERR, WARN, INFO). Common values include DEBUG, INFO, WARN, ERROR, and FATAL, but they are not an exhaustive enum. Discover the workspace's values with signoz_get_field_values(signal=\"logs\", name=\"severity_text\", fieldContext=\"log\").",
+                "description": "Shortcut filter for severity_text, matched in any case and as a prefix, so WARN also matches warning and Warning; pass the short form (ERR, WARN, INFO). Common values include DEBUG, INFO, WARN, ERROR, and FATAL, but they are not an exhaustive enum. Discover the workspace's values with fusescope_get_field_values(signal=\"logs\", name=\"severity_text\", fieldContext=\"log\").",
                 "type": "string"
               },
               "start": {
@@ -165,7 +165,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_aggregate_logs"
+          "name": "fusescope_aggregate_logs"
         },
         {
           "annotations": {
@@ -174,7 +174,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants custom aggregate statistics over spans (counts, rates, latency percentiles, grouped/top-N breakdowns, or time series) rather than individual span rows or a full trace hierarchy. For the built-in operation table for one traced service, ranked by p99, use signoz_get_service_top_operations. Use signoz_search_traces for raw spans, trace-ID discovery, or one row per trace (such as the most expensive AI traces), and signoz_get_trace_details for one known trace ID. Before calling, read signoz://traces/query-builder-guide; discover unfamiliar workspace fields with signoz_get_field_keys. For the user's LLM, AI agent, token, cost, model, tool-call, or prompt questions (AI observability), set queryType to builder_ai_query and read signoz://ai/query-builder-guide. Defaults to the last 1 hour.",
+          "description": "Use this when the user wants custom aggregate statistics over spans (counts, rates, latency percentiles, grouped/top-N breakdowns, or time series) rather than individual span rows or a full trace hierarchy. For the built-in operation table for one traced service, ranked by p99, use fusescope_get_service_top_operations. Use fusescope_search_traces for raw spans, trace-ID discovery, or one row per trace (such as the most expensive AI traces), and fusescope_get_trace_details for one known trace ID. Before calling, read fusescope://traces/query-builder-guide; discover unfamiliar workspace fields with fusescope_get_field_keys. For the user's LLM, AI agent, token, cost, model, tool-call, or prompt questions (AI observability), set queryType to builder_ai_query and read fusescope://ai/query-builder-guide. Defaults to the last 1 hour.",
           "inputSchema": {
             "properties": {
               "aggregations": {
@@ -202,7 +202,7 @@
                 ]
               },
               "filter": {
-                "description": "Filter expression text in SigNoz search syntax, not {\"expression\": ...} (see signoz://traces/query-builder-guide). search() is logs-only; traces use field predicates. Combine conditions with AND, OR, and parentheses for precedence. An unknown key may not fail: SigNoz can match a guessed attribute and return a `key ... not found in metadata` warning with no rows, so read that warning as an absent key. Keys present in multiple contexts default to resource context; disambiguate with attribute.\u003ckey\u003e, resource.\u003ckey\u003e, or span.\u003ckey\u003e. Every condition needs a key and an operator: there is no full-text search, key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%' and EXISTS or NOT EXISTS. Discover valid keys with signoz_get_field_keys, then confirm values with signoz_get_field_values, before filtering. Examples: \"service.name = 'payment-svc' AND has_error = true\", \"http_method = 'POST' AND (has_error = true OR duration_nano \u003e 1000000000)\". Combined with service/operation/error/duration params using AND.",
+                "description": "Filter expression text in SigNoz search syntax, not {\"expression\": ...} (see fusescope://traces/query-builder-guide). search() is logs-only; traces use field predicates. Combine conditions with AND, OR, and parentheses for precedence. An unknown key may not fail: SigNoz can match a guessed attribute and return a `key ... not found in metadata` warning with no rows, so read that warning as an absent key. Keys present in multiple contexts default to resource context; disambiguate with attribute.\u003ckey\u003e, resource.\u003ckey\u003e, or span.\u003ckey\u003e. Every condition needs a key and an operator: there is no full-text search, key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%' and EXISTS or NOT EXISTS. Discover valid keys with fusescope_get_field_keys, then confirm values with fusescope_get_field_values, before filtering. Examples: \"service.name = 'payment-svc' AND has_error = true\", \"http_method = 'POST' AND (has_error = true OR duration_nano \u003e 1000000000)\". Combined with service/operation/error/duration params using AND.",
                 "type": "string"
               },
               "functions": {
@@ -346,7 +346,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_aggregate_traces"
+          "name": "fusescope_aggregate_traces"
         },
         {
           "annotations": {
@@ -355,7 +355,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants to find high-cardinality labels or attributes on one metric. It returns keys sorted by cardinality count with sample values, helping distinguish unbounded values such as UUIDs from bounded dimensions such as status codes. Do not use it to find dashboard or alert dependencies (signoz_check_metric_usage) or rank metric ingestion (signoz_get_top_metrics). This does not show whether the metric is used; check usage before recommending a drop.",
+          "description": "Use this when the user wants to find high-cardinality labels or attributes on one metric. It returns keys sorted by cardinality count with sample values, helping distinguish unbounded values such as UUIDs from bounded dimensions such as status codes. Do not use it to find dashboard or alert dependencies (fusescope_check_metric_usage) or rank metric ingestion (fusescope_get_top_metrics). This does not show whether the metric is used; check usage before recommending a drop.",
           "inputSchema": {
             "properties": {
               "end": {
@@ -391,7 +391,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_check_metric_cardinality"
+          "name": "fusescope_check_metric_cardinality"
         },
         {
           "annotations": {
@@ -400,7 +400,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user needs to know which dashboards and alerts reference known metric names, especially before dropping or reducing telemetry. It returns dashboards, alerts, and an error for each metric, with up to 50 unique names per call. Do not use it for ingestion ranking (signoz_get_top_metrics) or label cardinality (signoz_check_metric_cardinality). A non-empty per-metric error means that entry is partial and unreliable; never interpret it as proof that the metric is unused.",
+          "description": "Use this when the user needs to know which dashboards and alerts reference known metric names, especially before dropping or reducing telemetry. It returns dashboards, alerts, and an error for each metric, with up to 50 unique names per call. Do not use it for ingestion ranking (fusescope_get_top_metrics) or label cardinality (fusescope_check_metric_cardinality). A non-empty per-metric error means that entry is partial and unreliable; never interpret it as proof that the metric is unused.",
           "inputSchema": {
             "properties": {
               "metricNames": {
@@ -420,7 +420,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_check_metric_usage",
+          "name": "fusescope_check_metric_usage",
           "outputSchema": {
             "additionalProperties": {
               "additionalProperties": false,
@@ -465,7 +465,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants a new SigNoz alert rule; use signoz_update_alert to change an existing rule. Supports v2alpha1 threshold, PromQL, and metric anomaly alerts. Read signoz://alert/instructions and signoz://alert/examples before composing any payload, unless already read in the same prepared operation; for PromQL also read signoz://promql/instructions. For direct routing, reuse a fully paginated signoz_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If none fits, ask the user or offer signoz_create_notification_channel with settings the user provides; never guess or create automatically. SigNoz rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
+          "description": "Use this when the user wants a new SigNoz alert rule; use fusescope_update_alert to change an existing rule. Supports v2alpha1 threshold, PromQL, and metric anomaly alerts. Read fusescope://alert/instructions and fusescope://alert/examples before composing any payload, unless already read in the same prepared operation; for PromQL also read fusescope://promql/instructions. For direct routing, reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If none fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never guess or create automatically. SigNoz rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
           "inputSchema": {
             "properties": {
               "alert": {
@@ -764,7 +764,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_create_alert"
+          "name": "fusescope_create_alert"
         },
         {
           "annotations": {
@@ -773,7 +773,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants a custom SigNoz dashboard built from a complete title, layout, variables, and panel configuration; use signoz_import_dashboard instead when a curated template fits. Use signoz_create_view instead to save one Explorer query. Before composing the payload, read signoz://dashboard/instructions, signoz://dashboard/widgets-instructions, signoz://dashboard/widgets-examples, and signoz://dashboard/examples (complete worked dashboards), then follow the query-specific resource linked by the widget guide.",
+          "description": "Use this when the user wants a custom SigNoz dashboard built from a complete title, layout, variables, and panel configuration; use fusescope_import_dashboard instead when a curated template fits. Use fusescope_create_view instead to save one Explorer query. Before composing the payload, read fusescope://dashboard/instructions, fusescope://dashboard/widgets-instructions, fusescope://dashboard/widgets-examples, and fusescope://dashboard/examples (complete worked dashboards), then follow the query-specific resource linked by the widget guide.",
           "inputSchema": {
             "$defs": {
               "CommonJSONRef": {
@@ -4637,7 +4637,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_create_dashboard"
+          "name": "fusescope_create_dashboard"
         },
         {
           "annotations": {
@@ -4646,7 +4646,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants a new notification channel; use signoz_update_notification_channel to replace an existing one. The payload is config: {kind, spec} plus name, or generateName=true with displayName. Read signoz://notification-channel/examples for every kind SigNoz accepts, each kind's spec fields, and a worked payload per kind, unless already read in the same prepared operation. SigNoz rejects an unknown kind, an unknown or missing spec field, and a duplicate name, each with the exact requirement. Minimal example: {\"name\":\"ops-hook\",\"config\":{\"kind\":\"webhook\",\"spec\":{\"url\":\"https://example.com/hook\"}}}. name is an immutable DNS-1123 label; alert routing references displayName (SigNoz defaults it from name). test defaults to false: ask whether the user wants one live test notification and set test=true only if they agree; the channel remains created if the test fails.",
+          "description": "Use this when the user wants a new notification channel; use fusescope_update_notification_channel to replace an existing one. The payload is config: {kind, spec} plus name, or generateName=true with displayName. Read fusescope://notification-channel/examples for every kind SigNoz accepts, each kind's spec fields, and a worked payload per kind, unless already read in the same prepared operation. SigNoz rejects an unknown kind, an unknown or missing spec field, and a duplicate name, each with the exact requirement. Minimal example: {\"name\":\"ops-hook\",\"config\":{\"kind\":\"webhook\",\"spec\":{\"url\":\"https://example.com/hook\"}}}. name is an immutable DNS-1123 label; alert routing references displayName (SigNoz defaults it from name). test defaults to false: ask whether the user wants one live test notification and set test=true only if they agree; the channel remains created if the test fails.",
           "inputSchema": {
             "additionalProperties": false,
             "properties": {
@@ -4693,7 +4693,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_create_notification_channel"
+          "name": "fusescope_create_notification_channel"
         },
         {
           "annotations": {
@@ -4702,7 +4702,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants to save one reusable query spec for Logs, Traces, Metrics, or Cost Meter; use signoz_create_dashboard for a multi-widget dashboard. Before composing any payload, you must read both signoz://view/instructions and signoz://view/examples. Do not send server-populated IDs or timestamps.",
+          "description": "Use this when the user wants to save one reusable query spec for Logs, Traces, Metrics, or Cost Meter; use fusescope_create_dashboard for a multi-widget dashboard. Before composing any payload, you must read both fusescope://view/instructions and fusescope://view/examples. Do not send server-populated IDs or timestamps.",
           "inputSchema": {
             "properties": {
               "generateName": {
@@ -4863,7 +4863,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_create_view"
+          "name": "fusescope_create_view"
         },
         {
           "annotations": {
@@ -4872,11 +4872,11 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user explicitly wants to permanently delete a configured alert rule. Resolve its ID with signoz_list_alert_rules and confirm the exact rule first. If both steps are already complete, call this tool directly without repeating list/get preflight. Do not use it to disable a rule or clear a firing instance.",
+          "description": "Use this when the user explicitly wants to permanently delete a configured alert rule. Resolve its ID with fusescope_list_alert_rules and confirm the exact rule first. If both steps are already complete, call this tool directly without repeating list/get preflight. Do not use it to disable a rule or clear a firing instance.",
           "inputSchema": {
             "properties": {
               "id": {
-                "description": "Alert rule UUIDv7. Required; obtain it from signoz_list_alert_rules.",
+                "description": "Alert rule UUIDv7. Required; obtain it from fusescope_list_alert_rules.",
                 "type": "string"
               },
               "searchContext": {
@@ -4887,7 +4887,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_delete_alert"
+          "name": "fusescope_delete_alert"
         },
         {
           "annotations": {
@@ -4896,11 +4896,11 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user has confirmed they want to permanently delete one user dashboard. The deletion is irreversible. Use signoz_list_dashboards to discover the id when needed. Only user dashboards can be deleted; upstream returns a coded denial for others. Use signoz_delete_view for saved Explorer views.",
+          "description": "Use this when the user has confirmed they want to permanently delete one user dashboard. The deletion is irreversible. Use fusescope_list_dashboards to discover the id when needed. Only user dashboards can be deleted; upstream returns a coded denial for others. Use fusescope_delete_view for saved Explorer views.",
           "inputSchema": {
             "properties": {
               "id": {
-                "description": "Dashboard id to delete. Required; use signoz_list_dashboards to discover it. Do not send uuid.",
+                "description": "Dashboard id to delete. Required; use fusescope_list_dashboards to discover it. Do not send uuid.",
                 "type": "string"
               },
               "searchContext": {
@@ -4913,7 +4913,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_delete_dashboard"
+          "name": "fusescope_delete_dashboard"
         },
         {
           "annotations": {
@@ -4950,11 +4950,11 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user has confirmed they want to permanently delete one saved view. The deletion is irreversible. Use signoz_list_views to discover the UUID when needed; do not use this for dashboards; delete those with signoz_delete_dashboard.",
+          "description": "Use this when the user has confirmed they want to permanently delete one saved view. The deletion is irreversible. Use fusescope_list_views to discover the UUID when needed; do not use this for dashboards; delete those with fusescope_delete_dashboard.",
           "inputSchema": {
             "properties": {
               "id": {
-                "description": "UUID of the saved view to delete. Required; use signoz_list_views to discover it.",
+                "description": "UUID of the saved view to delete. Required; use fusescope_list_views to discover it.",
                 "type": "string"
               },
               "searchContext": {
@@ -4965,7 +4965,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_delete_view"
+          "name": "fusescope_delete_view"
         },
         {
           "annotations": {
@@ -4974,7 +4974,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this only when dedicated log, trace, and metric tools cannot express the request, including multi-query requests, formulas, PromQL, and ClickHouse SQL. Use signoz_search_logs/signoz_search_traces for raw rows, signoz_aggregate_logs/signoz_aggregate_traces for grouped or top-N analysis, and signoz_query_metrics for ordinary metrics queries. Read the matching signoz://logs/query-builder-guide, signoz://traces/query-builder-guide, signoz://ai/query-builder-guide, or signoz://metrics-aggregation-guide; formulas require the metrics guide, and PromQL requires signoz://promql/instructions. signoz://query-builder/examples holds a complete request per query type and request type. Leave limit unset on each builder_query a formula references, because SigNoz applies an input's limit before the formula runs and drops series from its result. Give every other builder_query and each builder_formula a positive limit (100 for results) and non-empty spec.order (not dashboard orderBy); the server fills in omitted ones.",
+          "description": "Use this only when dedicated log, trace, and metric tools cannot express the request, including multi-query requests, formulas, PromQL, and ClickHouse SQL. Use fusescope_search_logs/fusescope_search_traces for raw rows, fusescope_aggregate_logs/fusescope_aggregate_traces for grouped or top-N analysis, and fusescope_query_metrics for ordinary metrics queries. Read the matching fusescope://logs/query-builder-guide, fusescope://traces/query-builder-guide, fusescope://ai/query-builder-guide, or fusescope://metrics-aggregation-guide; formulas require the metrics guide, and PromQL requires fusescope://promql/instructions. fusescope://query-builder/examples holds a complete request per query type and request type. Leave limit unset on each builder_query a formula references, because SigNoz applies an input's limit before the formula runs and drops series from its result. Give every other builder_query and each builder_formula a positive limit (100 for results) and non-empty spec.order (not dashboard orderBy); the server fills in omitted ones.",
           "inputSchema": {
             "properties": {
               "query": {
@@ -5099,7 +5099,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_execute_builder_query"
+          "name": "fusescope_execute_builder_query"
         },
         {
           "annotations": {
@@ -5108,7 +5108,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this after signoz_search_docs, or when an exact official SigNoz docs URL or /docs/... path is known, to return one page's full Markdown or a requested heading. Do not use it to discover pages or query live tenant data; use signoz_search_docs for topical discovery.",
+          "description": "Use this after fusescope_search_docs, or when an exact official SigNoz docs URL or /docs/... path is known, to return one page's full Markdown or a requested heading. Do not use it to discover pages or query live tenant data; use fusescope_search_docs for topical discovery.",
           "inputSchema": {
             "properties": {
               "heading": {
@@ -5129,7 +5129,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_fetch_doc",
+          "name": "fusescope_fetch_doc",
           "outputSchema": {
             "additionalProperties": false,
             "properties": {
@@ -5244,7 +5244,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_get_ai_pricing"
+          "name": "fusescope_get_ai_pricing"
         },
         {
           "annotations": {
@@ -5253,11 +5253,11 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants one configured alert rule's full definition, or before signoz_update_alert when a complete current definition is not already available for the prepared operation. Reuse a still-current definition fetched for that operation instead of repeating this preflight. It requires a known rule ID; use signoz_list_alert_rules to discover IDs. Do not use it for current alert instances or firing history: use signoz_list_alerts or signoz_get_alert_history.",
+          "description": "Use this when the user wants one configured alert rule's full definition, or before fusescope_update_alert when a complete current definition is not already available for the prepared operation. Reuse a still-current definition fetched for that operation instead of repeating this preflight. It requires a known rule ID; use fusescope_list_alert_rules to discover IDs. Do not use it for current alert instances or firing history: use fusescope_list_alerts or fusescope_get_alert_history.",
           "inputSchema": {
             "properties": {
               "id": {
-                "description": "Alert rule ID (UUIDv7 on v2 servers). Required; obtain it from signoz_list_alert_rules.",
+                "description": "Alert rule ID (UUIDv7 on v2 servers). Required; obtain it from fusescope_list_alert_rules.",
                 "type": "string"
               },
               "searchContext": {
@@ -5268,7 +5268,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_get_alert"
+          "name": "fusescope_get_alert"
         },
         {
           "annotations": {
@@ -5277,7 +5277,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants alert firing history or the state-transition timeline of one configured rule; use signoz_list_alerts for current instances and signoz_get_alert for the rule definition. It requires a rule ID from signoz_list_alert_rules, defaults to the last 6 hours, and supports state/filter narrowing. For the next page, pass data.nextCursor as cursor and repeat the original filters, time range, and order.",
+          "description": "Use this when the user wants alert firing history or the state-transition timeline of one configured rule; use fusescope_list_alerts for current instances and fusescope_get_alert for the rule definition. It requires a rule ID from fusescope_list_alert_rules, defaults to the last 6 hours, and supports state/filter narrowing. For the next page, pass data.nextCursor as cursor and repeat the original filters, time range, and order.",
           "inputSchema": {
             "properties": {
               "cursor": {
@@ -5296,7 +5296,7 @@
                 "type": "string"
               },
               "id": {
-                "description": "Alert rule ID. Required; obtain it from signoz_list_alert_rules.",
+                "description": "Alert rule ID. Required; obtain it from fusescope_list_alert_rules.",
                 "type": "string"
               },
               "limit": {
@@ -5340,7 +5340,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_get_alert_history"
+          "name": "fusescope_get_alert_history"
         },
         {
           "annotations": {
@@ -5349,11 +5349,11 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants the complete definition of one known tenant dashboard, including its layout, variables, panels, and queries. Use signoz_list_dashboards first when the id is unknown. Do not use this to browse: signoz_list_dashboards lists tenant summaries and signoz_list_dashboard_templates lists curated templates. Get-by-id can return source user, system, or integration; keep source as returned. Only source=user dashboards can be updated, patched, or deleted; system and integration writes fail with a coded upstream error.",
+          "description": "Use this when the user wants the complete definition of one known tenant dashboard, including its layout, variables, panels, and queries. Use fusescope_list_dashboards first when the id is unknown. Do not use this to browse: fusescope_list_dashboards lists tenant summaries and fusescope_list_dashboard_templates lists curated templates. Get-by-id can return source user, system, or integration; keep source as returned. Only source=user dashboards can be updated, patched, or deleted; system and integration writes fail with a coded upstream error.",
           "inputSchema": {
             "properties": {
               "id": {
-                "description": "Known dashboard id. Required; use signoz_list_dashboards to discover it. Do not send uuid.",
+                "description": "Known dashboard id. Required; use fusescope_list_dashboards to discover it. Do not send uuid.",
                 "type": "string"
               },
               "searchContext": {
@@ -5366,7 +5366,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_get_dashboard"
+          "name": "fusescope_get_dashboard"
         },
         {
           "annotations": {
@@ -5375,7 +5375,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user needs to discover field names available for filtering or grouping metrics, traces, or logs. It returns keys, not their observed values, scoped by signal and optional metric, context, or data type. SigNoz sets data.complete=false when it truncated the key list; narrow with searchText or fieldContext to see more. For AI trace fields (per-trace cost, tokens, call counts, gen_ai.*), set queryType=builder_ai_query. After choosing a key, use signoz_get_field_values to discover valid values.",
+          "description": "Use this when the user needs to discover field names available for filtering or grouping metrics, traces, or logs. It returns keys, not their observed values, scoped by signal and optional metric, context, or data type. SigNoz sets data.complete=false when it truncated the key list; narrow with searchText or fieldContext to see more. For AI trace fields (per-trace cost, tokens, call counts, gen_ai.*), set queryType=builder_ai_query. After choosing a key, use fusescope_get_field_values to discover valid values.",
           "inputSchema": {
             "properties": {
               "fieldContext": {
@@ -5436,7 +5436,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_get_field_keys"
+          "name": "fusescope_get_field_keys"
         },
         {
           "annotations": {
@@ -5445,7 +5445,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user knows a field key and needs its observed values for a metrics, traces, or logs filter. It returns values, not field names; use signoz_get_field_keys when the key is unknown. Match signal and fieldContext to the query that will use the value. SigNoz sets data.complete=false when it truncated the value list; narrow with searchText to see more.",
+          "description": "Use this when the user knows a field key and needs its observed values for a metrics, traces, or logs filter. It returns values, not field names; use fusescope_get_field_keys when the key is unknown. Match signal and fieldContext to the query that will use the value. SigNoz sets data.complete=false when it truncated the value list; narrow with searchText to see more.",
           "inputSchema": {
             "properties": {
               "fieldContext": {
@@ -5497,7 +5497,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_get_field_values"
+          "name": "fusescope_get_field_values"
         },
         {
           "annotations": {
@@ -5506,7 +5506,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Get one notification channel by ID, including its complete provider config. Use signoz_list_notification_channels to discover IDs. The response preserves backend-owned fields so an update can retain the full current configuration.",
+          "description": "Get one notification channel by ID, including its complete provider config. Use fusescope_list_notification_channels to discover IDs. The response preserves backend-owned fields so an update can retain the full current configuration.",
           "inputSchema": {
             "additionalProperties": false,
             "properties": {
@@ -5525,7 +5525,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_get_notification_channel"
+          "name": "fusescope_get_notification_channel"
         },
         {
           "annotations": {
@@ -5545,7 +5545,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_get_org_overview",
+          "name": "fusescope_get_org_overview",
           "outputSchema": {
             "additionalProperties": false,
             "properties": {
@@ -6366,7 +6366,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants the built-in operation table for one traced service in a time window. It ranks operation names by p99 latency and returns p50, p95, p99, call count, and error count. Use signoz_list_services to discover active traced service names. For custom aggregation, grouping, time series, cross-service comparison, or arbitrary trace filters, use signoz_aggregate_traces instead. The optional tags parameter is a JSON-encoded TagQueryParam array.",
+          "description": "Use this when the user wants the built-in operation table for one traced service in a time window. It ranks operation names by p99 latency and returns p50, p95, p99, call count, and error count. Use fusescope_list_services to discover active traced service names. For custom aggregation, grouping, time series, cross-service comparison, or arbitrary trace filters, use fusescope_aggregate_traces instead. The optional tags parameter is a JSON-encoded TagQueryParam array.",
           "inputSchema": {
             "properties": {
               "end": {
@@ -6381,7 +6381,7 @@
                 "type": "string"
               },
               "service": {
-                "description": "Exact traced service name, typically from signoz_list_services.",
+                "description": "Exact traced service name, typically from fusescope_list_services.",
                 "type": "string"
               },
               "start": {
@@ -6406,7 +6406,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_get_service_top_operations"
+          "name": "fusescope_get_service_top_operations"
         },
         {
           "annotations": {
@@ -6415,7 +6415,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants to know which metrics drive ingestion volume or cost. It returns a fixed top 100 ranked by ingested sample count with pre-computed percentages for the requested window. Do not use it for metric values or trends (signoz_query_metrics), dashboard or alert dependencies (signoz_check_metric_usage), or label cardinality (signoz_check_metric_cardinality). This ranking has no offset pagination.",
+          "description": "Use this when the user wants to know which metrics drive ingestion volume or cost. It returns a fixed top 100 ranked by ingested sample count with pre-computed percentages for the requested window. Do not use it for metric values or trends (fusescope_query_metrics), dashboard or alert dependencies (fusescope_check_metric_usage), or label cardinality (fusescope_check_metric_cardinality). This ranking has no offset pagination.",
           "inputSchema": {
             "properties": {
               "end": {
@@ -6445,7 +6445,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_get_top_metrics"
+          "name": "fusescope_get_top_metrics"
         },
         {
           "annotations": {
@@ -6454,7 +6454,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user already has a known trace ID and wants that trace's spans, metadata, and hierarchy. If the ID is unknown, discover it with signoz_search_traces first. SigNoz locates the trace by its ID alone, so no time window is needed; an ID SigNoz does not know returns no spans. Do not use this for filtering many spans or aggregate analysis.",
+          "description": "Use this when the user already has a known trace ID and wants that trace's spans, metadata, and hierarchy. If the ID is unknown, discover it with fusescope_search_traces first. SigNoz locates the trace by its ID alone, so no time window is needed; an ID SigNoz does not know returns no spans. Do not use this for filtering many spans or aggregate analysis.",
           "inputSchema": {
             "properties": {
               "includeSpans": {
@@ -6469,7 +6469,7 @@
                 "type": "string"
               },
               "traceId": {
-                "description": "Known trace ID to retrieve. Discover it with signoz_search_traces when the user has not supplied one.",
+                "description": "Known trace ID to retrieve. Discover it with fusescope_search_traces when the user has not supplied one.",
                 "type": "string"
               }
             },
@@ -6478,7 +6478,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_get_trace_details"
+          "name": "fusescope_get_trace_details"
         },
         {
           "annotations": {
@@ -6487,11 +6487,11 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants the complete definition of one known saved view. Use signoz_list_views first when its UUID is unknown. The returned data object is the required base for signoz_update_view because updates fully replace a view. Do not use this for multi-widget dashboards; use signoz_get_dashboard.",
+          "description": "Use this when the user wants the complete definition of one known saved view. Use fusescope_list_views first when its UUID is unknown. The returned data object is the required base for fusescope_update_view because updates fully replace a view. Do not use this for multi-widget dashboards; use fusescope_get_dashboard.",
           "inputSchema": {
             "properties": {
               "id": {
-                "description": "Saved view UUID. Use signoz_list_views to discover IDs. Required.",
+                "description": "Saved view UUID. Use fusescope_list_views to discover IDs. Required.",
                 "type": "string"
               },
               "searchContext": {
@@ -6502,7 +6502,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_get_view"
+          "name": "fusescope_get_view"
         },
         {
           "annotations": {
@@ -6511,11 +6511,11 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants a new dashboard from a curated SigNoz/dashboards template, not a custom configuration. Pass a known relative template path; if it is unknown, call signoz_list_dashboard_templates first. The server fetches the selected template and creates the dashboard (the v2 API validates it). Use signoz_create_dashboard for a custom layout or queries.",
+          "description": "Use this when the user wants a new dashboard from a curated SigNoz/dashboards template, not a custom configuration. Pass a known relative template path; if it is unknown, call fusescope_list_dashboard_templates first. The server fetches the selected template and creates the dashboard (the v2 API validates it). Use fusescope_create_dashboard for a custom layout or queries.",
           "inputSchema": {
             "properties": {
               "path": {
-                "description": "Relative JSON path from signoz_list_dashboard_templates, for example hostmetrics/hostmetrics.json. Do not pass a URL or absolute path.",
+                "description": "Relative JSON path from fusescope_list_dashboard_templates, for example hostmetrics/hostmetrics.json. Do not pass a URL or absolute path.",
                 "type": "string"
               },
               "searchContext": {
@@ -6528,7 +6528,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_import_dashboard"
+          "name": "fusescope_import_dashboard"
         },
         {
           "annotations": {
@@ -6537,7 +6537,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user asks why AI spans show no model, tokens, or cost, or which vendor attributes SigNoz maps to gen_ai.* keys. At ingest, a mapping group runs on spans whose attribute keys contain one of its condition substrings, and each mapper fills one gen_ai.* key from the first source key present, by priority. Mappings apply only to spans ingested afterwards and are changed on the Attribute Mapping tab of AI Observability in SigNoz. To see how a sample span maps, use signoz_test_ai_attribute_mapping; for spans with a model but no cost, use signoz_get_ai_pricing. If incomplete is true, failedGroups names the groups whose mappers could not be read.",
+          "description": "Use this when the user asks why AI spans show no model, tokens, or cost, or which vendor attributes SigNoz maps to gen_ai.* keys. At ingest, a mapping group runs on spans whose attribute keys contain one of its condition substrings, and each mapper fills one gen_ai.* key from the first source key present, by priority. Mappings apply only to spans ingested afterwards and are changed on the Attribute Mapping tab of AI Observability in SigNoz. To see how a sample span maps, use fusescope_test_ai_attribute_mapping; for spans with a model but no cost, use fusescope_get_ai_pricing. If incomplete is true, failedGroups names the groups whose mappers could not be read.",
           "inputSchema": {
             "properties": {
               "searchContext": {
@@ -6548,7 +6548,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_list_ai_attribute_mappings"
+          "name": "fusescope_list_ai_attribute_mappings"
         },
         {
           "annotations": {
@@ -6557,7 +6557,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants configured alert-rule summaries, including inactive/OK and disabled rules. It returns rule IDs, names, types, state, severity, labels, and timestamps; use signoz_get_alert with an ID for the full definition. Do not use it for current firing/silenced/inhibited instances: use signoz_list_alerts. To find rules by name, label, severity, or state, narrow with filter and states instead of paging through every rule; paginate with limit and offset.",
+          "description": "Use this when the user wants configured alert-rule summaries, including inactive/OK and disabled rules. It returns rule IDs, names, types, state, severity, labels, and timestamps; use fusescope_get_alert with an ID for the full definition. Do not use it for current firing/silenced/inhibited instances: use fusescope_list_alerts. To find rules by name, label, severity, or state, narrow with filter and states instead of paging through every rule; paginate with limit and offset.",
           "inputSchema": {
             "properties": {
               "filter": {
@@ -6610,7 +6610,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_list_alert_rules",
+          "name": "fusescope_list_alert_rules",
           "outputSchema": {
             "additionalProperties": false,
             "properties": {
@@ -6716,7 +6716,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants current firing, silenced, or inhibited Alertmanager alert instances and their state, severity, timing, and rule IDs. Do not use it for configured rules or history: use signoz_list_alert_rules for rule summaries, signoz_get_alert for one definition, or signoz_get_alert_history for one rule's timeline. Filter by alert labels, state, or receiver before paginating.",
+          "description": "Use this when the user wants current firing, silenced, or inhibited Alertmanager alert instances and their state, severity, timing, and rule IDs. Do not use it for configured rules or history: use fusescope_list_alert_rules for rule summaries, fusescope_get_alert for one definition, or fusescope_get_alert_history for one rule's timeline. Filter by alert labels, state, or receiver before paginating.",
           "inputSchema": {
             "properties": {
               "active": {
@@ -6772,7 +6772,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_list_alerts",
+          "name": "fusescope_list_alerts",
           "outputSchema": {
             "additionalProperties": false,
             "properties": {
@@ -6860,7 +6860,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants to browse curated dashboard templates or discover a path for signoz_import_dashboard. It returns the matching bundled templates with id, title, path, description, category, and keywords, plus their total. Pass searchText with the technology the user named; omit it only to browse the full catalog. It does not list dashboards already created in the tenant; use signoz_list_dashboards for those.",
+          "description": "Use this when the user wants to browse curated dashboard templates or discover a path for fusescope_import_dashboard. It returns the matching bundled templates with id, title, path, description, category, and keywords, plus their total. Pass searchText with the technology the user named; omit it only to browse the full catalog. It does not list dashboards already created in the tenant; use fusescope_list_dashboards for those.",
           "inputSchema": {
             "properties": {
               "searchContext": {
@@ -6875,7 +6875,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_list_dashboard_templates"
+          "name": "fusescope_list_dashboard_templates"
         },
         {
           "annotations": {
@@ -6884,11 +6884,11 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants to discover tenant dashboards, browse their summaries, or find a dashboard id. It returns names, descriptions, tags, timestamps, source, and a total count, not panel/query definitions; use signoz_get_dashboard for one full definition. source is user or integration; only user dashboards can be updated, patched, or deleted. source is not a list-filter column: filter by name, description, tags, creator, timestamps, or locked state, then distinguish user vs integration client-side across pages. When looking for a specific dashboard, page by raising offset by limit until you have covered total before concluding it is absent.",
+          "description": "Use this when the user wants to discover tenant dashboards, browse their summaries, or find a dashboard id. It returns names, descriptions, tags, timestamps, source, and a total count, not panel/query definitions; use fusescope_get_dashboard for one full definition. source is user or integration; only user dashboards can be updated, patched, or deleted. source is not a list-filter column: filter by name, description, tags, creator, timestamps, or locked state, then distinguish user vs integration client-side across pages. When looking for a specific dashboard, page by raising offset by limit until you have covered total before concluding it is absent.",
           "inputSchema": {
             "properties": {
               "filter": {
-                "description": "Optional server-side filter over dashboard metadata (name, description, tags, creator, timestamps, locked state); omit to list all. Read signoz://dashboard/list-filter-guide for the filter DSL grammar, per-key operators, value formats, and examples. Example: \"name CONTAINS 'overview' AND locked = true\".",
+                "description": "Optional server-side filter over dashboard metadata (name, description, tags, creator, timestamps, locked state); omit to list all. Read fusescope://dashboard/list-filter-guide for the filter DSL grammar, per-key operators, value formats, and examples. Example: \"name CONTAINS 'overview' AND locked = true\".",
                 "type": "string"
               },
               "limit": {
@@ -6932,7 +6932,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_list_dashboards"
+          "name": "fusescope_list_dashboards"
         },
         {
           "annotations": {
@@ -6941,7 +6941,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user needs to discover metric names or inspect catalog metadata such as type, temporality, unit, and monotonicity. It lists metrics active in the requested window; searchText filters names by substring. Do not use it for metric values or trends; use signoz_query_metrics, which can query a known exact name directly and auto-fetch missing metadata. Use source=\"meter\" only for Cost Meter metrics. Results have a limit but no offset pagination, so narrow the search if the cap is reached.",
+          "description": "Use this when the user needs to discover metric names or inspect catalog metadata such as type, temporality, unit, and monotonicity. It lists metrics active in the requested window; searchText filters names by substring. Do not use it for metric values or trends; use fusescope_query_metrics, which can query a known exact name directly and auto-fetch missing metadata. Use source=\"meter\" only for Cost Meter metrics. Results have a limit but no offset pagination, so narrow the search if the cap is reached.",
           "inputSchema": {
             "properties": {
               "end": {
@@ -6987,7 +6987,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_list_metrics"
+          "name": "fusescope_list_metrics"
         },
         {
           "annotations": {
@@ -6996,7 +6996,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "List notification channels as configuration-free summaries. Use query and kind to filter before paging; total counts every matching channel. Use signoz_get_notification_channel with an ID to read the complete provider configuration.",
+          "description": "List notification channels as configuration-free summaries. Use query and kind to filter before paging; total counts every matching channel. Use fusescope_get_notification_channel with an ID to read the complete provider configuration.",
           "inputSchema": {
             "additionalProperties": false,
             "properties": {
@@ -7050,7 +7050,7 @@
             },
             "type": "object"
           },
-          "name": "signoz_list_notification_channels"
+          "name": "fusescope_list_notification_channels"
         },
         {
           "annotations": {
@@ -7059,7 +7059,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants APM services with trace activity and their call or latency summaries in a time window. It returns traced-service records sorted by name and paginated; absence means no trace activity in that window, not that a matching service.name never appears in logs. For log values use signoz_get_field_values with signal=\"logs\" and name=\"service.name\"; for one service's operations use signoz_get_service_top_operations. Follow pagination.nextOffset until hasMore=false before concluding a traced service is absent.",
+          "description": "Use this when the user wants APM services with trace activity and their call or latency summaries in a time window. It returns traced-service records sorted by name and paginated; absence means no trace activity in that window, not that a matching service.name never appears in logs. For log values use fusescope_get_field_values with signal=\"logs\" and name=\"service.name\"; for one service's operations use fusescope_get_service_top_operations. Follow pagination.nextOffset until hasMore=false before concluding a traced service is absent.",
           "inputSchema": {
             "properties": {
               "end": {
@@ -7105,7 +7105,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_list_services"
+          "name": "fusescope_list_services"
         },
         {
           "annotations": {
@@ -7114,7 +7114,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants to discover saved views or find a view UUID for the Logs, Traces, Metrics, or Cost Meter explorer pages. A view stores one query spec; it is not a multi-widget dashboard. Apply name filters before pagination, and follow pagination.nextOffset while pagination.hasMore is true before concluding a view is absent. Use signoz_get_view for one full definition.",
+          "description": "Use this when the user wants to discover saved views or find a view UUID for the Logs, Traces, Metrics, or Cost Meter explorer pages. A view stores one query spec; it is not a multi-widget dashboard. Apply name filters before pagination, and follow pagination.nextOffset while pagination.hasMore is true before concluding a view is absent. Use fusescope_get_view for one full definition.",
           "inputSchema": {
             "properties": {
               "limit": {
@@ -7149,7 +7149,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_list_views"
+          "name": "fusescope_list_views"
         },
         {
           "annotations": {
@@ -7158,7 +7158,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Apply a partial update to a v2 dashboard using an RFC 6902 JSON Patch, without re-sending the whole dashboard. Supply the dashboard 'id' and 'patch' (an array of {op, path, value} operations). Paths are JSON Pointers into the dashboard's postable shape, e.g. /spec/display/name, /spec/panels/\u003cpanelId\u003e, /spec/panels/\u003cpanelId\u003e/spec/queries/0, /spec/variables/0, /tags/-. Prefer this over signoz_update_dashboard for targeted changes (renaming, adding/editing one panel or query, tweaking a variable); it is far cheaper than rebuilding the full dashboard. Apply is lenient (remove on a missing path is a no-op; add creates missing parents) but the result is still validated; locked dashboards are rejected. Read signoz://dashboard/patch-instructions for worked recipes and exact paths (e.g. adding a panel takes two ops).",
+          "description": "Apply a partial update to a v2 dashboard using an RFC 6902 JSON Patch, without re-sending the whole dashboard. Supply the dashboard 'id' and 'patch' (an array of {op, path, value} operations). Paths are JSON Pointers into the dashboard's postable shape, e.g. /spec/display/name, /spec/panels/\u003cpanelId\u003e, /spec/panels/\u003cpanelId\u003e/spec/queries/0, /spec/variables/0, /tags/-. Prefer this over fusescope_update_dashboard for targeted changes (renaming, adding/editing one panel or query, tweaking a variable); it is far cheaper than rebuilding the full dashboard. Apply is lenient (remove on a missing path is a no-op; add creates missing parents) but the result is still validated; locked dashboards are rejected. Read fusescope://dashboard/patch-instructions for worked recipes and exact paths (e.g. adding a panel takes two ops).",
           "inputSchema": {
             "$defs": {
               "DashboardtypesJSONPatchOperation": {
@@ -7227,7 +7227,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_patch_dashboard"
+          "name": "fusescope_patch_dashboard"
         },
         {
           "annotations": {
@@ -7236,7 +7236,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants metric values, trends, breakdowns, or formulas. It returns scalar or time-series results, applies metric-aware aggregation defaults, and reports the decisions used. If the exact metricName is known, call this directly: when metricType is omitted, type, temporality, and monotonicity are auto-fetched together. Use signoz_list_metrics only to discover names or inspect catalog metadata; use signoz_execute_builder_query for complex multi-query requests this tool cannot express. Standalone and formula results are capped at the top 100; formula inputs are not limited. Grouped time-series top-N is ranked over the whole window. Read signoz://metrics-aggregation-guide for rules and examples.",
+          "description": "Use this when the user wants metric values, trends, breakdowns, or formulas. It returns scalar or time-series results, applies metric-aware aggregation defaults, and reports the decisions used. If the exact metricName is known, call this directly: when metricType is omitted, type, temporality, and monotonicity are auto-fetched together. Use fusescope_list_metrics only to discover names or inspect catalog metadata; use fusescope_execute_builder_query for complex multi-query requests this tool cannot express. Standalone and formula results are capped at the top 100; formula inputs are not limited. Grouped time-series top-N is ranked over the whole window. Read fusescope://metrics-aggregation-guide for rules and examples.",
           "inputSchema": {
             "properties": {
               "end": {
@@ -7366,7 +7366,7 @@
                 ]
               },
               "groupBy": {
-                "description": "Label names to group by, as an array or a comma-separated string (e.g. [\"service.name\", \"k8s.pod.name\"]). Metric labels hold resource and data-point attributes in one set, so names need no context prefix. Discover them with signoz_get_field_keys (signal=\"metrics\", metricName).",
+                "description": "Label names to group by, as an array or a comma-separated string (e.g. [\"service.name\", \"k8s.pod.name\"]). Metric labels hold resource and data-point attributes in one set, so names need no context prefix. Discover them with fusescope_get_field_keys (signal=\"metrics\", metricName).",
                 "items": {
                   "type": "string"
                 },
@@ -7464,7 +7464,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_query_metrics"
+          "name": "fusescope_query_metrics"
         },
         {
           "annotations": {
@@ -7473,7 +7473,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Search official SigNoz documentation and return ranked pages with URLs and snippets for product, setup, instrumentation, configuration, API, deployment, or troubleshooting questions. Send 2 to 6 keywords for one topic and keep product and technology names as the user wrote them; split multi-intent questions into separate calls. If the top result is off-topic, retry with fewer or different terms. Do not use for live tenant data; use signoz_fetch_doc for the full content of a selected result or exact docs URL.",
+          "description": "Search official SigNoz documentation and return ranked pages with URLs and snippets for product, setup, instrumentation, configuration, API, deployment, or troubleshooting questions. Send 2 to 6 keywords for one topic and keep product and technology names as the user wrote them; split multi-intent questions into separate calls. If the top result is off-topic, retry with fewer or different terms. Do not use for live tenant data; use fusescope_fetch_doc for the full content of a selected result or exact docs URL.",
           "inputSchema": {
             "properties": {
               "limit": {
@@ -7500,7 +7500,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_search_docs",
+          "name": "fusescope_search_docs",
           "outputSchema": {
             "additionalProperties": false,
             "properties": {
@@ -7565,7 +7565,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants individual log records or messages matching text, service, severity, or field filters. It returns paginated rows, not counts, trends, or grouped breakdowns; use signoz_aggregate_logs for those, and signoz_execute_builder_query only for queries this tool cannot express. Rows carry a default set of log columns; to include other attributes, such as service.name, name them in selectFields. A field missing from a row was not selected. You do not need the guide when using only searchText, service, severity, time, or pagination. Read signoz://logs/query-builder-guide before filtering on unfamiliar fields. Defaults to the last 1 hour.",
+          "description": "Use this when the user wants individual log records or messages matching text, service, severity, or field filters. It returns paginated rows, not counts, trends, or grouped breakdowns; use fusescope_aggregate_logs for those, and fusescope_execute_builder_query only for queries this tool cannot express. Rows carry a default set of log columns; to include other attributes, such as service.name, name them in selectFields. A field missing from a row was not selected. You do not need the guide when using only searchText, service, severity, time, or pagination. Read fusescope://logs/query-builder-guide before filtering on unfamiliar fields. Defaults to the last 1 hour.",
           "inputSchema": {
             "properties": {
               "end": {
@@ -7576,7 +7576,7 @@
                 ]
               },
               "filter": {
-                "description": "Filter expression text in SigNoz search syntax, not {\"expression\": ...} (see signoz://logs/query-builder-guide). Combine conditions with AND, OR, and parentheses. An unknown key may not fail: no rows plus a `key ... not found in metadata` warning means the key is absent. Ambiguous keys default to resource; prefix attribute.\u003ckey\u003e or resource.\u003ckey\u003e to choose. Log keys are workspace-specific; even service.name exists only when the log pipeline sets it. Discover keys and values with signoz_get_field_keys and signoz_get_field_values first. For message text use body CONTAINS 'term'. Only when you don't know which field holds a term, use search('term') for every field or search('term', attribute); scopes (body, attribute, resource, log) are ORed. search() is slow and may be rejected over wide time ranges. There is no key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%', and EXISTS or NOT EXISTS. Example: \"service.name = 'payment-svc' AND severity_text = 'ERROR'\".",
+                "description": "Filter expression text in SigNoz search syntax, not {\"expression\": ...} (see fusescope://logs/query-builder-guide). Combine conditions with AND, OR, and parentheses. An unknown key may not fail: no rows plus a `key ... not found in metadata` warning means the key is absent. Ambiguous keys default to resource; prefix attribute.\u003ckey\u003e or resource.\u003ckey\u003e to choose. Log keys are workspace-specific; even service.name exists only when the log pipeline sets it. Discover keys and values with fusescope_get_field_keys and fusescope_get_field_values first. For message text use body CONTAINS 'term'. Only when you don't know which field holds a term, use search('term') for every field or search('term', attribute); scopes (body, attribute, resource, log) are ORed. search() is slow and may be rejected over wide time ranges. There is no key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%', and EXISTS or NOT EXISTS. Example: \"service.name = 'payment-svc' AND severity_text = 'ERROR'\".",
                 "type": "string"
               },
               "limit": {
@@ -7618,7 +7618,7 @@
                 "type": "string"
               },
               "selectFields": {
-                "description": "Extra fields to return on each row, added to the default set: timestamp, id, body, severity_text, trace_id, span_id. Pass an array of names or a comma-separated string, at most 50. Names can be resource attributes (service.name, k8s.pod.name), log attributes (http.route), or other log columns (severity_number); a resource., attribute., log., or body. prefix picks the context. Each field comes back as its own row key. A body field (body.\u003cpath\u003e) can be selected only when signoz_get_field_keys(signal=\"logs\", fieldContext=\"body\") lists it; otherwise SigNoz rejects it with `can be filtered but not selected or grouped` or `field not found`, so filter on it instead. Discover names with signoz_get_field_keys (signal=\"logs\"). Example: [\"service.name\", \"http.route\"].",
+                "description": "Extra fields to return on each row, added to the default set: timestamp, id, body, severity_text, trace_id, span_id. Pass an array of names or a comma-separated string, at most 50. Names can be resource attributes (service.name, k8s.pod.name), log attributes (http.route), or other log columns (severity_number); a resource., attribute., log., or body. prefix picks the context. Each field comes back as its own row key. A body field (body.\u003cpath\u003e) can be selected only when fusescope_get_field_keys(signal=\"logs\", fieldContext=\"body\") lists it; otherwise SigNoz rejects it with `can be filtered but not selected or grouped` or `field not found`, so filter on it instead. Discover names with fusescope_get_field_keys (signal=\"logs\"). Example: [\"service.name\", \"http.route\"].",
                 "items": {
                   "type": "string"
                 },
@@ -7628,11 +7628,11 @@
                 ]
               },
               "service": {
-                "description": "Optional service name to filter by (adds service.name = '\u003cvalue\u003e'). When this workspace's logs lack service.name, the call usually returns no rows with a `key service.name not found in metadata` warning instead of failing; discover keys with signoz_get_field_keys(signal=\"logs\", fieldContext=\"resource\") and filter on an available key instead.",
+                "description": "Optional service name to filter by (adds service.name = '\u003cvalue\u003e'). When this workspace's logs lack service.name, the call usually returns no rows with a `key service.name not found in metadata` warning instead of failing; discover keys with fusescope_get_field_keys(signal=\"logs\", fieldContext=\"resource\") and filter on an available key instead.",
                 "type": "string"
               },
               "severity": {
-                "description": "Filter on severity_text, matched in any case and as a prefix, so WARN also matches warning and Warning; pass the short form (ERR, WARN, INFO). Common values include DEBUG, INFO, WARN, ERROR, and FATAL, but they are not an exhaustive enum. Discover the workspace's values with signoz_get_field_values(signal=\"logs\", name=\"severity_text\", fieldContext=\"log\").",
+                "description": "Filter on severity_text, matched in any case and as a prefix, so WARN also matches warning and Warning; pass the short form (ERR, WARN, INFO). Common values include DEBUG, INFO, WARN, ERROR, and FATAL, but they are not an exhaustive enum. Discover the workspace's values with fusescope_get_field_values(signal=\"logs\", name=\"severity_text\", fieldContext=\"log\").",
                 "type": "string"
               },
               "start": {
@@ -7651,7 +7651,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_search_logs"
+          "name": "fusescope_search_logs"
         },
         {
           "annotations": {
@@ -7660,7 +7660,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants individual span rows matching service, operation, error, duration, or field filters, needs to discover trace IDs, or wants one row per trace (requestType=trace), such as the slowest traces or the most expensive AI traces. It returns paginated rows, not aggregate trends/groups or a full trace hierarchy; use signoz_aggregate_traces for statistics and signoz_get_trace_details for one known trace ID. Span rows carry a default set of span fields; name other fields in selectFields. A field missing from a row was not selected, so do not read it as absent from the span. Read signoz://traces/query-builder-guide before using unfamiliar workspace fields. For the user's LLM, AI agent, token, cost, model, tool-call, or prompt questions (AI observability), set queryType to builder_ai_query and read signoz://ai/query-builder-guide. Defaults to the last 1 hour.",
+          "description": "Use this when the user wants individual span rows matching service, operation, error, duration, or field filters, needs to discover trace IDs, or wants one row per trace (requestType=trace), such as the slowest traces or the most expensive AI traces. It returns paginated rows, not aggregate trends/groups or a full trace hierarchy; use fusescope_aggregate_traces for statistics and fusescope_get_trace_details for one known trace ID. Span rows carry a default set of span fields; name other fields in selectFields. A field missing from a row was not selected, so do not read it as absent from the span. Read fusescope://traces/query-builder-guide before using unfamiliar workspace fields. For the user's LLM, AI agent, token, cost, model, tool-call, or prompt questions (AI observability), set queryType to builder_ai_query and read fusescope://ai/query-builder-guide. Defaults to the last 1 hour.",
           "inputSchema": {
             "properties": {
               "end": {
@@ -7678,7 +7678,7 @@
                 ]
               },
               "filter": {
-                "description": "Filter expression text in SigNoz search syntax, not {\"expression\": ...} (see signoz://traces/query-builder-guide). search() is logs-only; traces use field predicates. Combine conditions with AND, OR, and parentheses for precedence. An unknown key may not fail: SigNoz can match a guessed attribute and return a `key ... not found in metadata` warning with no rows, so read that warning as an absent key. Keys present in multiple contexts default to resource context; disambiguate with attribute.\u003ckey\u003e, resource.\u003ckey\u003e, or span.\u003ckey\u003e. Every condition needs a key and an operator: there is no full-text search, key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%' and EXISTS or NOT EXISTS. Discover valid keys with signoz_get_field_keys, then confirm values with signoz_get_field_values, before filtering. Examples: \"service.name = 'payment-svc' AND has_error = true\", \"http_method = 'POST' AND (has_error = true OR duration_nano \u003e 1000000000)\". Combined with shortcut params using AND.",
+                "description": "Filter expression text in SigNoz search syntax, not {\"expression\": ...} (see fusescope://traces/query-builder-guide). search() is logs-only; traces use field predicates. Combine conditions with AND, OR, and parentheses for precedence. An unknown key may not fail: SigNoz can match a guessed attribute and return a `key ... not found in metadata` warning with no rows, so read that warning as an absent key. Keys present in multiple contexts default to resource context; disambiguate with attribute.\u003ckey\u003e, resource.\u003ckey\u003e, or span.\u003ckey\u003e. Every condition needs a key and an operator: there is no full-text search, key:value, STARTS WITH, or IS NULL; use LIKE 'prefix%' and EXISTS or NOT EXISTS. Discover valid keys with fusescope_get_field_keys, then confirm values with fusescope_get_field_values, before filtering. Examples: \"service.name = 'payment-svc' AND has_error = true\", \"http_method = 'POST' AND (has_error = true OR duration_nano \u003e 1000000000)\". Combined with shortcut params using AND.",
                 "type": "string"
               },
               "limit": {
@@ -7742,7 +7742,7 @@
                 "type": "string"
               },
               "selectFields": {
-                "description": "Extra fields to return on each span row, added to the default set: timestamp, trace_id, span_id, parent_span_id, name, service.name, kind_string, duration_nano, has_error, status_code_string, status_message, response_status_code, http_method. Pass an array of names or a comma-separated string, at most 50. Names can be span columns (db_name), resource attributes (k8s.pod.name), or span attributes (http.route); a resource., attribute., or span. prefix picks the context. Each field comes back as its own row key. Discover names with signoz_get_field_keys (signal=\"traces\"). Example: [\"http.route\", \"db.statement\"].",
+                "description": "Extra fields to return on each span row, added to the default set: timestamp, trace_id, span_id, parent_span_id, name, service.name, kind_string, duration_nano, has_error, status_code_string, status_message, response_status_code, http_method. Pass an array of names or a comma-separated string, at most 50. Names can be span columns (db_name), resource attributes (k8s.pod.name), or span attributes (http.route); a resource., attribute., or span. prefix picks the context. Each field comes back as its own row key. Discover names with fusescope_get_field_keys (signal=\"traces\"). Example: [\"http.route\", \"db.statement\"].",
                 "items": {
                   "type": "string"
                 },
@@ -7771,7 +7771,7 @@
             "required": [],
             "type": "object"
           },
-          "name": "signoz_search_traces"
+          "name": "fusescope_search_traces"
         },
         {
           "annotations": {
@@ -7780,7 +7780,7 @@
             "openWorldHint": true,
             "readOnlyHint": true
           },
-          "description": "Use this when the user wants to know whether SigNoz will treat a framework's spans as model, tool, or agent calls, or wants to try a mapping before adding it. It runs sample spans through the mapping groups (the saved ones by default) and returns each span as SigNoz would store it; nothing is saved. A span that gains gen_ai.request.model counts as a model call. To read the saved mappings, use signoz_list_ai_attribute_mappings.",
+          "description": "Use this when the user wants to know whether SigNoz will treat a framework's spans as model, tool, or agent calls, or wants to try a mapping before adding it. It runs sample spans through the mapping groups (the saved ones by default) and returns each span as SigNoz would store it; nothing is saved. A span that gains gen_ai.request.model counts as a model call. To read the saved mappings, use fusescope_list_ai_attribute_mappings.",
           "inputSchema": {
             "properties": {
               "groups": {
@@ -7985,7 +7985,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_test_ai_attribute_mapping"
+          "name": "fusescope_test_ai_attribute_mapping"
         },
         {
           "annotations": {
@@ -7994,7 +7994,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants to change an existing SigNoz alert rule; use signoz_create_alert for a new rule. This is a full replacement: call signoz_get_alert unless its complete result is available from the same still-current prepared operation, then preserve every unchanged field. Likewise reuse signoz://alert/instructions, signoz://alert/examples, and a fully paginated signoz_list_notification_channels result only from that operation; otherwise read/call them, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If no direct channel fits, ask the user or offer signoz_create_notification_channel with settings the user provides; never create automatically. SigNoz rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
+          "description": "Use this when the user wants to change an existing SigNoz alert rule; use fusescope_create_alert for a new rule. This is a full replacement: call fusescope_get_alert unless its complete result is available from the same still-current prepared operation, then preserve every unchanged field. Likewise reuse fusescope://alert/instructions, fusescope://alert/examples, and a fully paginated fusescope_list_notification_channels result only from that operation; otherwise read/call them, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If no direct channel fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never create automatically. SigNoz rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
           "inputSchema": {
             "properties": {
               "alert": {
@@ -8173,7 +8173,7 @@
                 ]
               },
               "id": {
-                "description": "UUIDv7 of the alert rule to update (required). Obtain it from signoz_list_alert_rules or signoz_get_alert.",
+                "description": "UUIDv7 of the alert rule to update (required). Obtain it from fusescope_list_alert_rules or fusescope_get_alert.",
                 "type": "string"
               },
               "labels": {
@@ -8301,7 +8301,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_update_alert"
+          "name": "fusescope_update_alert"
         },
         {
           "annotations": {
@@ -8310,7 +8310,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants to change an existing SigNoz dashboard. This is a full replacement, not a partial patch: fetch it with signoz_get_dashboard, take the \"data\" object out of that response, merge only the requested changes into it, and preserve every other field. Send that object's fields at the top level; the {status, data} response envelope is not accepted as input. For small, targeted edits prefer signoz_patch_dashboard, which avoids re-sending the whole dashboard. Use signoz_update_view instead for a saved Explorer query. Before composing changed panels, read signoz://dashboard/instructions, signoz://dashboard/widgets-instructions, and signoz://dashboard/widgets-examples, then follow the query-specific resource linked by the widget guide.",
+          "description": "Use this when the user wants to change an existing SigNoz dashboard. This is a full replacement, not a partial patch: fetch it with fusescope_get_dashboard, take the \"data\" object out of that response, merge only the requested changes into it, and preserve every other field. Send that object's fields at the top level; the {status, data} response envelope is not accepted as input. For small, targeted edits prefer fusescope_patch_dashboard, which avoids re-sending the whole dashboard. Use fusescope_update_view instead for a saved Explorer query. Before composing changed panels, read fusescope://dashboard/instructions, fusescope://dashboard/widgets-instructions, and fusescope://dashboard/widgets-examples, then follow the query-specific resource linked by the widget guide.",
           "inputSchema": {
             "$defs": {
               "CommonJSONRef": {
@@ -12175,7 +12175,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_update_dashboard"
+          "name": "fusescope_update_dashboard"
         },
         {
           "annotations": {
@@ -12184,7 +12184,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants to replace one notification channel's complete config: {kind, spec}; it is a full replacement and may change the provider kind. First call signoz_get_notification_channel and preserve every setting the user did not ask to change; send only id and config, because name and displayName are immutable. A fetched config is writable as-is; to unset an optional field, omit it, because SigNoz rejects an empty string for template-backed fields such as titles and messages. SigNoz also rejects an unknown kind and an unknown or missing spec field with the exact requirement; signoz://notification-channel/examples lists every kind's spec fields. Set test=true only when the user wants one live test notification after the update; the default is false and the update remains committed if the test fails.",
+          "description": "Use this when the user wants to replace one notification channel's complete config: {kind, spec}; it is a full replacement and may change the provider kind. First call fusescope_get_notification_channel and preserve every setting the user did not ask to change; send only id and config, because name and displayName are immutable. A fetched config is writable as-is; to unset an optional field, omit it, because SigNoz rejects an empty string for template-backed fields such as titles and messages. SigNoz also rejects an unknown kind and an unknown or missing spec field with the exact requirement; fusescope://notification-channel/examples lists every kind's spec fields. Set test=true only when the user wants one live test notification after the update; the default is false and the update remains committed if the test fails.",
           "inputSchema": {
             "additionalProperties": false,
             "properties": {
@@ -12194,7 +12194,7 @@
                 "type": "object"
               },
               "id": {
-                "description": "Notification channel UUID. Obtain it from signoz_list_notification_channels.",
+                "description": "Notification channel UUID. Obtain it from fusescope_list_notification_channels.",
                 "type": "string"
               },
               "searchContext": {
@@ -12215,7 +12215,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_update_notification_channel"
+          "name": "fusescope_update_notification_channel"
         },
         {
           "annotations": {
@@ -12224,11 +12224,11 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants to change an existing saved view. This is a full replacement: call signoz_get_view first, modify its data object, preserve every unrequested field, and pass that full object as view. Upstream keeps name immutable on update; the display name lives in spec.displayName. Read signoz://view/instructions and signoz://view/examples when changing source or spec. Keep the UUID only in id; omit server-populated IDs and timestamps from view.",
+          "description": "Use this when the user wants to change an existing saved view. This is a full replacement: call fusescope_get_view first, modify its data object, preserve every unrequested field, and pass that full object as view. Upstream keeps name immutable on update; the display name lives in spec.displayName. Read fusescope://view/instructions and fusescope://view/examples when changing source or spec. Keep the UUID only in id; omit server-populated IDs and timestamps from view.",
           "inputSchema": {
             "properties": {
               "id": {
-                "description": "UUID of the view to replace (required). Obtain it from signoz_list_views.",
+                "description": "UUID of the view to replace (required). Obtain it from fusescope_list_views.",
                 "type": "string"
               },
               "searchContext": {
@@ -12236,7 +12236,7 @@
                 "type": "string"
               },
               "view": {
-                "description": "Complete saved view after the requested changes. Start with the data returned by signoz_get_view and pass the full object here; name is immutable and is dropped.",
+                "description": "Complete saved view after the requested changes. Start with the data returned by fusescope_get_view and pass the full object here; name is immutable and is dropped.",
                 "properties": {
                   "schemaVersion": {
                     "description": "The version of the spec shape. Always v2; filled in when omitted.",
@@ -12384,7 +12384,7 @@
             ],
             "type": "object"
           },
-          "name": "signoz_update_view"
+          "name": "fusescope_update_view"
         }
       ],
       "ttlMs": 0

@@ -18,12 +18,12 @@ func (h *Handler) RegisterQueryBuilderV5Handlers(s *mcp.Server) {
 	h.logger.Debug("Registering query builder v5 handlers")
 
 	// SigNoz Query Builder v5 tool - LLM builds structured query JSON and executes it
-	executeQuery := mcp.NewTool("signoz_execute_builder_query",
+	executeQuery := mcp.NewTool("fusescope_execute_builder_query",
 		withReadOnlyToolAnnotations(),
 		mcp.WithDescription(
 			"Use this only when dedicated log, trace, and metric tools cannot express the request, including multi-query requests, formulas, PromQL, and ClickHouse SQL. "+
-				"Use signoz_search_logs/signoz_search_traces for raw rows, signoz_aggregate_logs/signoz_aggregate_traces for grouped or top-N analysis, and signoz_query_metrics for ordinary metrics queries. "+
-				"Read the matching signoz://logs/query-builder-guide, signoz://traces/query-builder-guide, signoz://ai/query-builder-guide, or signoz://metrics-aggregation-guide; formulas require the metrics guide, and PromQL requires signoz://promql/instructions. signoz://query-builder/examples holds a complete request per query type and request type. "+
+				"Use fusescope_search_logs/fusescope_search_traces for raw rows, fusescope_aggregate_logs/fusescope_aggregate_traces for grouped or top-N analysis, and fusescope_query_metrics for ordinary metrics queries. "+
+				"Read the matching fusescope://logs/query-builder-guide, fusescope://traces/query-builder-guide, fusescope://ai/query-builder-guide, or fusescope://metrics-aggregation-guide; formulas require the metrics guide, and PromQL requires fusescope://promql/instructions. fusescope://query-builder/examples holds a complete request per query type and request type. "+
 				"Leave limit unset on each builder_query a formula references, because SigNoz applies an input's limit before the formula runs and drops series from its result. Give every other builder_query and each builder_formula a positive limit (100 for results) and non-empty spec.order (not dashboard orderBy); the server fills in omitted ones.",
 		),
 		mcp.WithInputSchema[types.ExecuteBuilderQueryInput](),
@@ -32,9 +32,9 @@ func (h *Handler) RegisterQueryBuilderV5Handlers(s *mcp.Server) {
 	h.addTool(s, executeQuery, h.handleExecuteBuilderQuery)
 
 	queryBuilderExamples := mcp.NewResource(
-		"signoz://query-builder/examples",
+		"fusescope://query-builder/examples",
 		"Query Builder Request Examples",
-		mcp.WithResourceDescription("Read this when composing the query argument of signoz_execute_builder_query and a complete request shape is still needed after the signal's guide. It provides one query_range request from the SigNoz OpenAPI spec per query type (builder, formula, PromQL, ClickHouse SQL) and request type (raw, scalar, time_series) across logs, traces, and metrics."),
+		mcp.WithResourceDescription("Read this when composing the query argument of fusescope_execute_builder_query and a complete request shape is still needed after the signal's guide. It provides one query_range request from the SigNoz OpenAPI spec per query type (builder, formula, PromQL, ClickHouse SQL) and request type (raw, scalar, time_series) across logs, traces, and metrics."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(querybuilder.Examples))),
 	)
@@ -49,7 +49,7 @@ func (h *Handler) RegisterQueryBuilderV5Handlers(s *mcp.Server) {
 	})
 
 	tracesQueryBuilderGuide := mcp.NewResource(
-		"signoz://traces/query-builder-guide",
+		"fusescope://traces/query-builder-guide",
 		"Traces Query Builder Guide",
 		mcp.WithResourceDescription("Read this before writing Query Builder v5 JSON for traces or filtering on unfamiliar trace fields. It explains filter syntax, field discovery, built-in span fields, row and aggregate queries, limits, ordering, timestamps, and examples for rows, single values, and time series."),
 		mcp.WithMIMEType("text/markdown"),
@@ -67,9 +67,9 @@ func (h *Handler) RegisterQueryBuilderV5Handlers(s *mcp.Server) {
 	})
 
 	aiQueryBuilderGuide := mcp.NewResource(
-		"signoz://ai/query-builder-guide",
+		"fusescope://ai/query-builder-guide",
 		"AI Query Builder Guide",
-		mcp.WithResourceDescription("Read this before AI observability queries: LLM cost, tokens, models, or tool calls, per call or per trace. It covers queryType builder_ai_query on signoz_search_traces and signoz_aggregate_traces, the trace-level fields and where they work, how cost and token totals are computed (including cache tokens), examples for both tools, and saving a builder_ai_query as an alert. Full requests are in signoz://query-builder/examples."),
+		mcp.WithResourceDescription("Read this before AI observability queries: LLM cost, tokens, models, or tool calls, per call or per trace. It covers queryType builder_ai_query on fusescope_search_traces and fusescope_aggregate_traces, the trace-level fields and where they work, how cost and token totals are computed (including cache tokens), examples for both tools, and saving a builder_ai_query as an alert. Full requests are in fusescope://query-builder/examples."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(querybuilder.AIQueryBuilderGuide))),
 	)
@@ -85,7 +85,7 @@ func (h *Handler) RegisterQueryBuilderV5Handlers(s *mcp.Server) {
 	})
 
 	logsQueryBuilderGuide := mcp.NewResource(
-		"signoz://logs/query-builder-guide",
+		"fusescope://logs/query-builder-guide",
 		"Logs Query Builder Guide",
 		mcp.WithResourceDescription("Read this before writing Query Builder v5 JSON for logs or filtering on unfamiliar log fields. It explains filter syntax, field discovery, body, JSON-path, and cross-field search(), row and aggregate queries, stable pagination, limits, ordering, timestamps, and examples for rows, single values, and time series."),
 		mcp.WithMIMEType("text/markdown"),
@@ -104,7 +104,7 @@ func (h *Handler) RegisterQueryBuilderV5Handlers(s *mcp.Server) {
 }
 
 func (h *Handler) handleExecuteBuilderQuery(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	h.logger.DebugContext(ctx, "Tool called: signoz_execute_builder_query")
+	h.logger.DebugContext(ctx, "Tool called: fusescope_execute_builder_query")
 
 	args, ok := req.Params.Arguments.(map[string]any)
 	if !ok {
@@ -154,8 +154,8 @@ func (h *Handler) handleExecuteBuilderQuery(ctx context.Context, req mcp.CallToo
 		notes = append(notes, queryBoundsDecisionsNote(applied, requestType))
 	}
 	warnings := extractBackendWarningMessages(data)
-	warnBackendWarnings(ctx, h.logger, "signoz_execute_builder_query", warnings)
-	warnUnparsedWarningEnvelope(ctx, h.logger, "signoz_execute_builder_query", data, len(warnings))
+	warnBackendWarnings(ctx, h.logger, "fusescope_execute_builder_query", warnings)
+	warnUnparsedWarningEnvelope(ctx, h.logger, "fusescope_execute_builder_query", data, len(warnings))
 	if len(warnings) > 0 {
 		notes = append(notes, backendWarningsNote(warnings))
 	}

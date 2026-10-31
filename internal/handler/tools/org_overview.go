@@ -218,7 +218,7 @@ type orgOverviewIncompleteGroup struct {
 func (h *Handler) RegisterOrgOverviewHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering organization overview handlers")
 
-	tool := mcp.NewTool("signoz_get_org_overview",
+	tool := mcp.NewTool("fusescope_get_org_overview",
 		mcp.WithOutputSchema[orgOverviewOutput](),
 		withReadOnlyToolAnnotations(),
 		mcp.WithDescription("Get the current status and overall posture of the SigNoz deployment in one call. Returns typed telemetry, infrastructure, dashboard, alert, integration, access, license, and configuration summaries, the org's feature flags, plus sourceStats with every reported stats field. Use dedicated list and query tools for exact inventories or time-windowed data. Missing fields are unreported, not zero; metadata.incompleteGroups provides recovery guidance for partial projections."),
@@ -234,7 +234,7 @@ func (h *Handler) handleGetOrgOverview(ctx context.Context, _ mcp.CallToolReques
 		return clientError(err), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_get_org_overview")
+	h.logger.DebugContext(ctx, "Tool called: fusescope_get_org_overview")
 	result, err := client.GetOrgOverview(ctx)
 	if err != nil {
 		h.logUpstreamFailure(ctx, "Failed to get deployment overview", err)
@@ -242,7 +242,7 @@ func (h *Handler) handleGetOrgOverview(ctx context.Context, _ mcp.CallToolReques
 		var statusErr *signozclient.HTTPStatusError
 		routeMissing := errors.As(err, &statusErr) && statusErr.StatusCode == http.StatusNotFound
 		if routeMissing || errors.Is(err, signozclient.ErrNonJSONResponse) {
-			const recovery = "recovery: Verify that the configured SigNoz URL points to an active deployment. If the deployment is reachable but this route is unavailable, use signoz_list_dashboards, signoz_list_alert_rules, signoz_list_notification_channels, signoz_list_views, signoz_list_metrics, signoz_list_alerts, signoz_search_logs, signoz_search_traces, or signoz_query_metrics as appropriate."
+			const recovery = "recovery: Verify that the configured SigNoz URL points to an active deployment. If the deployment is reachable but this route is unavailable, use fusescope_list_dashboards, fusescope_list_alert_rules, fusescope_list_notification_channels, fusescope_list_views, fusescope_list_metrics, fusescope_list_alerts, fusescope_search_logs, fusescope_search_traces, or fusescope_query_metrics as appropriate."
 			for i, content := range errorResult.Content {
 				if text, ok := content.(*mcp.TextContent); ok {
 					text.Text += "\n\n" + recovery
@@ -732,36 +732,36 @@ func orgOverviewRecovery(group string) (string, string, []string) {
 	switch group {
 	case "signals.logs":
 		return "The log count was not reported or was invalid.",
-			"Use signoz_search_logs for a time-windowed ingestion check.",
-			[]string{"signoz_search_logs"}
+			"Use fusescope_search_logs for a time-windowed ingestion check.",
+			[]string{"fusescope_search_logs"}
 	case "signals.metrics":
 		return "One or more metric or infrastructure stats were not reported or were invalid.",
-			"Use signoz_list_metrics to inspect the metric catalog and signoz_query_metrics for time-windowed values.",
-			[]string{"signoz_list_metrics", "signoz_query_metrics"}
+			"Use fusescope_list_metrics to inspect the metric catalog and fusescope_query_metrics for time-windowed values.",
+			[]string{"fusescope_list_metrics", "fusescope_query_metrics"}
 	case "signals.traces":
 		return "The trace count was not reported or was invalid.",
-			"Use signoz_search_traces for a time-windowed ingestion check.",
-			[]string{"signoz_search_traces"}
+			"Use fusescope_search_traces for a time-windowed ingestion check.",
+			[]string{"fusescope_search_traces"}
 	case "dashboards":
 		return "One or more dashboard stats were not reported or were invalid.",
-			"Use signoz_list_dashboards for the exact inventory and signoz_get_dashboard for panel details.",
-			[]string{"signoz_list_dashboards", "signoz_get_dashboard"}
+			"Use fusescope_list_dashboards for the exact inventory and fusescope_get_dashboard for panel details.",
+			[]string{"fusescope_list_dashboards", "fusescope_get_dashboard"}
 	case "alerts.rules":
 		return "One or more configured alert-rule stats were not reported or were invalid.",
-			"Use signoz_list_alert_rules for the exact configured-rule inventory.",
-			[]string{"signoz_list_alert_rules"}
+			"Use fusescope_list_alert_rules for the exact configured-rule inventory.",
+			[]string{"fusescope_list_alert_rules"}
 	case "alerts.runtime":
 		return "The firing-rule runtime stat was not reported or was invalid.",
-			"Use signoz_list_alerts for current firing, silenced, or inhibited alert instances.",
-			[]string{"signoz_list_alerts"}
+			"Use fusescope_list_alerts for current firing, silenced, or inhibited alert instances.",
+			[]string{"fusescope_list_alerts"}
 	case "alerts.notificationChannels":
 		return "One or more notification-channel stats were not reported or were invalid.",
-			"Use signoz_list_notification_channels for the exact channel inventory.",
-			[]string{"signoz_list_notification_channels"}
+			"Use fusescope_list_notification_channels for the exact channel inventory.",
+			[]string{"fusescope_list_notification_channels"}
 	case "views":
 		return "One or more saved-view stats were not reported or were invalid.",
-			"Use signoz_list_views for the exact saved-view inventory.",
-			[]string{"signoz_list_views"}
+			"Use fusescope_list_views for the exact saved-view inventory.",
+			[]string{"fusescope_list_views"}
 	case "logPipelines":
 		return "One or more log-pipeline stats were not reported or were invalid.",
 			"Inspect Log Pipelines in SigNoz and rerun the overview after resolving collector access.",

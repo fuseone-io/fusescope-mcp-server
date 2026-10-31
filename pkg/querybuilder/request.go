@@ -158,7 +158,7 @@ func logsSearchOrder(opts RawSearchOptions) []orderBy {
 	}
 }
 
-// LogsSearch builds the raw-row request signoz_search_logs sends. Rows order by
+// LogsSearch builds the raw-row request fusescope_search_logs sends. Rows order by
 // timestamp then id, both descending, unless opts names another order.
 func LogsSearch(start, end int64, filter string, limit, offset int, opts RawSearchOptions) (Request, error) {
 	envelope, err := builderEnvelope(func(spec *apitypes.Querybuildertypesv5BuilderQuerySpec) error {
@@ -199,8 +199,8 @@ type TraceSearchOptions struct {
 	OrderDir  string
 }
 
-// SpanSearch builds the raw request signoz_search_traces and
-// signoz_get_trace_details send: one row per span, newest first unless
+// SpanSearch builds the raw request fusescope_search_traces and
+// fusescope_get_trace_details send: one row per span, newest first unless
 // OrderExpr is set. With builder_ai_query the spans come from AI traces.
 func SpanSearch(start, end int64, opts TraceSearchOptions) (Request, error) {
 	order := newOrderBy("timestamp", "desc")
@@ -268,8 +268,8 @@ func traceEnvelope(queryType string, query traceQuery) (apitypes.Querybuildertyp
 // for SigNoz to validate.
 type Function = apitypes.Querybuildertypesv5Function
 
-// AggregateSpec describes the grouped request signoz_aggregate_logs and
-// signoz_aggregate_traces send. Signal is "logs" or "traces"; Aggregations are
+// AggregateSpec describes the grouped request fusescope_aggregate_logs and
+// fusescope_aggregate_traces send. Signal is "logs" or "traces"; Aggregations are
 // expressions such as "count()" or "p99(duration_nano)". An empty RequestType
 // means "scalar"; a nil StepInterval lets SigNoz choose.
 type AggregateSpec struct {
@@ -299,8 +299,8 @@ func functionsOf(functions []Function) *[]Function {
 	return new(append([]Function(nil), functions...))
 }
 
-// Aggregate builds the grouped request signoz_aggregate_logs and
-// signoz_aggregate_traces send.
+// Aggregate builds the grouped request fusescope_aggregate_logs and
+// fusescope_aggregate_traces send.
 func Aggregate(spec AggregateSpec) (Request, error) {
 	requestType := spec.RequestType
 	if requestType == "" {
@@ -364,7 +364,7 @@ func Aggregate(spec AggregateSpec) (Request, error) {
 	return newRequest(spec.Start, spec.End, requestType, []apitypes.Querybuildertypesv5QueryEnvelope{envelope}), nil
 }
 
-// MetricsQuery describes one metric query or formula in a signoz_query_metrics
+// MetricsQuery describes one metric query or formula in a fusescope_query_metrics
 // request.
 type MetricsQuery struct {
 	Name        string
@@ -397,8 +397,8 @@ func (q MetricsQuery) order() *[]orderBy {
 	return &[]orderBy{newOrderBy(q.OrderKey, q.OrderDir)}
 }
 
-// MetricsJSON builds the signoz_query_metrics request and applies the same
-// result bounds signoz_execute_builder_query applies. source selects a metrics
+// MetricsJSON builds the fusescope_query_metrics request and applies the same
+// result bounds fusescope_execute_builder_query applies. source selects a metrics
 // store such as "meter" for Cost Meter; pass "" for the default store.
 func MetricsJSON(start, end, stepInterval int64, queries []MetricsQuery, requestType, source string) ([]byte, error) {
 	if requestType == "" {
@@ -470,7 +470,7 @@ func MetricsJSON(start, end, stepInterval int64, queries []MetricsQuery, request
 	return json.Marshal(decoded)
 }
 
-// LogSearchCoreFields is the default column set for signoz_search_logs: the
+// LogSearchCoreFields is the default column set for fusescope_search_logs: the
 // intrinsic log columns only, because logs carry no spec-mandated resource
 // attributes and a default that names an absent key would warn on every call.
 // Callers add attributes with selectFields; SigNoz always includes timestamp
@@ -484,7 +484,7 @@ var LogSearchCoreFields = []FieldKey{
 	NewFieldKey("span_id", "logs", "log", "string"),
 }
 
-// TraceSearchCoreFields is the default column set for signoz_search_traces.
+// TraceSearchCoreFields is the default column set for fusescope_search_traces.
 // Callers add fields with selectFields; SigNoz always adds timestamp, trace_id,
 // and span_id to an explicit list, so rows stay flat.
 var TraceSearchCoreFields = []FieldKey{
@@ -503,7 +503,7 @@ var TraceSearchCoreFields = []FieldKey{
 	NewFieldKey("http_method", "traces", "span", "string"),
 }
 
-// TraceDetailSelectFields is the column set signoz_get_trace_details requests.
+// TraceDetailSelectFields is the column set fusescope_get_trace_details requests.
 var TraceDetailSelectFields = []FieldKey{
 	// Top-level span fields
 	NewFieldKey("trace_id", "traces", "span", "string"),

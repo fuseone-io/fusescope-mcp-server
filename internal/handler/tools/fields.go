@@ -25,10 +25,10 @@ const fieldDataTypeParamDesc = "Restrict results to a single field data type (op
 func (h *Handler) RegisterFieldsHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering fields handlers")
 
-	getFieldKeysTool := mcp.NewTool("signoz_get_field_keys",
+	getFieldKeysTool := mcp.NewTool("fusescope_get_field_keys",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user needs to discover field names available for filtering or grouping metrics, traces, or logs. It returns keys, not their observed values, scoped by signal and optional metric, context, or data type. SigNoz sets data.complete=false when it truncated the key list; narrow with searchText or fieldContext to see more. For AI trace fields (per-trace cost, tokens, call counts, gen_ai.*), set queryType=builder_ai_query. After choosing a key, use signoz_get_field_values to discover valid values."),
+		mcp.WithDescription("Use this when the user needs to discover field names available for filtering or grouping metrics, traces, or logs. It returns keys, not their observed values, scoped by signal and optional metric, context, or data type. SigNoz sets data.complete=false when it truncated the key list; narrow with searchText or fieldContext to see more. For AI trace fields (per-trace cost, tokens, call counts, gen_ai.*), set queryType=builder_ai_query. After choosing a key, use fusescope_get_field_values to discover valid values."),
 		mcp.WithString("signal", mcp.Required(), mcp.Enum("metrics", "traces", "logs"), mcp.Description("Signal type: 'metrics', 'traces', or 'logs'.")),
 		mcp.WithString("searchText", mcp.Description("Filter field names by substring (optional).")),
 		mcp.WithString("metricName", mcp.Description("Metric name to scope field keys (optional, only relevant when signal=metrics).")),
@@ -40,10 +40,10 @@ func (h *Handler) RegisterFieldsHandlers(s *mcp.Server) {
 
 	h.addTool(s, getFieldKeysTool, h.handleGetFieldKeys)
 
-	getFieldValuesTool := mcp.NewTool("signoz_get_field_values",
+	getFieldValuesTool := mcp.NewTool("fusescope_get_field_values",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user knows a field key and needs its observed values for a metrics, traces, or logs filter. It returns values, not field names; use signoz_get_field_keys when the key is unknown. Match signal and fieldContext to the query that will use the value. SigNoz sets data.complete=false when it truncated the value list; narrow with searchText to see more."),
+		mcp.WithDescription("Use this when the user knows a field key and needs its observed values for a metrics, traces, or logs filter. It returns values, not field names; use fusescope_get_field_keys when the key is unknown. Match signal and fieldContext to the query that will use the value. SigNoz sets data.complete=false when it truncated the value list; narrow with searchText to see more."),
 		mcp.WithString("signal", mcp.Required(), mcp.Enum("metrics", "traces", "logs"), mcp.Description("Signal type: 'metrics', 'traces', or 'logs'.")),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Field name to get values for (e.g., 'service.name', 'http.status_code').")),
 		mcp.WithString("searchText", mcp.Description("Filter the returned values by substring (optional).")),
@@ -69,7 +69,7 @@ func (h *Handler) handleGetFieldKeys(ctx context.Context, req mcp.CallToolReques
 	source, _ := args["source"].(string)
 	queryType, _ := args["queryType"].(string)
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_get_field_keys", slog.String("signal", signal), slog.String("queryType", queryType), slog.String("searchText", searchText))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_get_field_keys", slog.String("signal", signal), slog.String("queryType", queryType), slog.String("searchText", searchText))
 	client, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil
@@ -102,7 +102,7 @@ func (h *Handler) handleGetFieldValues(ctx context.Context, req mcp.CallToolRequ
 	fieldContext, _ := args["fieldContext"].(string)
 	source, _ := args["source"].(string)
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_get_field_values", slog.String("signal", signal), slog.String("name", name))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_get_field_values", slog.String("signal", signal), slog.String("name", name))
 	client, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil

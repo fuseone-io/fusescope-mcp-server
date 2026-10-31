@@ -1,12 +1,12 @@
 // Package promql exposes the canonical PromQL writing guide served as the
-// signoz://promql/instructions MCP resource. The guide is consumed by both
+// fusescope://promql/instructions MCP resource. The guide is consumed by both
 // promql_rule alerts and PromQL dashboard widgets, so it lives in its own
 // package rather than under pkg/dashboard.
 package promql
 
-// Instructions is the text served as the signoz://promql/instructions MCP
-// resource. Cross-referenced from signoz://alert/instructions, the
-// signoz_create_alert / signoz_update_alert / signoz_execute_builder_query
+// Instructions is the text served as the fusescope://promql/instructions MCP
+// resource. Cross-referenced from fusescope://alert/instructions, the
+// fusescope_create_alert / fusescope_update_alert / fusescope_execute_builder_query
 // tool descriptions, and the dashboard widgets-instructions resource.
 const Instructions = `
 SigNoz PromQL Guide
@@ -172,12 +172,12 @@ PRE-FLIGHT CHECKLIST FOR A PROMQL HISTOGRAM ALERT
 Before creating a promql_rule alert on a histogram-derived query, run these checks so the rule
 actually resolves against data:
 
-  1. Confirm the metric exists and has data via signoz_list_metrics + signoz_query_metrics
+  1. Confirm the metric exists and has data via fusescope_list_metrics + fusescope_query_metrics
      (a builder query on the same metric).
-  2. Use signoz_get_field_keys with metricName set, to verify the bucket-boundary label is named
+  2. Use fusescope_get_field_keys with metricName set, to verify the bucket-boundary label is named
      le (it usually is, but custom pipelines can rename it).
   3. Write the PromQL with the UTF-8 quoted selector form: {"metric.name.bucket"}.
-  4. After creating the alert, call signoz_get_alert and check state. An inactive state under a
+  4. After creating the alert, call fusescope_get_alert and check state. An inactive state under a
      metric that you know is breaching the threshold is a strong signal the query isn't resolving
      (typically a name/selector-form mistake from the table above).
 

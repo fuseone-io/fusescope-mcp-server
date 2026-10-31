@@ -172,7 +172,7 @@ func TestQueryMetrics_ReportsIsMonotonicSigNozDidNotReturn(t *testing.T) {
 			h := NewHandler(logpkg.New("error"), cfg)
 			ctx := util.SetAPIKey(util.SetSigNozURL(testCtx(), cfg.URL), cfg.APIKey)
 
-			result, err := h.handleQueryMetrics(ctx, makeToolRequest("signoz_query_metrics", map[string]any{
+			result, err := h.handleQueryMetrics(ctx, makeToolRequest("fusescope_query_metrics", map[string]any{
 				"metricName": "queue.depth.changes", "timeRange": "1h", "requestType": "scalar",
 			}))
 			require.NoError(t, err)

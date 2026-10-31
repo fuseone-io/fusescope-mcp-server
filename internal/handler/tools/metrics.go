@@ -14,10 +14,10 @@ import (
 func (h *Handler) RegisterMetricsHandlers(s *mcp.Server) {
 	h.logger.Debug("Registering metrics handlers")
 
-	listMetricsTool := mcp.NewTool("signoz_list_metrics",
+	listMetricsTool := mcp.NewTool("fusescope_list_metrics",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
-		mcp.WithDescription("Use this when the user needs to discover metric names or inspect catalog metadata such as type, temporality, unit, and monotonicity. It lists metrics active in the requested window; searchText filters names by substring. Do not use it for metric values or trends; use signoz_query_metrics, which can query a known exact name directly and auto-fetch missing metadata. Use source=\"meter\" only for Cost Meter metrics. Results have a limit but no offset pagination, so narrow the search if the cap is reached."),
+		mcp.WithDescription("Use this when the user needs to discover metric names or inspect catalog metadata such as type, temporality, unit, and monotonicity. It lists metrics active in the requested window; searchText filters names by substring. Do not use it for metric values or trends; use fusescope_query_metrics, which can query a known exact name directly and auto-fetch missing metadata. Use source=\"meter\" only for Cost Meter metrics. Results have a limit but no offset pagination, so narrow the search if the cap is reached."),
 		mcp.WithString("searchText", mcp.Description(listMetricsSearchTextParamDescription)),
 		mcp.WithString("limit", mcp.DefaultString("50"), intOrStringType(), mcp.Description(listMetricsLimitParamDescription)),
 		mcp.WithString("timeRange", mcp.DefaultString("1h"), mcp.Description(timeRangeParamDescription("Defaults to '1h'."))),
@@ -28,12 +28,12 @@ func (h *Handler) RegisterMetricsHandlers(s *mcp.Server) {
 
 	h.addTool(s, listMetricsTool, h.handleListMetrics)
 
-	// signoz_query_metrics — metrics query tool that fills aggregation defaults
-	queryMetricsTool := mcp.NewTool("signoz_query_metrics",
+	// fusescope_query_metrics — metrics query tool that fills aggregation defaults
+	queryMetricsTool := mcp.NewTool("fusescope_query_metrics",
 		withReadOnlyToolAnnotations(),
 		mcp.WithString("searchContext", mcp.Description(searchContextParamDescription)),
 		mcp.WithDescription(
-			"Use this when the user wants metric values, trends, breakdowns, or formulas. It returns scalar or time-series results, applies metric-aware aggregation defaults, and reports the decisions used. If the exact metricName is known, call this directly: when metricType is omitted, type, temporality, and monotonicity are auto-fetched together. Use signoz_list_metrics only to discover names or inspect catalog metadata; use signoz_execute_builder_query for complex multi-query requests this tool cannot express. Standalone and formula results are capped at the top 100; formula inputs are not limited. Grouped time-series top-N is ranked over the whole window. Read signoz://metrics-aggregation-guide for rules and examples."),
+			"Use this when the user wants metric values, trends, breakdowns, or formulas. It returns scalar or time-series results, applies metric-aware aggregation defaults, and reports the decisions used. If the exact metricName is known, call this directly: when metricType is omitted, type, temporality, and monotonicity are auto-fetched together. Use fusescope_list_metrics only to discover names or inspect catalog metadata; use fusescope_execute_builder_query for complex multi-query requests this tool cannot express. Standalone and formula results are capped at the top 100; formula inputs are not limited. Grouped time-series top-N is ranked over the whole window. Read fusescope://metrics-aggregation-guide for rules and examples."),
 		mcp.WithString("metricName", mcp.Required(), mcp.Description(metricNameParamDescription)),
 		mcp.WithString("metricType", mcp.Description(metricTypeParamDescription)),
 		mcp.WithBoolean("isMonotonic", boolOrStringType(), mcp.Description(isMonotonicParamDescription)),
@@ -63,9 +63,9 @@ func (h *Handler) RegisterMetricsHandlers(s *mcp.Server) {
 
 	// Register metrics aggregation guide as MCP resource
 	metricsGuideResource := mcp.NewResource(
-		"signoz://metrics-aggregation-guide",
+		"fusescope://metrics-aggregation-guide",
 		"Metrics Aggregation Guide",
-		mcp.WithResourceDescription("Read this before choosing aggregations for signoz_query_metrics or building metrics Query Builder JSON. It explains timeAggregation, spaceAggregation, and reduceTo by metric type; formulas and limits; groupBy and filter label names; top-N selection across the full window; step intervals; examples; and Cost Meter queries."),
+		mcp.WithResourceDescription("Read this before choosing aggregations for fusescope_query_metrics or building metrics Query Builder JSON. It explains timeAggregation, spaceAggregation, and reduceTo by metric type; formulas and limits; groupBy and filter label names; top-N selection across the full window; step intervals; examples; and Cost Meter queries."),
 		mcp.WithMIMEType("text/markdown"),
 		mcp.WithResourceSize(int64(len(metricsrules.MetricsGuide))),
 	)
@@ -102,7 +102,7 @@ func (h *Handler) handleListMetrics(ctx context.Context, req mcp.CallToolRequest
 		return errorWithCode(CodeValidationFailed, err.Error()), nil
 	}
 
-	h.logger.DebugContext(ctx, "Tool called: signoz_list_metrics", slog.String("searchText", searchText))
+	h.logger.DebugContext(ctx, "Tool called: fusescope_list_metrics", slog.String("searchText", searchText))
 	client, err := h.GetClient(ctx)
 	if err != nil {
 		return clientError(err), nil

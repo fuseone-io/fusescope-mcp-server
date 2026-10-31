@@ -8,8 +8,8 @@ import (
 func TestAggregateTools_RejectUnknownRequestTypeAsValidationFailed(t *testing.T) {
 	server := newToolServerWithoutSigNoz(t)
 	for tool, arguments := range map[string]string{
-		"signoz_aggregate_logs": `{"aggregations":"count()","timeRange":"1h","requestType":"totally-bogus"}`,
-		"signoz_query_metrics":  `{"metricName":"system.cpu.time","timeRange":"1h","requestType":"totally-bogus"}`,
+		"fusescope_aggregate_logs": `{"aggregations":"count()","timeRange":"1h","requestType":"totally-bogus"}`,
+		"fusescope_query_metrics":  `{"metricName":"system.cpu.time","timeRange":"1h","requestType":"totally-bogus"}`,
 	} {
 		t.Run(tool, func(t *testing.T) {
 			result := callRegisteredTool(t, server, tool, arguments)

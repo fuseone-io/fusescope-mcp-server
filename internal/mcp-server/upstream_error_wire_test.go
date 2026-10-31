@@ -86,11 +86,11 @@ func TestProductionHTTPUpstreamErrorGuidanceWire(t *testing.T) {
 			var response protocolHTTPResponse
 			if tt.modern {
 				response = protocolPOST(t, httpHandler, protocolRequestJSON(t, 700+index, "tools/call", modernParams(nil, map[string]any{
-					"name": "signoz_list_services", "arguments": map[string]any{},
-				})), modernHeaders("tools/call", "signoz_list_services"))
+					"name": "fusescope_list_services", "arguments": map[string]any{},
+				})), modernHeaders("tools/call", "fusescope_list_services"))
 			} else {
 				response = protocolPOST(t, httpHandler, protocolRequestJSON(t, 700+index, "tools/call", map[string]any{
-					"name": "signoz_list_services", "arguments": map[string]any{},
+					"name": "fusescope_list_services", "arguments": map[string]any{},
 				}), http.Header{"Mcp-Protocol-Version": {"2025-11-25"}})
 			}
 

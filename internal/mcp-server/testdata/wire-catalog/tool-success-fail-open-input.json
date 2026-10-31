@@ -9,7 +9,7 @@
       "arguments": {
         "limit": {}
       },
-      "name": "signoz_list_dashboards"
+      "name": "fusescope_list_dashboards"
     }
   },
   "httpStatus": 200,

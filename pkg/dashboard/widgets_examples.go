@@ -3,7 +3,7 @@ package dashboard
 const WidgetExamples = `
 Worked v6 (Perses) dashboard examples. Every payload below is a real widget created against a live SigNoz instance and read back (GET), so each field is server-accepted, not guessed. Each block is one panel: the object you place in the spec.panels map under a panel id (shown unkeyed here). Copy the structure, not the literal attribute names.
 
-For the rules behind these (which panel and query type to choose, layout, legends, the one-query-per-panel constraint, and variables), read signoz://dashboard/instructions and signoz://dashboard/widgets-instructions. For the exact field set, use the create/update tool's JSON Schema.
+For the rules behind these (which panel and query type to choose, layout, legends, the one-query-per-panel constraint, and variables), read fusescope://dashboard/instructions and fusescope://dashboard/widgets-instructions. For the exact field set, use the create/update tool's JSON Schema.
 
 Quick reference (all illustrated below):
 - Aggregations: count(), p50/p95/p99(field), avg/sum/min/max(field). Name a column with the aggregation's "alias" field (NOT "as '...'" inside the expression). Multiple aggregations = multiple entries in the aggregations[] array.
@@ -16,7 +16,7 @@ Quick reference (all illustrated below):
 
 Example: Token Usage (Timeseries with a formula over disabled base queries)
 
-A single widget: one entry from spec.panels (keyed by a panel id, e.g. "token-usage"); a layout item links to it via content.$ref. It is a signoz/TimeSeriesPanel whose signoz/CompositeQuery sums prompt + completion tokens: two builder_query entries (A, B) marked "disabled": true and a builder_formula F1 ("A + B") left enabled, so only the summed series renders (the pattern for any computed series). Filters reference $service_name / $language / $llm_model, which are DynamicVariables declared at the dashboard level (see signoz://dashboard/instructions for variable wiring).
+A single widget: one entry from spec.panels (keyed by a panel id, e.g. "token-usage"); a layout item links to it via content.$ref. It is a signoz/TimeSeriesPanel whose signoz/CompositeQuery sums prompt + completion tokens: two builder_query entries (A, B) marked "disabled": true and a builder_formula F1 ("A + B") left enabled, so only the summed series renders (the pattern for any computed series). Filters reference $service_name / $language / $llm_model, which are DynamicVariables declared at the dashboard level (see fusescope://dashboard/instructions for variable wiring).
 
 {
   "kind": "Panel",
