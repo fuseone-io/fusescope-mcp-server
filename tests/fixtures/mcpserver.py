@@ -106,10 +106,10 @@ def mcp_server(request: pytest.FixtureRequest, signoz: SigNoz) -> MCPServer:
             "MCP_SERVER_PORT": str(CONTAINER_PORT),
             # The cast SigNoz publishes 8080 on the host; containers reach the
             # host through the gateway alias.
-            "SIGNOZ_URL": signoz.endpoint.replace("localhost", "host.docker.internal").replace(
+            "FUSESCOPE_URL": signoz.endpoint.replace("localhost", "host.docker.internal").replace(
                 "127.0.0.1", "host.docker.internal"
             ),
-            "SIGNOZ_API_KEY": signoz.access_token,
+            "FUSESCOPE_API_KEY": signoz.access_token,
             "LOG_LEVEL": "error",
             "ANALYTICS_ENABLED": "false",
             "OTEL_TRACES_EXPORTER": "none",
@@ -179,10 +179,10 @@ def mcp_server_with_global_external_url(
             "TRANSPORT_MODE": "http",
             "MCP_SERVER_HOST": "127.0.0.1",
             "MCP_SERVER_PORT": str(port),
-            "SIGNOZ_URL": backend_url,
-            "SIGNOZ_API_KEY": signoz.access_token,
-            "SIGNOZ_CUSTOM_HEADERS": "",
-            "SIGNOZ_INSTANCE_URL_ALLOWLIST": "",
+            "FUSESCOPE_URL": backend_url,
+            "FUSESCOPE_API_KEY": signoz.access_token,
+            "FUSESCOPE_CUSTOM_HEADERS": "",
+            "FUSESCOPE_INSTANCE_URL_ALLOWLIST": "",
             "OAUTH_ENABLED": "false",
             "LOG_LEVEL": "error",
             "ANALYTICS_ENABLED": "false",

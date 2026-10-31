@@ -61,7 +61,7 @@ uv run pytest --basetemp=./tmp/ e2e/tests/test_logs.py::test_seeded_logs_are_sea
   `GET /api/v1/global/config` response, and restore the original setting afterward.
   MCP HTTP calls check external paths, localhost browser links, and per-request
   backend aliases; an unconfigured instance checks backend URL fallback.
-  The path case includes the prefix in `SIGNOZ_URL`, because SigNoz mounts its API
+  The path case includes the prefix in `FUSESCOPE_URL`, because SigNoz mounts its API
   there too. Per-request alias checks use the origin cases.
   The pinned backend returns `data.external_url: "//<unset>"` when unconfigured.
 - Tests talk to the server through the official Python MCP SDK

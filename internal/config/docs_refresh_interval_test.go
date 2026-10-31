@@ -60,8 +60,8 @@ func TestLoadConfigDocsRefreshOrderingFallback(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Setenv("SIGNOZ_URL", "https://example.invalid")
-			t.Setenv("SIGNOZ_API_KEY", "test")
+			t.Setenv("FUSESCOPE_URL", "https://example.invalid")
+			t.Setenv("FUSESCOPE_API_KEY", "test")
 			t.Setenv(DocsRefreshIntervalEnv, tt.refresh)
 			t.Setenv(DocsFullRefreshIntervalEnv, tt.full)
 			cfg, err := LoadConfig()

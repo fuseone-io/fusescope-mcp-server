@@ -109,8 +109,8 @@ run_stdio_smoke() {
   timeout --signal=TERM --kill-after=5s "${COMMAND_TIMEOUT_SECONDS}s" \
     env \
     TRANSPORT_MODE=stdio \
-    SIGNOZ_URL=https://example.invalid \
-    SIGNOZ_API_KEY=protocol-test-key \
+    FUSESCOPE_URL=https://example.invalid \
+    FUSESCOPE_API_KEY=protocol-test-key \
     ANALYTICS_ENABLED=false \
     OTEL_TRACES_EXPORTER=none \
     OTEL_METRICS_EXPORTER=none \
@@ -312,8 +312,8 @@ env \
   TRANSPORT_MODE=http \
   MCP_SERVER_HOST="$MCP_PROTOCOL_HOST" \
   MCP_SERVER_PORT="$MCP_PROTOCOL_PORT" \
-  SIGNOZ_URL=https://example.invalid \
-  SIGNOZ_API_KEY=protocol-test-key \
+  FUSESCOPE_URL=https://example.invalid \
+  FUSESCOPE_API_KEY=protocol-test-key \
   OAUTH_ENABLED=false \
   ANALYTICS_ENABLED=false \
   OTEL_TRACES_EXPORTER=none \

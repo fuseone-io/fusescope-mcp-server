@@ -36,8 +36,8 @@ func TestHandleListDashboards_UnconfiguredBrowserURLUsesLocalhostBackend(t *test
 	}))
 	t.Cleanup(backend.Close)
 	apiURL := strings.Replace(backend.URL, "127.0.0.1", "localhost", 1)
-	t.Setenv(config.SignozURL, apiURL)
-	t.Setenv(config.SignozApiKey, "test-key")
+	t.Setenv(config.FuseScopeURL, apiURL)
+	t.Setenv(config.FuseScopeAPIKey, "test-key")
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		t.Fatal(err)
