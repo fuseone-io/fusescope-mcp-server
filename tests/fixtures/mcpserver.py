@@ -20,7 +20,7 @@ logger = setup_logger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
-IMAGE = "signoz-mcp-server:e2e"
+IMAGE = "fusescope-mcp-server:e2e"
 CONTAINER_PORT = 8000
 READY_TIMEOUT = 60.0
 
@@ -153,7 +153,7 @@ def mcp_server(request: pytest.FixtureRequest, signoz: SigNoz) -> MCPServer:
 
 @pytest.fixture(scope="session")
 def mcp_server_binary(tmp_path_factory: pytest.TempPathFactory) -> Path:
-    binary = tmp_path_factory.mktemp("mcp-server") / "signoz-mcp-server"
+    binary = tmp_path_factory.mktemp("mcp-server") / "fusescope-mcp-server"
     Commander.from_path("go", cwd=REPO_ROOT).run("build", "-o", str(binary), "./cmd/server/", timeout=900)
     return binary
 

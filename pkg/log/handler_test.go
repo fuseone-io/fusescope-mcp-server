@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	"github.com/SigNoz/signoz-mcp-server/pkg/util"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

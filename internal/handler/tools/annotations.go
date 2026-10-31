@@ -1,7 +1,7 @@
 package tools
 
 import (
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 )
 
 // Composite annotation options, one per tool class. Every registered tool must

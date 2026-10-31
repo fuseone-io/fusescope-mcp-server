@@ -7,7 +7,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/querybuilder"
 )
 
 const logsLegacyQueryAliasError = `parameter validation failed: "query" is not accepted by log tools; use "filter" with a Query Builder filter expression (see fusescope://logs/query-builder-guide)`

@@ -6,10 +6,10 @@ import (
 	"log/slog"
 	"strconv"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
-	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/querybuilder"
 )
 
 func (h *Handler) RegisterLogsHandlers(s *mcp.Server) {

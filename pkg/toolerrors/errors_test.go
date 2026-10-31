@@ -3,7 +3,7 @@ package toolerrors
 import (
 	"testing"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 )
 
 func TestCode(t *testing.T) {

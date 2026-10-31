@@ -3,8 +3,8 @@ package docs
 import (
 	"strings"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	"github.com/SigNoz/signoz-mcp-server/pkg/toolerrors"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/toolerrors"
 )
 
 const (

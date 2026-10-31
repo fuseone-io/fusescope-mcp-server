@@ -15,12 +15,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/client"
-	"github.com/SigNoz/signoz-mcp-server/internal/config"
-	"github.com/SigNoz/signoz-mcp-server/pkg/analytics"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
-	otelpkg "github.com/SigNoz/signoz-mcp-server/pkg/otel"
-	"github.com/SigNoz/signoz-mcp-server/pkg/util"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/client"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/analytics"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
+	otelpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/otel"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
 )

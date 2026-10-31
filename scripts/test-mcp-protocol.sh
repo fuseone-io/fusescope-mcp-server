@@ -114,7 +114,7 @@ run_stdio_smoke() {
     ANALYTICS_ENABLED=false \
     OTEL_TRACES_EXPORTER=none \
     OTEL_METRICS_EXPORTER=none \
-    node - "$PROTOCOL_TMP_DIR/signoz-mcp-server" "$era" >"$output_file" 2>"$stderr_file" <<'NODE'
+    node - "$PROTOCOL_TMP_DIR/fusescope-mcp-server" "$era" >"$output_file" 2>"$stderr_file" <<'NODE'
 const { spawn } = require("node:child_process");
 const readline = require("node:readline");
 
@@ -303,7 +303,7 @@ if [[ "$installed_inspector_version" != "$INSPECTOR_VERSION" ]]; then
 fi
 
 CURRENT_PHASE="build server"
-go build -o "$PROTOCOL_TMP_DIR/signoz-mcp-server" ./cmd/server >"$CURRENT_STDOUT" 2>"$CURRENT_STDERR"
+go build -o "$PROTOCOL_TMP_DIR/fusescope-mcp-server" ./cmd/server >"$CURRENT_STDOUT" 2>"$CURRENT_STDERR"
 
 run_stdio_smoke legacy
 run_stdio_smoke modern
@@ -318,7 +318,7 @@ env \
   ANALYTICS_ENABLED=false \
   OTEL_TRACES_EXPORTER=none \
   OTEL_METRICS_EXPORTER=none \
-  "$PROTOCOL_TMP_DIR/signoz-mcp-server" >"$SERVER_LOG" 2>&1 &
+  "$PROTOCOL_TMP_DIR/fusescope-mcp-server" >"$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
 
 CURRENT_PHASE="server readiness"

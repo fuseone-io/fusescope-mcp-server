@@ -18,14 +18,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient"
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/types"
-	"github.com/SigNoz/signoz-mcp-server/pkg/version"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/types"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/version"
 )
 
 func newBufferedLogger(buf *bytes.Buffer, level slog.Level) *slog.Logger {

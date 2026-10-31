@@ -8,13 +8,13 @@ import (
 	"log/slog"
 	"time"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	otelpkg "github.com/SigNoz/signoz-mcp-server/pkg/otel"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	otelpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/trace"
 
-	docsindex "github.com/SigNoz/signoz-mcp-server/internal/docs"
+	docsindex "github.com/fuseone-io/fusescope-mcp-server/internal/docs"
 )
 
 func (h *Handler) RegisterDocsHandlers(s *mcp.Server) {

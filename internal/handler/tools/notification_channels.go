@@ -7,10 +7,10 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/client"
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	"github.com/SigNoz/signoz-mcp-server/pkg/notificationchannel"
-	"github.com/SigNoz/signoz-mcp-server/pkg/types"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/client"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/notificationchannel"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/types"
 )
 
 func (h *Handler) RegisterNotificationChannelHandlers(server *mcp.Server) {

@@ -1,5 +1,5 @@
 [project]
-name = "signoz-mcp-server-tests"
+name = "fusescope-mcp-server-tests"
 version = "0.1.0"
 description = "End-to-end tests for the SigNoz MCP server"
 requires-python = ">=3.11"

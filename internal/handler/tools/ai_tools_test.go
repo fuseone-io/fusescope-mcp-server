@@ -11,11 +11,11 @@ import (
 	"sync"
 	"testing"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
 
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 )
 
 // recordedRequest is one request the fake SigNoz received.

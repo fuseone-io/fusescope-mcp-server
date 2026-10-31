@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/version"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/version"
 )
 
 const (

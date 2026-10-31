@@ -13,10 +13,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 )
 
 type orgOverviewOutput struct {

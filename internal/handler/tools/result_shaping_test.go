@@ -10,10 +10,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/config"
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
-	"github.com/SigNoz/signoz-mcp-server/pkg/util"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/config"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
 )
 
 // upstreamSpecs runs a query tool against a fake SigNoz and returns the result

@@ -6,12 +6,12 @@ import (
 	"log/slog"
 	"sort"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
-	"github.com/SigNoz/signoz-mcp-server/pkg/paginate"
-	"github.com/SigNoz/signoz-mcp-server/pkg/timeutil"
-	"github.com/SigNoz/signoz-mcp-server/pkg/util"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/paginate"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/timeutil"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
 )
 
 func (h *Handler) RegisterServiceHandlers(s *mcp.Server) {

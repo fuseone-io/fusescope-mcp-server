@@ -10,9 +10,9 @@ import (
 	"strings"
 	"testing"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
 )
 
 // resultText extracts the first text content block of a tool result, asserting

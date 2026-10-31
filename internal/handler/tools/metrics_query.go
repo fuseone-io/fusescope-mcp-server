@@ -9,13 +9,13 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
-	"github.com/SigNoz/signoz-mcp-server/pkg/metricsrules"
-	"github.com/SigNoz/signoz-mcp-server/pkg/querybuilder"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/metricsrules"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/querybuilder"
 )
 
 // metricMetadata holds one metric's metadata from the exact-name lookup.

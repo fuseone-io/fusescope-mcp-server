@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
 )
 
 const testNotificationChannelID = "019947a7-f200-7000-8000-000000000001"

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
 	"github.com/stretchr/testify/require"
 )
 

@@ -7,7 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient"
 )
 
 // GetMetricCardinality fetches label/attribute keys for a single metric with

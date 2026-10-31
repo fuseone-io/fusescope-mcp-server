@@ -15,7 +15,7 @@ import (
 	"testing/synctest"
 	"time"
 
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

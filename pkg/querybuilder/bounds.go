@@ -6,7 +6,7 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
 )
 
 // AppliedBounds records a limit or order this server inserted into one query,

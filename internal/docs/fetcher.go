@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/version"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/version"
 	"golang.org/x/time/rate"
 )
 
@@ -203,5 +203,5 @@ func retryAfter(raw string) time.Duration {
 }
 
 func defaultUserAgent() string {
-	return version.UserAgent() + " (+https://github.com/SigNoz/signoz-mcp-server; docs-indexer)"
+	return version.UserAgent() + " (+https://github.com/fuseone-io/fusescope-mcp-server; docs-indexer)"
 }

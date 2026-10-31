@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
-	"github.com/SigNoz/signoz-mcp-server/pkg/paginate"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/paginate"
 )
 
 // listResult wraps a paginated list payload (a code-controlled envelope) as a

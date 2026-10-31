@@ -2,18 +2,18 @@
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 version: 2
 
-project_name: signoz-mcp-server
+project_name: fusescope-mcp-server
 
 before:
   hooks:
     - go mod tidy
 
 builds:
-  - id: signoz
-    binary: bin/signoz-mcp-server
+  - id: fusescope
+    binary: bin/fusescope-mcp-server
     main: ./cmd/server/
     ldflags:
-      - -s -w -X github.com/SigNoz/signoz-mcp-server/pkg/version.Version={{.Tag}}
+      - -s -w -X github.com/fuseone-io/fusescope-mcp-server/pkg/version.Version={{.Tag}}
     goos:
       - linux
       - darwin

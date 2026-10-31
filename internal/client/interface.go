@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient"
-	"github.com/SigNoz/signoz-mcp-server/pkg/types"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/types"
 )
 
 // Client defines the interface for interacting with the SigNoz API.

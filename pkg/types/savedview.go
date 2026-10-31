@@ -1,7 +1,7 @@
 package types
 
 import (
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
 )
 
 // CreateViewInput is the fusescope_create_view input schema: the upstream-generated

@@ -9,17 +9,17 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient"
-	"github.com/SigNoz/signoz-mcp-server/internal/apiclient/apitypes"
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient"
+	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 
-	signozclient "github.com/SigNoz/signoz-mcp-server/internal/client"
-	"github.com/SigNoz/signoz-mcp-server/pkg/alert"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
-	"github.com/SigNoz/signoz-mcp-server/pkg/paginate"
-	"github.com/SigNoz/signoz-mcp-server/pkg/timeutil"
-	"github.com/SigNoz/signoz-mcp-server/pkg/types"
-	"github.com/SigNoz/signoz-mcp-server/pkg/util"
+	signozclient "github.com/fuseone-io/fusescope-mcp-server/internal/client"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/alert"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/paginate"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/timeutil"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/types"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
 )
 
 type alertListOutput struct {

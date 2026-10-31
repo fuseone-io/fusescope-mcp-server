@@ -9,9 +9,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/SigNoz/signoz-mcp-server/guardrails"
-	"github.com/SigNoz/signoz-mcp-server/pkg/dashboard"
-	"github.com/SigNoz/signoz-mcp-server/pkg/version"
+	"github.com/fuseone-io/fusescope-mcp-server/guardrails"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/dashboard"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/version"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

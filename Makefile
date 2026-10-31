@@ -36,7 +36,7 @@ require-goimports:
 
 build: fmt goimports
 	@echo "🚀 Building ..."
-	@go build $(GO_FLAGS) -ldflags "-X github.com/SigNoz/signoz-mcp-server/pkg/version.Version=$(VERSION)" -o bin/signoz-mcp-server ./cmd/server/...
+	@go build $(GO_FLAGS) -ldflags "-X github.com/fuseone-io/fusescope-mcp-server/pkg/version.Version=$(VERSION)" -o bin/fusescope-mcp-server ./cmd/server/...
 
 test:
 	@echo "🧪 Running all tests..."
@@ -196,7 +196,7 @@ gen-client: $(SKAFF)
 	for f in $(APITYPES_DIR)/*_test.go; do if [ -e "$$f" ]; then mv "$$f" "$${f%_test.go}_test_type.go" || exit 1; fi; done && \
 	$(SKAFF) client --openapi "$$tmp/openapi.yml" --config skaff.yml \
 		--output $(APICLIENT_DIR)/zz_generated_client.go --package apiclient \
-		--apitypes-import github.com/SigNoz/signoz-mcp-server/$(APITYPES_DIR)
+		--apitypes-import github.com/fuseone-io/fusescope-mcp-server/$(APITYPES_DIR)
 
 # Needs no skaff or gh login: regenerates the dashboard schemas and the examples resources.
 gen-spec:
@@ -215,12 +215,12 @@ gen-check: gen
 	if [ -n "$$untracked" ]; then printf '%s\n' "$$untracked"; echo "Generated files are not committed."; exit 1; fi
 
 bundle:
-	@echo "🚀 Building SigNoz Claude MCP extension..."
+	@echo "🚀 Building the FuseScope Claude MCP extension..."
 	@mkdir -p bundle/server
-	@GOOS=darwin GOARCH=arm64 go build -o bundle/server/signoz-mcp-server ./cmd/server/
-	@GOOS=windows GOARCH=amd64 go build -o bundle/server/signoz-mcp-server.exe ./cmd/server/
+	@GOOS=darwin GOARCH=arm64 go build -o bundle/server/fusescope-mcp-server ./cmd/server/
+	@GOOS=windows GOARCH=amd64 go build -o bundle/server/fusescope-mcp-server.exe ./cmd/server/
 	@cp ./manifest.json bundle/
-	@cp ./assets/signoz_icon.png bundle/
+	@cp ./assets/fusescope_icon.png bundle/
 	@echo "📦 Installing MCPB CLI..."
 	@npm install -g @anthropic-ai/mcpb > /dev/null 2>&1
 	@echo "🧩 Packing MCP bundle..."

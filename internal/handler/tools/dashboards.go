@@ -13,13 +13,13 @@ import (
 	"time"
 	"unicode/utf8"
 
-	mcp "github.com/SigNoz/signoz-mcp-server/internal/mcpcontract"
+	mcp "github.com/fuseone-io/fusescope-mcp-server/internal/mcpcontract"
 
-	"github.com/SigNoz/signoz-mcp-server/pkg/dashboard"
-	logpkg "github.com/SigNoz/signoz-mcp-server/pkg/log"
-	"github.com/SigNoz/signoz-mcp-server/pkg/paginate"
-	"github.com/SigNoz/signoz-mcp-server/pkg/promql"
-	"github.com/SigNoz/signoz-mcp-server/pkg/util"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/dashboard"
+	logpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/log"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/paginate"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/promql"
+	"github.com/fuseone-io/fusescope-mcp-server/pkg/util"
 )
 
 // v2 dashboard tool input schemas, extracted from the SigNoz OpenAPI spec

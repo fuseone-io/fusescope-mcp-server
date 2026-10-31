@@ -915,7 +915,7 @@ wheels = [
 ]
 
 [[package]]
-name = "signoz-mcp-server-tests"
+name = "fusescope-mcp-server-tests"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

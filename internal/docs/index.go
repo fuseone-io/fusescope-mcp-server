@@ -21,11 +21,11 @@ import (
 	"time"
 	"unicode/utf8"
 
-	otelpkg "github.com/SigNoz/signoz-mcp-server/pkg/otel"
 	"github.com/blevesearch/bleve/v2"
 	"github.com/blevesearch/bleve/v2/index/scorch"
 	"github.com/blevesearch/bleve/v2/mapping"
 	bleveQuery "github.com/blevesearch/bleve/v2/search/query"
+	otelpkg "github.com/fuseone-io/fusescope-mcp-server/pkg/otel"
 	"go.opentelemetry.io/otel/trace"
 )
 
