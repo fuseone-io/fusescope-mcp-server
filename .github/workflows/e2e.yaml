@@ -25,7 +25,7 @@ jobs:
     # The suite casts an ephemeral SigNoz and needs no secrets to run, so it
     # runs on every non-fork pull request. Fork PRs run only through the
     # privileged pull_request_target path once a maintainer applies
-    # safe-to-test. The license key is optional: empty means community-only.
+    # safe-to-test.
     if: |
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' && ! github.event.pull_request.head.repo.fork && github.event.pull_request.user.login != 'dependabot[bot]' && ! contains(github.event.pull_request.labels.*.name, 'safe-to-test')) ||
@@ -56,16 +56,8 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           "$HOME/.local/bin/foundryctl" version
       - name: setup
-        env:
-          PRIMUS_LICENSE_KEY: ${{ secrets.PRIMUS_LICENSE_KEY }}
         run: |
-          # The license key is optional; pass the flag only when the secret is
-          # set, so community runs don't trip over a value-less --license-key.
-          flags=()
-          if [ -n "${PRIMUS_LICENSE_KEY}" ]; then
-            flags+=(--license-key "${PRIMUS_LICENSE_KEY}")
-          fi
-          make setup-e2e-env E2E_FLAGS="${flags[*]}"
+          make setup-e2e-env
       - name: run
         run: |
           make test-e2e-reuse

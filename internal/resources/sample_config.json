@@ -1,11 +1,11 @@
 {
   "mcpServers": {
     "fusescope": {
-      "command": "/path/to/your/signoz-mcp-server",
+      "command": "/path/to/your/fusescope-mcp-server",
       "args": [],
       "env": {
         "FUSESCOPE_API_KEY": "<your-api-key>",
-        "FUSESCOPE_URL": "<signoz-url>"
+        "FUSESCOPE_URL": "<fusescope-url>"
       }
     }
   }
