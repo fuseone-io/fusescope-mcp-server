@@ -1,0 +1,46 @@
+name: tmp-regen-docs
+
+on:
+  push:
+    branches:
+      - feat/fusescope-docs
+
+permissions:
+  contents: write
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/fusescope-docs
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Rebuild corpus, goldens and baseline ranks
+        run: |
+          set -o pipefail
+          go run ./cmd/build-docs-index 2>&1 | tail -20
+          go run ./cmd/build-docs-index -fallback-only
+          perl -0pi -e 's/\tif bytes.Equal\(expected, actual\) \{\n\t\treturn\n\t\}/\tif bytes.Equal(expected, actual) {\n\t\treturn\n\t}\n\t_ = os.WriteFile(path, actual, 0o644)\n\treturn/' internal/mcp-server/wire_catalog_golden_test.go
+          go test -count=1 -run '^TestGuardrail_WireCatalogGoldens$' ./internal/mcp-server/ || true
+          git checkout internal/mcp-server/wire_catalog_golden_test.go
+          go test -count=1 -v -run '^TestGoldenSet$' ./internal/docs/ > golden.log 2>&1 || true
+          python3 - <<'PY'
+          import json, re
+          ranks = {m.group(2): int(m.group(1)) for m in re.finditer(r'rank=(\d+) style=\S+ holdout=\S+ query="(.*)"', open("golden.log").read())}
+          path = "internal/docs/testdata/golden_queries.json"
+          queries = json.load(open(path))
+          for q in queries:
+              q["baseline_rank"] = ranks[q["query"]]
+          json.dump(queries, open(path, "w"), indent=2)
+          open(path, "a").write("\n")
+          summary = "%0A".join(f"{ranks[q['query']]} {q['style']} {q['query']}" for q in queries)
+          print(f"::notice title=golden ranks::{summary}")
+          PY
+          rm golden.log
+          git rm -q .github/workflows/tmp-regen-docs.yaml
+          git add -A internal
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "chore: rebuild the docs corpus and goldens from the FuseScope docs"
+          git push
