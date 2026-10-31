@@ -45,7 +45,7 @@ test:
 ##@ CI
 
 # Everything the PR gate runs except the live e2e suite. Needs Node, uv, and goimports.
-ci: check-fmt lint check-deps check-build test-race check-guardrails check-protocol check-conformance check-e2e-style check-repo-docs
+ci: check-fmt lint check-deps check-agpl check-build test-race check-guardrails check-protocol check-conformance check-e2e-style check-repo-docs
 	@echo "✅ All PR-gate checks passed."
 
 # Read-only: lists files that fmt or goimports would rewrite.
@@ -128,6 +128,32 @@ docs-index:
 	@echo "📚 Rebuilding embedded FuseScope docs corpus (fail-loud if the docs sitemap.md is unreachable)..."
 	@go run ./cmd/build-docs-index
 	@echo "✅ corpus.gob.gz + corpus.manifest.json regenerated. Diff the manifest and commit both files."
+
+##@ Bundled ClickHouse schema
+
+# The fusescope-schema-migrator release the bundled schema is read from.
+SCHEMA_MIGRATOR_VERSION ?= 0.145.0
+CHSCHEMA_COMPOSE := SCHEMA_MIGRATOR_VERSION=$(SCHEMA_MIGRATOR_VERSION) docker compose -f tools/chschema/compose.yaml
+
+.PHONY: gen-chschema check-agpl
+
+# Migrates a throwaway ClickHouse and reads its system tables into pkg/dashboard/clickhouse_schema.json.
+gen-chschema:
+	@echo ">> Reading the ClickHouse schema created by fusescope-schema-migrator $(SCHEMA_MIGRATOR_VERSION)"
+	@log=$$(mktemp) && trap 'rm -f "$$log"; $(CHSCHEMA_COMPOSE) down -v >/dev/null 2>&1' EXIT && \
+	$(CHSCHEMA_COMPOSE) up -d --wait clickhouse && \
+	for mode in sync async; do \
+		$(CHSCHEMA_COMPOSE) run --rm migrator $$mode --replication=false --cluster-name=cluster --up= \
+			--dsn=tcp://clickhouse:9000 >"$$log" 2>&1 || { cat "$$log"; exit 1; }; \
+	done && \
+	go run ./tools/chschema -url "http://$$($(CHSCHEMA_COMPOSE) port clickhouse 8123)" \
+		-migrator-version $(SCHEMA_MIGRATOR_VERSION) -out pkg/dashboard/clickhouse_schema.json
+
+# The server is Apache-2.0 and must not link the AGPL-3.0 collector or schema migrator.
+check-agpl:
+	@echo "⚖️  Checking for linked AGPL collector packages..."
+	@linked=$$(go list -deps -test ./... | grep -E '^github\.com/(SigNoz/signoz|fuseone-io/fusescope)-otel-collector(/|$$)'); \
+	if [ -n "$$linked" ]; then printf '%s\n' "$$linked"; echo "$${GITHUB_ACTIONS:+::error::}The server links AGPL collector packages."; exit 1; fi
 
 ##@ Generated SigNoz API client
 

@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        check: [lint, check-deps, check-build, test-race]
+        check: [lint, check-deps, check-agpl, check-build, test-race]
     steps:
       - name: Checkout pull request
         uses: actions/checkout@v4

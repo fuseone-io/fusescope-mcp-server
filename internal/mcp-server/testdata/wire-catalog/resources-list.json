@@ -48,7 +48,7 @@
           "description": "Read this before writing ClickHouse SQL for a dashboard widget over SigNoz logs. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-logs-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag.",
           "mimeType": "text/markdown",
           "name": "ClickHouse Logs Schema",
-          "size": 4505,
+          "size": 5698,
           "uri": "fusescope://dashboard/clickhouse-schema-for-logs"
         },
         {
@@ -62,7 +62,7 @@
           "description": "Read this before writing ClickHouse SQL for a dashboard widget over SigNoz metrics. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-metrics-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag.",
           "mimeType": "text/markdown",
           "name": "ClickHouse Metrics Schema",
-          "size": 7191,
+          "size": 7402,
           "uri": "fusescope://dashboard/clickhouse-schema-for-metrics"
         },
         {
@@ -76,7 +76,7 @@
           "description": "Read this before writing ClickHouse SQL for a dashboard widget over SigNoz traces. It lists tables and columns from the schema bundled with this server. Also read fusescope://dashboard/clickhouse-traces-example. If the live SigNoz instance rejects a table or column, follow that error because the bundled schema may lag.",
           "mimeType": "text/markdown",
           "name": "ClickHouse Traces Schema",
-          "size": 17539,
+          "size": 26816,
           "uri": "fusescope://dashboard/clickhouse-schema-for-traces"
         },
         {
