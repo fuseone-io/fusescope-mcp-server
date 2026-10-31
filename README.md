@@ -1,5 +1,11 @@
 # SigNoz MCP Server
 
+> **FuseScope fork.** This repository is FuseOne's independent fork of
+> [SigNoz MCP Server](https://github.com/SigNoz/signoz-mcp-server) (Apache-2.0),
+> maintained for [FuseScope](https://github.com/fuseone-io/fusescope). It does
+> not track upstream. Attribution is in [NOTICE](NOTICE). The rest of this README
+> still describes the upstream project until the rebrand lands.
+
 [![Go Version](https://img.shields.io/badge/Go-1.26+-blue.svg)](https://golang.org)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![MCP Protocol](https://img.shields.io/badge/MCP-2025--11--25_%7C_2026--07--28-orange.svg)](https://modelcontextprotocol.io)
