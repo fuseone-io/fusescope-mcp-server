@@ -21,10 +21,10 @@ func (h *Handler) RegisterQueryBuilderV5Handlers(s *mcp.Server) {
 	executeQuery := mcp.NewTool("fusescope_execute_builder_query",
 		withReadOnlyToolAnnotations(),
 		mcp.WithDescription(
-			"Use this only when dedicated log, trace, and metric tools cannot express the request, including multi-query requests, formulas, PromQL, and ClickHouse SQL. "+
+			"Use this only when dedicated log, trace, and metric tools cannot express the request, such as multi-query requests, formulas, PromQL, or ClickHouse SQL. "+
 				"Use fusescope_search_logs/fusescope_search_traces for raw rows, fusescope_aggregate_logs/fusescope_aggregate_traces for grouped or top-N analysis, and fusescope_query_metrics for ordinary metrics queries. "+
-				"Read the matching fusescope://logs/query-builder-guide, fusescope://traces/query-builder-guide, fusescope://ai/query-builder-guide, or fusescope://metrics-aggregation-guide; formulas require the metrics guide, and PromQL requires fusescope://promql/instructions. fusescope://query-builder/examples holds a complete request per query type and request type. "+
-				"Leave limit unset on each builder_query a formula references, because SigNoz applies an input's limit before the formula runs and drops series from its result. Give every other builder_query and each builder_formula a positive limit (100 for results) and non-empty spec.order (not dashboard orderBy); the server fills in omitted ones.",
+				"Read the matching fusescope://logs/query-builder-guide, fusescope://traces/query-builder-guide, fusescope://ai/query-builder-guide, or fusescope://metrics-aggregation-guide; formulas require the metrics guide, and PromQL requires fusescope://promql/instructions. fusescope://query-builder/examples has a full request per query and request type. "+
+				"Leave limit unset on each builder_query a formula references, because SigNoz applies an input's limit before the formula runs, dropping series. Give every other builder_query and each builder_formula a positive limit (100 for results) and non-empty spec.order (not dashboard orderBy); the server fills in omitted ones.",
 		),
 		mcp.WithInputSchema[types.ExecuteBuilderQueryInput](),
 	)
