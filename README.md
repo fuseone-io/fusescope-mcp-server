@@ -1,24 +1,19 @@
-# SigNoz MCP Server
-
-> **FuseScope fork.** This repository is FuseOne's independent fork of
-> [SigNoz MCP Server](https://github.com/SigNoz/signoz-mcp-server) (Apache-2.0),
-> maintained for [FuseScope](https://github.com/fuseone-io/fusescope). It does
-> not track upstream. Attribution is in [NOTICE](NOTICE). The rest of this README
-> still describes the upstream project until the rebrand lands.
+# FuseScope MCP Server
 
 [![Go Version](https://img.shields.io/badge/Go-1.26+-blue.svg)](https://golang.org)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![MCP Protocol](https://img.shields.io/badge/MCP-2025--11--25_%7C_2026--07--28-orange.svg)](https://modelcontextprotocol.io)
 
-A Model Context Protocol (MCP) server that provides seamless access to SigNoz observability data through AI assistants and LLMs. Query metrics, traces, logs, alerts, dashboards, and services using natural language.
+A Model Context Protocol (MCP) server that gives AI assistants and LLMs access to [FuseScope](https://github.com/fuseone-io/fusescope) observability data. Query metrics, traces, logs, alerts, dashboards, and services in natural language.
 
-**[📖 Full Documentation](https://signoz.io/docs/ai/signoz-mcp-server/)**
+This is FuseOne's independent fork of [SigNoz MCP Server](https://github.com/SigNoz/signoz-mcp-server) (Apache-2.0). It does not track upstream; attribution is in [NOTICE](NOTICE). FuseScope keeps SigNoz-compatible APIs, so the server's environment variables and the `SIGNOZ-API-KEY` header keep their SigNoz names.
+
+**[📖 FuseScope documentation](https://fuseone-io.github.io/fusescope-docs/)**
 
 ## Table of Contents
 
-- [Connect to SigNoz Cloud](#connect-to-signoz-cloud)
-- [Self-Hosted Installation](#self-hosted-installation)
-- [Connect to Self-Hosted SigNoz](#connect-to-self-hosted-signoz)
+- [Installation](#installation)
+- [Connect to FuseScope](#connect-to-fusescope)
 - [MCP Protocol Compatibility](#mcp-protocol-compatibility)
 - [What Can You Do With It?](#what-can-you-do-with-it)
 - [Available Tools](#available-tools)
@@ -28,231 +23,50 @@ A Model Context Protocol (MCP) server that provides seamless access to SigNoz ob
 - [Architecture](#architecture)
 - [Contributing](#contributing)
 
-## Connect to SigNoz Cloud
+## Installation
 
-Connect your AI tool to SigNoz Cloud's hosted MCP server. No installation is required; just add the hosted MCP URL and authenticate.
+There are no published binaries or container images yet. Build the server from source.
 
-```text
-https://mcp.<region>.signoz.cloud/mcp
-```
+### Build from Source
 
-> Make sure you select the correct region that matches your SigNoz Cloud account. Using the wrong region will result in authentication failures.
->
-> Find your region under **Settings → Ingestion** in SigNoz, or see the [SigNoz Cloud region reference](https://signoz.io/docs/ingestion/signoz-cloud/overview/#endpoint).
-
-### One-Click Install Links
-
-GitHub does not reliably make custom-protocol links like `cursor://` and `vscode:` clickable in README rendering.
-
-Use the documentation page for one-click install buttons:
-
-- [Open one-click install links for Cursor](https://signoz.io/docs/ai/signoz-mcp-server/#install-in-one-click)
-- [Open one-click install links for VS Code](https://signoz.io/docs/ai/signoz-mcp-server/#install-in-one-click-1)
-
-If you prefer, use the manual configuration examples below in this README.
-
-### Cursor
-
-#### Manual Configuration
-
-Add this configuration to `.cursor/mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "fusescope": {
-      "url": "https://mcp.<region>.signoz.cloud/mcp"
-    }
-  }
-}
-```
-
-Need help? See the [Cursor MCP docs](https://docs.cursor.com/context/model-context-protocol).
-
-### VS Code / GitHub Copilot
-
-#### Manual Configuration
-
-Add this configuration to `.vscode/mcp.json`:
-
-```json
-{
-  "servers": {
-    "fusescope": {
-      "type": "http",
-      "url": "https://mcp.<region>.signoz.cloud/mcp"
-    }
-  }
-}
-```
-
-Need help? See the [VS Code MCP docs](https://code.visualstudio.com/docs/copilot/chat/mcp-servers).
-
-### Claude Desktop
-
-Add SigNoz Cloud as a custom connector in Claude Desktop:
-
-1. Open Claude Desktop.
-2. Go to **Settings → Developer** (or **Features**, depending on your version).
-3. Click **Add Custom Connector** or **Add Remote MCP Server**.
-4. Enter your SigNoz MCP URL: `https://mcp.<region>.signoz.cloud/mcp`
-
-When prompted, complete the authentication flow.
-
-### Claude Code
-
-Run this command to add the hosted SigNoz MCP server:
+Requires Go 1.26 or newer.
 
 ```bash
-claude mcp add --scope user --transport http signoz https://mcp.<region>.signoz.cloud/mcp
+git clone https://github.com/fuseone-io/fusescope-mcp-server.git
+cd fusescope-mcp-server
+make build
 ```
 
-After configuring the MCP server, authenticate in a terminal:
-
-```bash
-claude /mcp
-```
-
-Select the `signoz` server and complete the authentication flow.
-
-### OpenAI Codex
-
-Run this command to add the hosted SigNoz MCP server:
-
-```bash
-codex mcp add fusescope --url https://mcp.<region>.signoz.cloud/mcp
-```
-
-Or add this configuration to `config.toml`:
-
-```toml
-[mcp_servers.signoz]
-url = "https://mcp.<region>.signoz.cloud/mcp"
-```
-
-After adding the server, authenticate:
-
-```bash
-codex mcp login signoz
-```
-
-Then run `/mcp` inside Codex to verify the connection.
-
-### Grok Build
-
-Run this command to add the hosted SigNoz MCP server:
-
-```bash
-grok mcp add -t http signoz https://mcp.<region>.signoz.cloud/mcp
-```
-
-Or add this configuration to `~/.grok/config.toml`:
-
-```toml
-[mcp_servers.signoz]
-url = "https://mcp.<region>.signoz.cloud/mcp"
-enabled = true
-```
-
-Adding the server does not authenticate it. Start Grok Build, run `/mcps`, select the `signoz` server, and complete the OAuth flow in your browser:
-
-```bash
-grok
-```
-
-```
-/mcps
-```
-
-No API key is stored in the config file; credentials are saved separately once the OAuth flow completes.
-
-Use `-s project` on the `add` command to write to `./.grok/config.toml` instead, so the server is shared with everyone working in that directory.
-
-Verify the connection with:
-
-```bash
-grok mcp list
-grok mcp doctor
-```
-
-### SigNoz Cloud Authentication
-
-When you add the hosted MCP URL to your client, the client initiates an authentication flow. You will be prompted to enter:
-
-1. Your SigNoz instance URL (for example, `your-instance.signoz.cloud`). Protocol-less URLs are accepted; paths, query parameters, and fragments are ignored.
-2. Your API key
-
-Create an API key in **Settings → API Keys** in SigNoz. Only **Admin** users can create API keys.
-
-## Self-Hosted Installation
-
-### Download Binary (Recommended)
-
-Download the latest binary from [GitHub Releases](https://github.com/SigNoz/signoz-mcp-server/releases):
-
-```bash
-# macOS (Apple Silicon)
-curl -L https://github.com/SigNoz/signoz-mcp-server/releases/latest/download/signoz-mcp-server_darwin_arm64.tar.gz | tar xz
-
-# macOS (Intel)
-curl -L https://github.com/SigNoz/signoz-mcp-server/releases/latest/download/signoz-mcp-server_darwin_amd64.tar.gz | tar xz
-
-# Linux (amd64)
-curl -L https://github.com/SigNoz/signoz-mcp-server/releases/latest/download/signoz-mcp-server_linux_amd64.tar.gz | tar xz
-```
-
-This extracts a `signoz-mcp-server` binary in the current directory. Move it somewhere on your PATH or note the absolute path for the config below.
-
-### Go Install
-
-```bash
-go install github.com/SigNoz/signoz-mcp-server/cmd/server@latest
-```
-
-The binary is installed as `server` to `$GOPATH/bin/` (default: `$HOME/go/bin/server`). You may want to rename it:
-
-```bash
-mv "$(go env GOPATH)/bin/server" "$(go env GOPATH)/bin/signoz-mcp-server"
-```
+The binary is at `./bin/signoz-mcp-server`. Move it somewhere on your PATH or note its absolute path for the client config below.
 
 ### Docker
 
-Docker images are available on [Docker Hub](https://hub.docker.com/r/signoz/signoz-mcp-server/tags):
+Build the image locally:
 
 ```bash
-docker pull signoz/signoz-mcp-server:latest
+docker build -t fusescope-mcp-server .
 ```
 
-Run in HTTP mode:
+Run it in HTTP mode:
 
 ```bash
 docker run -p 8000:8000 \
   -e TRANSPORT_MODE=http \
   -e MCP_SERVER_PORT=8000 \
-  -e SIGNOZ_URL=https://your-signoz-instance.com \
+  -e SIGNOZ_URL=https://your-fusescope-instance.com \
   -e SIGNOZ_API_KEY=your-api-key \
-  signoz/signoz-mcp-server:latest
+  fusescope-mcp-server
 ```
 
-Use a specific version tag (e.g. `v0.1.0`) instead of `latest` for pinned deployments.
-
-### Build from Source
-
-```bash
-git clone https://github.com/SigNoz/signoz-mcp-server.git
-cd signoz-mcp-server
-make build
-```
-
-The binary is at `./bin/signoz-mcp-server`.
-
-## Connect to Self-Hosted SigNoz
+## Connect to FuseScope
 
 ### Prerequisites
 
-- A running [SigNoz](https://signoz.io) instance on the latest release. Each server release targets the latest SigNoz release and is not tested against older versions; see [CHANGELOG.md](CHANGELOG.md) for breaking changes.
-- A SigNoz API key (Settings → API Keys in the SigNoz UI)
-- The `signoz-mcp-server` binary (see [Self-Hosted Installation](#self-hosted-installation))
+- A running FuseScope instance. See [Install with Helm](https://fuseone-io.github.io/fusescope-docs/install/helm/).
+- A FuseScope API key from a service account. See [Service accounts](https://fuseone-io.github.io/fusescope-docs/administration/service-accounts/).
+- The server binary or image (see [Installation](#installation)).
+
+FuseScope's **Settings → MCP Server** page shows the connection details and client snippets once the FuseScope deployment sets `global.mcp_url` to this server's URL.
 
 ### Stdio Mode (Claude Desktop / Cursor / Any MCP Client)
 
@@ -280,7 +94,7 @@ HTTP mode listens on all interfaces by default. Set `MCP_SERVER_HOST=127.0.0.1` 
 
 #### Memory footprint
 
-The server keeps the SigNoz docs search index in memory. With stemming on titles and headings and a single standard-analyzed body field, the embedded 746-page index used 28 to 36 MiB of resident heap across eight local Go 1.26 whole-package test runs. Build peaks ranged from 97 to 134 MiB above the pre-build heap baseline, using 64-page batches. These are index measurements, not whole-process RSS or container memory guarantees; request handling and refresh work add memory.
+The server keeps the FuseScope docs search index in memory. With stemming on titles and headings and a single standard-analyzed body field, the embedded 746-page index used 28 to 36 MiB of resident heap across eight local Go 1.26 whole-package test runs. Build peaks ranged from 97 to 134 MiB above the pre-build heap baseline, using 64-page batches. These are index measurements, not whole-process RSS or container memory guarantees; request handling and refresh work add memory.
 
 | Moment | Index memory behavior |
 | --- | --- |
@@ -297,7 +111,7 @@ Recommendations for containerized HTTP deployments:
 - Set both `SIGNOZ_DOCS_REFRESH_INTERVAL=0` and `SIGNOZ_DOCS_FULL_REFRESH_INTERVAL=0` when you would rather serve the docs snapshot that shipped with the release than pay any refresh. New docs pages then arrive with the next server upgrade. Setting only the first keeps the daily forced refresh.
 - Every refresh logs `docs refresh starting` and ends with a completion or failure line, for example `docs refresh no-op; sitemap unchanged`, `docs refresh found no page changes; index kept`, `docs refresh applied delta`, `docs refresh rebuilt index`, or a `docs refresh failed` / `docs full refresh failed` warning. A refresh normally finishes within a few minutes. A container whose last docs line is `docs refresh starting`, `docs refresh fetching pages`, or `docs refresh rebuilding index` and that then restarted most likely died mid-refresh.
 
-#### With OAuth (Multi-Tenant / Cloud)
+#### With OAuth (Multi-Tenant)
 
 Start the server:
 
@@ -326,7 +140,7 @@ The client discovers OAuth endpoints automatically, opens a browser for credenti
 
 #### Without OAuth (Simple Setup)
 
-The API key and SigNoz URL only need to be provided in **one** place: the server or the client.
+The API key and FuseScope URL only need to be provided in **one** place: the server or the client.
 
 **Option A — Credentials on the server** (simpler client config):
 
@@ -372,7 +186,7 @@ MCP_SERVER_PORT=8000 \
 
 ## MCP Protocol Compatibility
 
-SigNoz uses the official MCP Go SDK v1.8.0 and supports both current lifecycle
+FuseScope uses the official MCP Go SDK v1.8.0 and supports both current lifecycle
 models over HTTP and stdio:
 
 | Protocol era | Lifecycle |
@@ -415,20 +229,20 @@ HTTP mode exposes unauthenticated probe endpoints. New Kubernetes deployments sh
 "Search traces for the checkout service from the last hour"
 "Get details for trace ID abc123"
 "Create a dashboard with CPU and memory widgets"
-"How do I send Docker logs to SigNoz?"
+"How do I send Docker logs to FuseScope?"
 ```
 
 ## Available Tools
 
-> **Tool metadata:** every tool accepts `searchContext`. Copy the user's entire original request verbatim, including preflight or confirmation context; it is used for MCP observability and is not forwarded to SigNoz APIs.
+> **Tool metadata:** every tool accepts `searchContext`. Copy the user's entire original request verbatim, including preflight or confirmation context; it is used for MCP observability and is not forwarded to FuseScope APIs.
 
 > **Input validation:** calls are never rejected for schema mismatches. Arguments are validated against each tool's advertised schema; a mismatched call still runs best-effort, and the successful result carries a deterministic appended `Input validation notice:` naming the affected top-level parameter when it can be derived safely from the advertised schema. Complex root-only mismatches use a generic fallback. Mismatches are also counted in the `mcp.tool.validation.mismatches` metric. Arguments a tool's schema does not declare add no notice and are handled as before: most tools ignore them, and a few reject them with a coded error, such as the retired log `query` alias or an unknown notification-channel field. They are also logged at WARN with their names and counted in the same metric under path `<undeclared>` and constraint `undeclared_argument`.
 
-> **Upstream errors:** upstream SigNoz 401 and 403 tool failures carry a stable structured `code` (`UNAUTHORIZED` or `PERMISSION_DENIED`) and numeric `status`. Recognized SigNoz error envelopes may also include bounded `upstreamURL`, `upstreamSuggestions`, `upstreamDetails` (`[{message, suggestions}]`), and `upstreamRetry` (`{delay}` in nanoseconds); the same recovery guidance appears in agent-readable text. Unrecognized bodies use the local status-derived coded fallback instead of raw passthrough, and authorization failures still name the failed tool and immediate recovery action. This error-only addition does not change tool names, schemas or descriptions, success payloads, resources or templates, or prompts.
+> **Upstream errors:** upstream FuseScope 401 and 403 tool failures carry a stable structured `code` (`UNAUTHORIZED` or `PERMISSION_DENIED`) and numeric `status`. Recognized FuseScope error envelopes may also include bounded `upstreamURL`, `upstreamSuggestions`, `upstreamDetails` (`[{message, suggestions}]`), and `upstreamRetry` (`{delay}` in nanoseconds); the same recovery guidance appears in agent-readable text. Unrecognized bodies use the local status-derived coded fallback instead of raw passthrough, and authorization failures still name the failed tool and immediate recovery action. This error-only addition does not change tool names, schemas or descriptions, success payloads, resources or templates, or prompts.
 
 | Tool | Description |
 |------|-------------|
-| `fusescope_get_org_overview` | Get the current status and overall posture of the SigNoz deployment, with typed projections plus `sourceStats` containing every reported stats field |
+| `fusescope_get_org_overview` | Get the current status and overall posture of the FuseScope deployment, with typed projections plus `sourceStats` containing every reported stats field |
 | `fusescope_list_metrics` | Discover active metric names and catalog metadata |
 | `fusescope_query_metrics` | Query known metrics for values, trends, breakdowns, or formulas |
 | `fusescope_get_top_metrics` | Return top 100 metrics ranked by ingested sample volume with pre-computed percentages for cost and volume analysis |
@@ -475,9 +289,7 @@ HTTP mode exposes unauthenticated probe endpoints. New Kubernetes deployments sh
 | `fusescope_update_notification_channel` | Fully replace a fetched channel's config |
 | `fusescope_delete_notification_channel` | Permanently delete a confirmed channel by ID |
 
-For detailed usage and examples, see the [full documentation](https://signoz.io/docs/ai/signoz-mcp-server/).
-
-> **Resource deep links:** the resource read tools (`fusescope_list_dashboards`, `fusescope_get_dashboard`, `fusescope_list_alerts`, `fusescope_list_alert_rules`, `fusescope_get_alert`, `fusescope_list_services`, `fusescope_search_traces`, `fusescope_get_trace_details`) and the dashboard write tools (`fusescope_create_dashboard`, `fusescope_update_dashboard`, `fusescope_patch_dashboard`, `fusescope_import_dashboard`) include a `webUrl` field when the request carries a SigNoz instance URL: an absolute deep link to the resource in the SigNoz web UI (per result row for `fusescope_search_traces`). The MCP server discovers the browser base from each SigNoz backend's `global.external_url`. API requests keep using the request's backend URL. See [Browser links for self-hosted SigNoz](#browser-links-for-self-hosted-signoz).
+> **Resource deep links:** the resource read tools (`fusescope_list_dashboards`, `fusescope_get_dashboard`, `fusescope_list_alerts`, `fusescope_list_alert_rules`, `fusescope_get_alert`, `fusescope_list_services`, `fusescope_search_traces`, `fusescope_get_trace_details`) and the dashboard write tools (`fusescope_create_dashboard`, `fusescope_update_dashboard`, `fusescope_patch_dashboard`, `fusescope_import_dashboard`) include a `webUrl` field when the request carries a FuseScope instance URL: an absolute deep link to the resource in the FuseScope web UI (per result row for `fusescope_search_traces`). The MCP server discovers the browser base from each FuseScope backend's `global.external_url`. API requests keep using the request's backend URL. See [Browser links for self-hosted FuseScope](#browser-links-for-fusescope).
 
 ### Agent Routing Guidance
 
@@ -529,13 +341,13 @@ for the closest history result.
 
 #### `fusescope_get_org_overview`
 
-Get the current status and overall posture of the SigNoz deployment before drilling into exact resources. `data.sourceStats` is the authoritative complete flat bag containing every key and value reported by the deployment stats endpoint, including current and future fields. Typed convenience projections cover telemetry freshness and volume, infrastructure presence, dashboards, alert rules and runtime, notification channels, saved views, log pipelines, cloud integrations, users, authentication, service accounts, roles, licensing, and configuration.
+Get the current status and overall posture of the FuseScope deployment before drilling into exact resources. `data.sourceStats` is the authoritative complete flat bag containing every key and value reported by the deployment stats endpoint, including current and future fields. Typed convenience projections cover telemetry freshness and volume, infrastructure presence, dashboards, alert rules and runtime, notification channels, saved views, log pipelines, cloud integrations, users, authentication, service accounts, roles, licensing, and configuration.
 
 - **Parameters**: no task parameters; like every tool, it accepts non-required `searchContext` for MCP observability.
 - **Authoritative source**: `sourceStats` preserves every successfully decoded entry from the upstream `data` object under its original dotted key. Use the grouped fields for convenient interpretation and `sourceStats` when exact backend coverage or a newly introduced field matters. Counts are deployment aggregates; use `fusescope_list_dashboards`, `fusescope_list_alert_rules`, `fusescope_list_notification_channels`, or `fusescope_list_views` for exact inventories; `fusescope_list_metrics` for metric names; `fusescope_list_alerts` for current alert instances; and `fusescope_search_logs`, `fusescope_search_traces`, or `fusescope_query_metrics` for time-windowed or per-service data.
 - **Missing fields**: a key absent from `sourceStats` was not reported by the upstream collector and must not be interpreted as zero. The endpoint can return a partial HTTP 200 when an individual collector fails. In typed projections, a missing group total produces `available: false`; a reported zero produces `available: true`. Expected missing or invalid projection fields set `metadata.projectionPartial` and add an `incompleteGroups` entry with affected output paths, reason, next action, and exact fallback tools where available. An invalid projection value is still retained unchanged in `sourceStats` and named in `invalidProjectionFields`.
 - **Cloud-integration completeness**: `cloudIntegrations.sourceAvailability` reports whether both current AWS/Azure provider counts were reported. Each provider has its own `dataAvailable`; an absent provider count is never converted to zero. If neither provider is reported, source availability is `unavailable` without setting overall `metadata.projectionPartial`; this can mean cloud integrations are unsupported/edition-gated **or** both provider queries failed, so do not interpret it as “no cloud integrations configured.” If exactly one is reported, source availability is `partial` and the missing provider receives non-recursive recovery guidance. `connectedAccounts` means a non-removed account with an account ID and at least one agent report, not a recent check-in or proof that an integration service is enabled.
-- **Feature flags**: `featureFlags.flags` lists every flag from `GET /api/v2/features` with its `name`, `kind`, `stage`, `description`, and the `resolvedValue` in effect for this org, sorted by name. Some flags change how data is stored or queried, such as `use_json_body` for JSON log bodies. If SigNoz does not report them, `featureFlags.available` is `false` and `metadata.incompleteGroups` has a `featureFlags` entry; treat every flag as unknown, not off.
+- **Feature flags**: `featureFlags.flags` lists every flag from `GET /api/v2/features` with its `name`, `kind`, `stage`, `description`, and the `resolvedValue` in effect for this org, sorted by name. Some flags change how data is stored or queried, such as `use_json_body` for JSON log bodies. If FuseScope does not report them, `featureFlags.available` is `false` and `metadata.incompleteGroups` has a `featureFlags` entry; treat every flag as unknown, not off.
 - **Projection metadata**: `reportedStatCount` is the number of authoritative entries in `sourceStats`; `projectedStatCount` counts entries also represented in typed groups; and `unprojectedStatCount` counts entries available only in `sourceStats`, including future fields. `projectionPartial`, `incompleteGroups`, and `invalidProjectionFields` describe only typed-projection gaps; they do not indicate data was removed from `sourceStats` or claim endpoint-wide completeness.
 
 #### `fusescope_list_metrics`
@@ -547,7 +359,7 @@ Discover metric names and catalog metadata such as type, temporality, unit, and 
   - `limit` (optional) - Maximum number of metrics to return (default: 50)
   - `timeRange` (optional) - Relative range: 30m, 1h, 6h, 24h, 7d (default: 1h; ignored when both `start` and `end` are provided)
   - `start`/`end` (optional) - Unix ms timestamps. When both are provided, they override `timeRange`.
-  - `source` (optional) - Data-source filter. Use `"meter"` to list Cost Meter metrics, the usage/billing metrics SigNoz meters on (currently telemetry ingestion volume); omit for the default metrics store
+  - `source` (optional) - Data-source filter. Use `"meter"` to list Cost Meter metrics, the usage/billing metrics FuseScope meters on (currently telemetry ingestion volume); omit for the default metrics store
   - **Completeness note**: the response appends a note reporting `hasMore` (inferred from `returnedRows == limit`) so a `limit`-truncated list is never mistaken for the full set; narrow with `searchText` for more specificity
 
 #### `fusescope_query_metrics`
@@ -559,23 +371,23 @@ Query a known metric for values, trends, breakdowns, or formulas. The tool appli
   - `metricType` (optional) - gauge, sum, histogram, exponential_histogram, summary (auto-fetched if absent)
   - `isMonotonic` (optional) - Boolean (or the strings `"true"`/`"false"`); auto-fetched if absent. An invalid value is rejected rather than silently treated as false
   - `temporality` (optional) - cumulative, delta, unspecified (auto-fetched if absent)
-  - `timeAggregation` (optional) - Aggregation within each series per time bucket (defaulted by type when omitted; SigNoz validates the combination)
+  - `timeAggregation` (optional) - Aggregation within each series per time bucket (defaulted by type when omitted; FuseScope validates the combination)
   - `spaceAggregation` (optional) - Aggregation across series (defaulted by type when omitted; percentiles are histogram-only). Summary metrics need both aggregations set
   - `groupBy` (optional) - Label names to group by, as an array or a comma-separated string. Metric labels hold resource and data-point attributes in one set, so names need no context prefix. An array item that is not a string is rejected with a coded error
-  - `filter` (optional) - Filter expression. Pass the expression text, not `{"expression": ...}`, which is rejected with a coded error. Regex matches use `REGEXP`, not PromQL's `=~`; a `=~` or `!~` that SigNoz rejects comes back with that hint. The former `query` alias is rejected with a coded error that names `filter`
+  - `filter` (optional) - Filter expression. Pass the expression text, not `{"expression": ...}`, which is rejected with a coded error. Regex matches use `REGEXP`, not PromQL's `=~`; a `=~` or `!~` that FuseScope rejects comes back with that hint. The former `query` alias is rejected with a coded error that names `filter`
   - `timeRange` (optional) - Relative time range `<number><unit>` where unit is `m`/`h`/`d` (e.g. '30m', '1h', '6h', '7d'; default: '1h'; ignored when both `start` and `end` are provided)
   - `start`/`end` (optional) - Unix ms timestamps. When both are provided, they override `timeRange`.
   - `stepInterval` (optional) - Step in seconds (auto-calculated if omitted)
   - `requestType` (optional) - Response format. Enum: `time_series` (default), `scalar`. Unknown values are rejected.
-  - `reduceTo` (required when `requestType` is `scalar`) - How to reduce each series to one value: `last`, `max`, `min`, `avg`, `sum`, `count`, `median`. It has no default; SigNoz rejects a scalar request without it. For a total count use `timeAggregation: increase` with `reduceTo: sum`
+  - `reduceTo` (required when `requestType` is `scalar`) - How to reduce each series to one value: `last`, `max`, `min`, `avg`, `sum`, `count`, `median`. It has no default; FuseScope rejects a scalar request without it. For a total count use `timeAggregation: increase` with `reduceTo: sum`
   - `formula` (optional) - Expression over named queries (e.g., "A / B * 100")
   - `formulaQueries` (optional) - Array of additional named metric queries for `formula`, or a JSON-encoded string of that array. The item schema is typed: `name` and `metricName` are required; `metricType`, `isMonotonic`, `temporality`, `timeAggregation`, `spaceAggregation`, `reduceTo`, `groupBy` (array or comma-separated string), and `filter` mirror the top-level parameters and are auto-fetched or defaulted the same way.
   - `limit` (optional) - Maximum number of groups (series) in the result (default: 100, max: 10000; higher values are clamped). With a formula, limit applies to the formula result; formula inputs are not limited
   - `orderBy` (optional) - Result order as `<key> <direction>`, where the key is `__result` or a `groupBy` field (e.g. `__result asc`; default: `__result desc`)
-  - `having` (optional) - Condition on the primary query's aggregated values, applied after grouping (e.g. `__result > 0.5`). With a formula it filters query A's series before the formula runs; SigNoz ignores a `having` on the formula result itself, so the tool never sends one there. SigNoz validates it
-  - `functions` (optional) - Post-query transforms applied to each `time_series` result, as an array of `{name, args}` objects (or a JSON-encoded string). SigNoz returns `scalar` results unchanged, and the decisions note says so. Names such as `cutOffMin`, `clampMax`, `absolute`, `runningDiff`, `ewma3`, `timeShift`, and `fillZero`; SigNoz validates names and args
+  - `having` (optional) - Condition on the primary query's aggregated values, applied after grouping (e.g. `__result > 0.5`). With a formula it filters query A's series before the formula runs; FuseScope ignores a `having` on the formula result itself, so the tool never sends one there. FuseScope validates it
+  - `functions` (optional) - Post-query transforms applied to each `time_series` result, as an array of `{name, args}` objects (or a JSON-encoded string). FuseScope returns `scalar` results unchanged, and the decisions note says so. Names such as `cutOffMin`, `clampMax`, `absolute`, `runningDiff`, `ewma3`, `timeShift`, and `fillZero`; FuseScope validates names and args
   - `source` (optional) - Data-source filter. Use `"meter"` to query Cost Meter data; omit for the default metrics store
-  - **Result bounds**: standalone generated metric queries and formula results use `limit: 100` with `__result desc` unless `limit` or `orderBy` says otherwise. Queries feeding a formula get no limit, because SigNoz applies input limits before formula evaluation and would drop groups from the result. The response decisions note reports the effective bounds.
+  - **Result bounds**: standalone generated metric queries and formula results use `limit: 100` with `__result desc` unless `limit` or `orderBy` says otherwise. Queries feeding a formula get no limit, because FuseScope applies input limits before formula evaluation and would drop groups from the result. The response decisions note reports the effective bounds.
   - **Key-not-found errors**: a filter referencing a key absent from this workspace's metrics metadata fails with recovery guidance in the error text plus a machine-readable `missingKeys` array in the structured error content
 
 #### `fusescope_get_top_metrics`
@@ -618,7 +430,7 @@ Lists currently firing/silenced/inhibited alert *instances* from Alertmanager, *
 
 #### `fusescope_list_alert_rules`
 
-Lists configured alert-rule summaries from `GET /api/v3/rules`, including inactive/OK and disabled rules. SigNoz applies `filter` and `states` before paging, so finding rules by name, label, severity, or state doesn't need a walk through every page. Use `fusescope_get_alert` for one full definition; use `fusescope_list_alerts` for current Alertmanager instances.
+Lists configured alert-rule summaries from `GET /api/v3/rules`, including inactive/OK and disabled rules. FuseScope applies `filter` and `states` before paging, so finding rules by name, label, severity, or state doesn't need a walk through every page. Use `fusescope_get_alert` for one full definition; use `fusescope_list_alerts` for current Alertmanager instances.
 
 - **Parameters**:
   - `filter` (optional) - Filter expression, at most 1024 characters. Keys: `name` (the rule title), `severity`, `alert_type`, `rule_type`, `created_by`, `updated_by`, and `created_at` or `updated_at` with RFC 3339 times. Any other key is a rule label, matched case-sensitively (`cluster = 'prod'`); `labels.<key>` matches only the label. A bare word matches the name, description, or labels, ignoring case. Example: `name CONTAINS 'High Response Time' AND severity IN ('critical', 'error')`
@@ -633,7 +445,7 @@ Lists configured alert-rule summaries from `GET /api/v3/rules`, including inacti
 Gets one alert rule's full definition (`GET /api/v2/rules/{id}`). Use `fusescope_list_alert_rules` to discover IDs. Before `fusescope_update_alert`, call this only when a complete current definition is not already available for the prepared operation; reuse a still-current result and preserve unchanged fields.
 
 - **Parameters**: `id` (required) - Alert rule ID (UUIDv7 on v2-capable servers).
-- **Note**: Response shape depends on the SigNoz server version. Post-#10997 servers return the canonical `Rule` type with `createdAt/updatedAt/createdBy/updatedBy`; older servers return `GettableRule` with `createAt/updateAt/createBy/updateBy` (no 'd').
+- **Note**: Response shape depends on the FuseScope server version. Post-#10997 servers return the canonical `Rule` type with `createdAt/updatedAt/createdBy/updatedBy`; older servers return `GettableRule` with `createAt/updateAt/createBy/updateBy` (no 'd').
 
 #### `fusescope_list_dashboards`
 
@@ -649,7 +461,7 @@ Only `source: user` dashboards can be updated, patched, or deleted. `source` is
 not a server-side list-filter column; filter returned rows locally across pages
 when needed.
 
-The `filter` DSL is a boolean expression of `key operator value` terms and bare free-text words joined with `AND`/`OR`/`NOT` and parentheses (e.g. `name CONTAINS 'overview' AND locked = true`). Read [`fusescope://dashboard/list-filter-guide`](#mcp-resources) for the full grammar, the filterable keys with their operators, value formats, and worked examples; the list response also echoes the authoritative reserved-key set in `reservedKeywords`.
+The `filter` DSL is a boolean expression of `key operator value` terms and bare free-text words joined with `AND`/`OR`/`NOT` and parentheses (e.g. `name CONTAINS 'overview' AND locked = true`). Read [`fusescope://dashboard/list-filter-guide`](#available-resources) for the full grammar, the filterable keys with their operators, value formats, and worked examples; the list response also echoes the authoritative reserved-key set in `reservedKeywords`.
 
 #### `fusescope_get_dashboard`
 
@@ -688,7 +500,7 @@ When the relative template path is unknown, call `fusescope_list_dashboard_templ
 
 #### `fusescope_list_dashboard_templates`
 
-Searches the bundled catalog of curated SigNoz dashboard templates and returns the matches as `{"templates": [...], "total": N}`, where each entry has id, title, path, description, category, and keywords. It does not list dashboards already created in the tenant; use `fusescope_list_dashboards` for those.
+Searches the bundled catalog of curated FuseScope dashboard templates and returns the matches as `{"templates": [...], "total": N}`, where each entry has id, title, path, description, category, and keywords. It does not list dashboards already created in the tenant; use `fusescope_list_dashboards` for those.
 
 - **Parameters:**
   - `searchText` (optional) – Words matched case-insensitively against each template's id, title, path, category, description, and keywords; a template must match every word, e.g. `postgres` or `kubernetes pod`. At most 2048 characters. Omit to return the full catalog.
@@ -743,7 +555,7 @@ The response is `{ "status": "success", "data": { "items": [...], "total": <n>, 
   - `start` (optional) - Start timestamp in unix milliseconds (defaults to 6 hours ago).
   - `end` (optional) - End timestamp in unix milliseconds (defaults to now)
   - `state` (optional) - Filter by alert state: `inactive`, `pending`, `recovering`, `firing`, `nodata`, or `disabled` (omit for all transitions)
-  - `filter` (optional) - SigNoz query-builder expression over timeline labels. Combine conditions with `AND`, `OR`, and parentheses; quote strings with single quotes. Example: `severity = 'critical' AND (team = 'payments' OR service.name = 'checkout')`. To discover keys, first call without a filter and inspect `data.items[].labels[].key.name`. The backend-shaped `filterExpression` alias remains accepted for compatibility, but `filter` is canonical.
+  - `filter` (optional) - FuseScope query-builder expression over timeline labels. Combine conditions with `AND`, `OR`, and parentheses; quote strings with single quotes. Example: `severity = 'critical' AND (team = 'payments' OR service.name = 'checkout')`. To discover keys, first call without a filter and inspect `data.items[].labels[].key.name`. The backend-shaped `filterExpression` alias remains accepted for compatibility, but `filter` is canonical.
   - `cursor` (optional) - Opaque continuation cursor. Repeat the original time range, state, filter, and order when fetching the next page. Omit `cursor` for the first page.
   - `limit` (optional) - Rows per page. Default: 20; max: 10000 (higher values are clamped).
   - `order` (optional) - Sort order. Enum: `asc`, `desc` (default: 'asc')
@@ -755,7 +567,7 @@ The response is `{ "status": "success", "data": { "items": [...], "total": <n>, 
 List saved Explorer views or discover a view UUID for one Logs, Traces, Metrics, or Cost Meter page. A view stores one reusable Explorer query spec; it is not a multi-panel dashboard. Apply name filters before pagination and follow `pagination.nextOffset` while `pagination.hasMore` is true.
 
 - **Parameters**:
-  - `source` (optional) - Explorer to filter by, for example `traces`, `logs`, `metrics`, or `meter` (Cost Meter, a distinct Explorer page); SigNoz validates the value. Omit to list views from every Explorer
+  - `source` (optional) - Explorer to filter by, for example `traces`, `logs`, `metrics`, or `meter` (Cost Meter, a distinct Explorer page); FuseScope validates the value. Omit to list views from every Explorer
   - `name` (optional) - Partial-match filter on view name (server-side)
   - `limit` (optional) - Page size (default: 50, max: 1000; higher values are clamped)
   - `offset` (optional) - Number of results to skip (default: 0)
@@ -768,7 +580,9 @@ Get one saved Explorer view's complete definition by UUID. Call this before `fus
 
 #### `fusescope_search_docs`
 
-Search official SigNoz documentation and return ranked pages with URLs and snippets for product, setup, instrumentation, configuration, API, deployment, or troubleshooting questions. Send 2 to 6 keywords for one topic and keep product and technology names as the user wrote them; split multi-intent questions into separate calls. If the top result is off-topic, retry with fewer or different terms. Do not use for live tenant data; use fusescope_fetch_doc for the full content of a selected result or exact docs URL.
+> **Docs source:** the docs tools and `fusescope://docs/sitemap` still index the SigNoz documentation at signoz.io, which matches FuseScope's SigNoz-compatible features. Indexing the [FuseScope docs](https://fuseone-io.github.io/fusescope-docs/) instead is planned.
+
+Search the official SigNoz documentation and return ranked pages with URLs and snippets for product, setup, instrumentation, configuration, API, deployment, or troubleshooting questions. Send 2 to 6 keywords for one topic and keep product and technology names as the user wrote them; split multi-intent questions into separate calls. If the top result is off-topic, retry with fewer or different terms. Do not use for live tenant data; use fusescope_fetch_doc for the full content of a selected result or exact docs URL.
 
 - **Parameters**:
   - `searchText` (required) - 2 to 6 keywords for one topic, for example "Kubernetes pod logs". Keep product and technology names as the user wrote them.
@@ -805,7 +619,7 @@ Save one reusable Explorer query spec. Use `fusescope_create_dashboard` for a mu
 - **Parameters** (v2 typed shape):
   - `name` (optional) - View name (DNS-1123 label). Required unless `generateName` is true
   - `generateName` (optional) - When true, the server generates `name` from `spec.displayName` and `name` must be empty
-  - `source` (required) - Which Explorer this view belongs to, for example `traces`, `logs`, `metrics`, or `meter`; SigNoz validates the value
+  - `source` (required) - Which Explorer this view belongs to, for example `traces`, `logs`, `metrics`, or `meter`; FuseScope validates the value
   - `spec` (required) - Typed view content: `displayName`, `panelType`, `requestType`, `queries`, `selectedFields`, `display`
   - `schemaVersion` (optional) - Always `v2`; defaults when omitted
 - **Required**: Read both MCP resources `fusescope://view/instructions` and `fusescope://view/examples` before composing any payload.
@@ -833,15 +647,15 @@ Permanently delete a confirmed saved Explorer view by UUID. Use `fusescope_list_
 Return aggregate statistics over logs (counts, rates, averages, percentiles, or grouped/top-N breakdowns) rather than individual records. Use `fusescope_search_logs` for log rows and message inspection.
 
 - **Parameters**:
-  - `aggregations` (required) - Aggregation expressions as the Query Builder writes them: `count()`, `count_distinct(user_id)`, `avg(duration)`, `p99(duration)`, `rate()`, or a conditional such as `countIf(severity_text = 'ERROR')`. One expression or an array (e.g. `["count()", "p95(duration)", "p99(duration)"]`); results come back as `__result_0`, `__result_1`, ... in that order. SigNoz validates the expressions. The former `aggregation` and `aggregateOn` inputs return a coded error naming this replacement
-  - `groupBy` (optional) - Fields to group by, as an array or a comma-separated string (e.g. `["service.name", "severity_text"]`). An array of objects is rejected with a coded error naming both forms. Group by keys `fusescope_get_field_keys` returns; an unknown key can come back as one empty group. A body field (`body.<path>`) can be grouped only when `fusescope_get_field_keys` (`signal="logs"`, `fieldContext="body"`) lists it, which happens only on workspaces that store JSON log bodies; otherwise SigNoz rejects it with `can be filtered but not selected or grouped` or `field not found`, so filter on it instead
-  - `having` (optional) - Condition on the aggregation results, applied after grouping (e.g. `count() > 100`). SigNoz validates it
-  - `filter` (optional) - Filter expression using SigNoz search syntax. Pass the expression text, not `{"expression": ...}`, which is rejected with a coded error. Combine conditions with AND, OR, parentheses. An unknown key may not fail: SigNoz can match guessed attribute and body spellings and return a `key ... not found in metadata` warning with no rows, so read that warning as an absent key. Ambiguous keys default to resource context. Log keys are workspace-specific; even `service.name` is only present when the log pipeline sets it. See `fusescope://logs/query-builder-guide` There is no `key:value`, `STARTS WITH`, or `IS NULL`; use `LIKE 'prefix%'` and `EXISTS` / `NOT EXISTS`.
+  - `aggregations` (required) - Aggregation expressions as the Query Builder writes them: `count()`, `count_distinct(user_id)`, `avg(duration)`, `p99(duration)`, `rate()`, or a conditional such as `countIf(severity_text = 'ERROR')`. One expression or an array (e.g. `["count()", "p95(duration)", "p99(duration)"]`); results come back as `__result_0`, `__result_1`, ... in that order. FuseScope validates the expressions. The former `aggregation` and `aggregateOn` inputs return a coded error naming this replacement
+  - `groupBy` (optional) - Fields to group by, as an array or a comma-separated string (e.g. `["service.name", "severity_text"]`). An array of objects is rejected with a coded error naming both forms. Group by keys `fusescope_get_field_keys` returns; an unknown key can come back as one empty group. A body field (`body.<path>`) can be grouped only when `fusescope_get_field_keys` (`signal="logs"`, `fieldContext="body"`) lists it, which happens only on workspaces that store JSON log bodies; otherwise FuseScope rejects it with `can be filtered but not selected or grouped` or `field not found`, so filter on it instead
+  - `having` (optional) - Condition on the aggregation results, applied after grouping (e.g. `count() > 100`). FuseScope validates it
+  - `filter` (optional) - Filter expression using FuseScope search syntax. Pass the expression text, not `{"expression": ...}`, which is rejected with a coded error. Combine conditions with AND, OR, parentheses. An unknown key may not fail: FuseScope can match guessed attribute and body spellings and return a `key ... not found in metadata` warning with no rows, so read that warning as an absent key. Ambiguous keys default to resource context. Log keys are workspace-specific; even `service.name` is only present when the log pipeline sets it. See `fusescope://logs/query-builder-guide` There is no `key:value`, `STARTS WITH`, or `IS NULL`; use `LIKE 'prefix%'` and `EXISTS` / `NOT EXISTS`.
   - `service` (optional) - Shortcut filter for service name (adds `service.name = '<value>'`; when the workspace's logs lack that attribute, the call usually returns no rows with a `key service.name not found in metadata` warning instead of failing)
   - `severity` (optional) - `severity_text`, matched in any case and as a prefix, so `WARN` also matches `warning` and `Warning`; pass the short form (`ERR`, `WARN`, `INFO`). DEBUG, INFO, WARN, ERROR, and FATAL are common examples, not an exhaustive enum. Discover values with `fusescope_get_field_values(signal="logs", name="severity_text", fieldContext="log")`
   - `orderBy` (optional) - Order expression and direction. The expression must be one of the call's aggregations, written exactly as in `aggregations`, or a `groupBy` key (e.g. `'count_distinct(trace_id) desc'` when aggregating `count_distinct(trace_id)`); default: the first aggregation, descending
   - `limit` (optional) - Maximum number of groups to return (default: 100, max: 10000; higher values are clamped to bound server memory)
-  - `functions` (optional) - Post-query transforms applied to each `time_series` result, as an array of `{name, args}` objects (or a JSON-encoded string). SigNoz returns `scalar` results unchanged, and the response notes it. Names such as `cutOffMin`, `clampMax`, `absolute`, `runningDiff`, `ewma3`, `timeShift`, and `fillZero`; SigNoz validates names and args
+  - `functions` (optional) - Post-query transforms applied to each `time_series` result, as an array of `{name, args}` objects (or a JSON-encoded string). FuseScope returns `scalar` results unchanged, and the response notes it. Names such as `cutOffMin`, `clampMax`, `absolute`, `runningDiff`, `ewma3`, `timeShift`, and `fillZero`; FuseScope validates names and args
   - `timeRange` (optional) - Relative time range `<number><unit>` where unit is `m`/`h`/`d` (e.g. '30m', '1h', '6h', '24h', '7d'; default: '1h'; ignored when both `start` and `end` are provided)
   - `start` / `end` (optional) - Start/end time in unix milliseconds. When both are provided, they override `timeRange`.
   - `requestType` (optional) - `scalar` (default; one aggregate value over the whole range) or `time_series` (one value per time bucket). Unknown values are rejected.
@@ -856,7 +670,7 @@ Return individual paginated log records matching text, service, severity, or fie
 Calls using only `searchText`, `service`, `severity`, time, or pagination parameters need no guide read. Read `fusescope://logs/query-builder-guide` only before composing `filter` with unfamiliar workspace fields.
 
 - **Parameters**:
-  - `filter` (optional) - Filter expression using SigNoz search syntax. Pass the expression text, not `{"expression": ...}`, which is rejected with a coded error. Combine conditions with AND, OR, and parentheses (e.g., "(severity_text = 'ERROR' OR body CONTAINS 'panic') AND service.name = 'payment-svc'"). Log keys are workspace-specific; even `service.name` is only present when the log pipeline sets it. See `fusescope://logs/query-builder-guide` There is no `key:value`, `STARTS WITH`, or `IS NULL`; use `LIKE 'prefix%'` and `EXISTS` / `NOT EXISTS`.
+  - `filter` (optional) - Filter expression using FuseScope search syntax. Pass the expression text, not `{"expression": ...}`, which is rejected with a coded error. Combine conditions with AND, OR, and parentheses (e.g., "(severity_text = 'ERROR' OR body CONTAINS 'panic') AND service.name = 'payment-svc'"). Log keys are workspace-specific; even `service.name` is only present when the log pipeline sets it. See `fusescope://logs/query-builder-guide` There is no `key:value`, `STARTS WITH`, or `IS NULL`; use `LIKE 'prefix%'` and `EXISTS` / `NOT EXISTS`.
   - `service` (optional) - Service name to filter by (adds `service.name = '<value>'`; when the workspace's logs lack that attribute, the call usually returns no rows with a `key service.name not found in metadata` warning instead of failing)
   - `severity` (optional) - `severity_text`, matched in any case and as a prefix, so `WARN` also matches `warning` and `Warning`; pass the short form (`ERR`, `WARN`, `INFO`). DEBUG, INFO, WARN, ERROR, and FATAL are common examples, not an exhaustive enum. Discover values with `fusescope_get_field_values(signal="logs", name="severity_text", fieldContext="log")`
   - `searchText` (optional) - Literal text to find, escaped automatically; combines with `filter` using AND
@@ -882,27 +696,27 @@ The same expressions work in log aggregations and saved-query specs.
 
 #### `fusescope_get_field_keys`
 
-Discover field names available for filtering or grouping metrics, traces, or logs, including AI trace fields with `queryType: builder_ai_query`. This returns keys, not observed values; use `fusescope_get_field_values` after selecting a key. A `data.complete` of `false` means SigNoz truncated the key list; narrow with `searchText` or `fieldContext`.
+Discover field names available for filtering or grouping metrics, traces, or logs, including AI trace fields with `queryType: builder_ai_query`. This returns keys, not observed values; use `fusescope_get_field_values` after selecting a key. A `data.complete` of `false` means FuseScope truncated the key list; narrow with `searchText` or `fieldContext`.
 
 - **Parameters**:
   - `signal` (required) - Signal type. Enum: `metrics`, `traces`, `logs`
   - `searchText` (optional) - Filter field keys by name substring
   - `metricName` (optional) - Filter by metric name (relevant for metrics signal)
-  - `fieldContext` (optional) - Restrict to a field context. Enum: `resource`, `attribute`, `scope`, `log`/`span`/`metric` (intrinsic columns), `trace` (fields of a whole trace rather than one span, such as values computed over all of its spans; written with the `trace.` prefix), `body` (JSON log body). Use `attribute`, not the legacy Query Builder context `tag`, which SigNoz ignores here.
+  - `fieldContext` (optional) - Restrict to a field context. Enum: `resource`, `attribute`, `scope`, `log`/`span`/`metric` (intrinsic columns), `trace` (fields of a whole trace rather than one span, such as values computed over all of its spans; written with the `trace.` prefix), `body` (JSON log body). Use `attribute`, not the legacy Query Builder context `tag`, which FuseScope ignores here.
   - `fieldDataType` (optional) - Restrict to a data type: `string`, `bool`, `int64`, `float64`, `number`. An array form like `[]string` is treated as its element type.
   - `source` (optional) - For metrics, use `meter` for Cost Meter fields; omit for the default metrics store
   - `queryType` (optional) - `builder_query` (default) lists the fields of `signal`. Set `builder_ai_query` for AI observability queries; it also lists the trace-level fields, such as `trace.estimated_total_cost`, and `gen_ai.*` attributes.
 
 #### `fusescope_get_field_values`
 
-Get observed values for a known field key. Use `fusescope_get_field_keys` when the key is unknown, and match `signal` and `fieldContext` to the query that will use the value. A `data.complete` of `false` means SigNoz truncated the value list; narrow with `searchText`.
+Get observed values for a known field key. Use `fusescope_get_field_keys` when the key is unknown, and match `signal` and `fieldContext` to the query that will use the value. A `data.complete` of `false` means FuseScope truncated the value list; narrow with `searchText`.
 
 - **Parameters**:
   - `signal` (required) - Signal type. Enum: `metrics`, `traces`, `logs`
   - `name` (required) - Field key name to get values for (e.g., `service.name`, `http.method`)
   - `searchText` (optional) - Filter values by substring
   - `metricName` (optional) - Filter by metric name (relevant for metrics signal)
-  - `fieldContext` (optional) - Restrict the lookup to a field context (`resource`, `attribute`, `scope`, `log`/`span`/`metric`, `body`) when the same key name exists in more than one. Use `attribute`, not the legacy Query Builder context `tag`; SigNoz returns no values for `tag`.
+  - `fieldContext` (optional) - Restrict the lookup to a field context (`resource`, `attribute`, `scope`, `log`/`span`/`metric`, `body`) when the same key name exists in more than one. Use `attribute`, not the legacy Query Builder context `tag`; FuseScope returns no values for `tag`.
   - `source` (optional) - For metrics, use `meter` for Cost Meter values; omit for the default metrics store
 
 
@@ -911,18 +725,18 @@ Get observed values for a known field key. Use `fusescope_get_field_keys` when t
 Return individual paginated span rows matching service, operation, error, duration, or field filters, and use them to discover trace IDs. With `requestType: trace` it returns one row per trace instead. With `queryType: builder_ai_query` it searches AI traces, also filters on per-trace cost, token, and call counts, and its trace rows carry those per-trace values. Use `fusescope_aggregate_traces` for statistics or `fusescope_get_trace_details` for one known trace.
 
 - **Parameters**:
-  - `filter` (optional) - Filter expression using SigNoz search syntax. Pass the expression text, not `{"expression": ...}`, which is rejected with a coded error. Combine conditions with AND, OR, and parentheses (e.g., "service.name = 'payment-svc' AND (has_error = true OR attribute.http.response.status_code >= 500)"). The former `query` alias is rejected with a coded error that names `filter`. Every condition needs a key and an operator: there is no full-text search, `key:value`, `STARTS WITH`, or `IS NULL`; use `LIKE 'prefix%'` and `EXISTS` / `NOT EXISTS`. `isRoot = true` and `isEntryPoint = true` select root and service entry spans. See `fusescope://traces/query-builder-guide`
+  - `filter` (optional) - Filter expression using FuseScope search syntax. Pass the expression text, not `{"expression": ...}`, which is rejected with a coded error. Combine conditions with AND, OR, and parentheses (e.g., "service.name = 'payment-svc' AND (has_error = true OR attribute.http.response.status_code >= 500)"). The former `query` alias is rejected with a coded error that names `filter`. Every condition needs a key and an operator: there is no full-text search, `key:value`, `STARTS WITH`, or `IS NULL`; use `LIKE 'prefix%'` and `EXISTS` / `NOT EXISTS`. `isRoot = true` and `isEntryPoint = true` select root and service entry spans. See `fusescope://traces/query-builder-guide`
   - `service` (optional) - Service name to filter by
   - `operation` (optional) - Operation/span name to filter by
   - `error` (optional) - Filter by error status. Boolean (or the strings `"true"`/`"false"`). An invalid value is rejected rather than silently dropped
-  - `minDuration` / `maxDuration` (optional) - Min/max span duration as a duration such as `'500ms'` or `'2s'` (units `ns`, `us`, `ms`, `s`, `m`, `h`). A bare number, string or JSON, is nanoseconds. SigNoz rejects any other value
+  - `minDuration` / `maxDuration` (optional) - Min/max span duration as a duration such as `'500ms'` or `'2s'` (units `ns`, `us`, `ms`, `s`, `m`, `h`). A bare number, string or JSON, is nanoseconds. FuseScope rejects any other value
   - `timeRange` (optional) - Relative time range `<number><unit>` where unit is `m`/`h`/`d` (e.g. '30m', '1h', '6h', '24h', '7d'; default: '1h'; ignored when both `start` and `end` are provided)
   - `start` / `end` (optional) - Start/end time in unix milliseconds. When both are provided, they override `timeRange`.
   - `limit` (optional) - Maximum rows to return (default: 100, max: 10000; higher values are clamped; paginate with `offset`)
   - `offset` (optional) - Number of rows to skip (default: 0)
   - `selectFields` (optional) - Extra fields to return on each span row, added to the default set. An array of field names or a comma-separated string, at most 50. Names can be span columns (`db_name`), resource attributes (`k8s.pod.name`), or span attributes (`http.route`); a `resource.`, `attribute.`, or `span.` prefix picks the context. Discover names with `fusescope_get_field_keys` (`signal="traces"`)
   - **Default fields**: each span row carries `timestamp`, `trace_id`, `span_id`, `parent_span_id`, `name`, `service.name`, `kind_string`, `duration_nano`, `has_error`, `status_code_string`, `status_message`, `response_status_code`, and `http_method`, plus any `selectFields`. Every field is a flat row key; a field missing from a row was not selected
-  - `orderBy` (optional) - Row order as `'<expression> <direction>'` (e.g. `'duration_nano desc'`; direction defaults to `desc`). Span rows order by span fields and default to `timestamp desc`. `builder_ai_query` trace rows order by a trace-level field or `trace.last_activity_time`, e.g. `'trace.estimated_total_cost desc'`, and default to latest activity first. `builder_query` trace rows always come back slowest first; SigNoz ignores `orderBy` for them
+  - `orderBy` (optional) - Row order as `'<expression> <direction>'` (e.g. `'duration_nano desc'`; direction defaults to `desc`). Span rows order by span fields and default to `timestamp desc`. `builder_ai_query` trace rows order by a trace-level field or `trace.last_activity_time`, e.g. `'trace.estimated_total_cost desc'`, and default to latest activity first. `builder_query` trace rows always come back slowest first; FuseScope ignores `orderBy` for them
   - `queryType` (optional) - `builder_query` (default) searches all traces. Set `builder_ai_query` for AI observability queries: it searches AI traces (traces with an LLM, tool, or agent span), its span rows are only those spans, and `filter` also accepts the trace-level fields `trace.llm_call_count`, `trace.tool_call_count`, `trace.distinct_tool_count`, `trace.input_tokens`, `trace.output_tokens`, `trace.total_tokens`, `trace.estimated_total_cost`, and `trace.max_llm_duration_nano`, e.g. `trace.tool_call_count > 10`. An unknown value runs as `builder_query` with an input validation notice
   - `requestType` (optional) - `raw` (default; one row per span) or `trace` (one row per trace). Span-level filters, including `operation`, `error`, `minDuration`, and `maxDuration`, keep the traces with at least one matching span, and `selectFields` does not apply to trace rows. `builder_query` trace rows carry `trace_id`, the root span `name`, `service.name`, `duration_nano`, and `span_count` (the spans matching the filter). `builder_ai_query` trace rows carry the trace-level fields without the `trace.` prefix (such as `llm_call_count`), plus `root_span_name`, `span_count`, `trace_duration_nano`, `error_count`, and the input and output message JSON. An unknown value runs as `raw` with an input validation notice
   - **Completeness note**: the response appends a note reporting `hasMore` (inferred from `returnedRows == limit`) and the `nextOffset` to fetch, so a truncated page is never mistaken for the full result set
@@ -935,17 +749,17 @@ Return individual paginated span rows matching service, operation, error, durati
 Return custom aggregate statistics over spans (counts, rates, latency percentiles, grouped/top-N breakdowns, or time series) rather than individual rows or a full trace hierarchy. For one row per trace, such as the most expensive AI traces, use `fusescope_search_traces` with `requestType: trace`. For one traced service's built-in operation table ranked by p99, use `fusescope_get_service_top_operations`. Read `fusescope://traces/query-builder-guide` before calling this tool. For AI cost, token, or call-count statistics per trace, set `queryType: builder_ai_query` (see `fusescope://ai/query-builder-guide`).
 
 - **Parameters**:
-  - `aggregations` (required) - Aggregation expressions as the Query Builder writes them: `count()`, `count_distinct(name)`, `avg(duration_nano)`, `p99(duration_nano)`, `rate()`, or a conditional such as `countIf(has_error = true)`; `duration_nano` is span latency in nanoseconds. One expression or an array (e.g. `["count()", "p95(duration_nano)", "p99(duration_nano)"]`); results come back as `__result_0`, `__result_1`, ... in that order. SigNoz validates the expressions. The former `aggregation` and `aggregateOn` inputs return a coded error naming this replacement
+  - `aggregations` (required) - Aggregation expressions as the Query Builder writes them: `count()`, `count_distinct(name)`, `avg(duration_nano)`, `p99(duration_nano)`, `rate()`, or a conditional such as `countIf(has_error = true)`; `duration_nano` is span latency in nanoseconds. One expression or an array (e.g. `["count()", "p95(duration_nano)", "p99(duration_nano)"]`); results come back as `__result_0`, `__result_1`, ... in that order. FuseScope validates the expressions. The former `aggregation` and `aggregateOn` inputs return a coded error naming this replacement
   - `groupBy` (optional) - Fields to group by, as an array or a comma-separated string (e.g. `["service.name", "name"]`). An array of objects is rejected with a coded error naming both forms. For values over time use `requestType: time_series`; grouping by `timestamp` fails
-  - `having` (optional) - Condition on the aggregation results, applied after grouping (e.g. `p99(duration_nano) > 500000000`). SigNoz validates it
-  - `filter` (optional) - Filter expression using SigNoz search syntax. Pass the expression text, not `{"expression": ...}`, which is rejected with a coded error. Combine conditions with AND, OR, parentheses. An unknown key may not fail: SigNoz can match a guessed attribute and return a `key ... not found in metadata` warning with no rows, so read that warning as an absent key. Ambiguous keys default to resource context. Every condition needs a key and an operator: there is no full-text search, `key:value`, `STARTS WITH`, or `IS NULL`; use `LIKE 'prefix%'` and `EXISTS` / `NOT EXISTS`. `isRoot = true` and `isEntryPoint = true` select root and service entry spans. See `fusescope://traces/query-builder-guide`
+  - `having` (optional) - Condition on the aggregation results, applied after grouping (e.g. `p99(duration_nano) > 500000000`). FuseScope validates it
+  - `filter` (optional) - Filter expression using FuseScope search syntax. Pass the expression text, not `{"expression": ...}`, which is rejected with a coded error. Combine conditions with AND, OR, parentheses. An unknown key may not fail: FuseScope can match a guessed attribute and return a `key ... not found in metadata` warning with no rows, so read that warning as an absent key. Ambiguous keys default to resource context. Every condition needs a key and an operator: there is no full-text search, `key:value`, `STARTS WITH`, or `IS NULL`; use `LIKE 'prefix%'` and `EXISTS` / `NOT EXISTS`. `isRoot = true` and `isEntryPoint = true` select root and service entry spans. See `fusescope://traces/query-builder-guide`
   - `service` (optional) - Shortcut filter for service name
   - `operation` (optional) - Shortcut filter for span/operation name
   - `error` (optional) - Shortcut filter for error spans. Boolean (or the strings `"true"`/`"false"`). An invalid value is rejected rather than silently dropped
-  - `minDuration` / `maxDuration` (optional) - Min/max span duration as a duration such as `'500ms'` or `'2s'` (units `ns`, `us`, `ms`, `s`, `m`, `h`). A bare number, string or JSON, is nanoseconds. SigNoz rejects any other value
+  - `minDuration` / `maxDuration` (optional) - Min/max span duration as a duration such as `'500ms'` or `'2s'` (units `ns`, `us`, `ms`, `s`, `m`, `h`). A bare number, string or JSON, is nanoseconds. FuseScope rejects any other value
   - `orderBy` (optional) - Order expression and direction. The expression must be one of the call's aggregations, written exactly as in `aggregations`, or a `groupBy` key (e.g. `'p99(duration_nano) desc'` when aggregating `p99(duration_nano)`); default: the first aggregation, descending
   - `limit` (optional) - Maximum number of groups to return (default: 100, max: 10000; higher values are clamped to bound server memory)
-  - `functions` (optional) - Post-query transforms applied to each `time_series` result, as an array of `{name, args}` objects (or a JSON-encoded string). SigNoz returns `scalar` results unchanged, and the response notes it. Names such as `cutOffMin`, `clampMax`, `absolute`, `runningDiff`, `ewma3`, `timeShift`, and `fillZero`; SigNoz validates names and args
+  - `functions` (optional) - Post-query transforms applied to each `time_series` result, as an array of `{name, args}` objects (or a JSON-encoded string). FuseScope returns `scalar` results unchanged, and the response notes it. Names such as `cutOffMin`, `clampMax`, `absolute`, `runningDiff`, `ewma3`, `timeShift`, and `fillZero`; FuseScope validates names and args
   - `timeRange` (optional) - Relative time range `<number><unit>` where unit is `m`/`h`/`d` (e.g. '30m', '1h', '6h', '24h', '7d'; default: '1h'; ignored when both `start` and `end` are provided)
   - `start` / `end` (optional) - Start/end time in unix milliseconds. When both are provided, they override `timeRange`.
   - `requestType` (optional) - `scalar` (default; one aggregate value over the whole range) or `time_series` (one value per time bucket). Unknown values are rejected.
@@ -957,7 +771,7 @@ Return custom aggregate statistics over spans (counts, rates, latency percentile
 
 #### `fusescope_get_trace_details`
 
-For a known trace ID, return its spans, metadata, and hierarchy. Use `fusescope_search_traces` first when the ID is unknown. SigNoz locates the trace by its ID alone, so the tool takes no time window; an ID SigNoz does not know returns no spans. Each span includes the AI fields `gen_ai.operation.name`, `gen_ai.request.model`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`, `signoz.gen_ai.usage.tokens.cost`, `gen_ai.tool.name`, and `gen_ai.agent.name`, which are null on spans without them.
+For a known trace ID, return its spans, metadata, and hierarchy. Use `fusescope_search_traces` first when the ID is unknown. FuseScope locates the trace by its ID alone, so the tool takes no time window; an ID FuseScope does not know returns no spans. Each span includes the AI fields `gen_ai.operation.name`, `gen_ai.request.model`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`, `signoz.gen_ai.usage.tokens.cost`, `gen_ai.tool.name`, and `gen_ai.agent.name`, which are null on spans without them.
 
 - **Parameters**:
   - `traceId` (required) - Known trace ID, usually discovered with `fusescope_search_traces`
@@ -965,40 +779,40 @@ For a known trace ID, return its spans, metadata, and hierarchy. Use `fusescope_
 
 #### `fusescope_get_ai_pricing`
 
-Return the AI model prices SigNoz uses to compute span cost, or the models that have no price. SigNoz stamps cost on each span at ingest: spans of a model no rule prices carry no cost, and a price change does not touch spans already stored. Prices are changed on the Model pricing tab of AI Observability in SigNoz.
+Return the AI model prices FuseScope uses to compute span cost, or the models that have no price. FuseScope stamps cost on each span at ingest: spans of a model no rule prices carry no cost, and a price change does not touch spans already stored. Prices are changed on the Model pricing tab of AI Observability in FuseScope.
 
 - **Parameters**:
   - `view` (optional) - `rules` (default): pricing rules with provider, model name and match patterns, input, output, and cache prices in USD per million tokens, and `enabled`. `unpriced_models`: models seen in spans during the last hour that no rule matches, with span counts
   - `searchText` (optional) - Case-insensitive substring of the model name or provider (`gpt-4o` also matches `gpt-4o-mini`). An empty page with `searchText` means no entry matched; omit it to see whether any entries exist
   - `limit` (optional) - Entries per page (default: 50, max: 1000; higher values are clamped)
   - `offset` (optional) - Entries to skip; use `pagination.nextOffset` from the previous page (default: 0)
-- **Response**: `view`, `data` (SigNoz's pricing rule or unpriced model objects as returned), and `pagination` (`total`, `offset`, `limit`, `hasMore`, `nextOffset`)
+- **Response**: `view`, `data` (FuseScope's pricing rule or unpriced model objects as returned), and `pagination` (`total`, `offset`, `limit`, `hasMore`, `nextOffset`)
 
 #### `fusescope_list_ai_attribute_mappings`
 
-List the span attribute mapping groups that map vendor AI span attributes (OpenInference, OpenLLMetry, Vercel AI SDK, and others) to `gen_ai.*` keys at ingest. A group runs on spans whose attribute keys contain one of its condition substrings, and each mapper fills one `gen_ai.*` key from the first source key present, by priority. Mappings apply only to spans ingested afterwards and are changed on the Attribute Mapping tab of AI Observability in SigNoz.
+List the span attribute mapping groups that map vendor AI span attributes (OpenInference, OpenLLMetry, Vercel AI SDK, and others) to `gen_ai.*` keys at ingest. A group runs on spans whose attribute keys contain one of its condition substrings, and each mapper fills one `gen_ai.*` key from the first source key present, by priority. Mappings apply only to spans ingested afterwards and are changed on the Attribute Mapping tab of AI Observability in FuseScope.
 
 - **Parameters**: none besides `searchContext`
-- **Response**: `data` (each group as SigNoz returns it, plus `mappers` with each mapper's sources), `incomplete`, and, when the mappers of some groups could not be read, `failedGroups` (`groupId`, `name`, `code`, `status`, `message`) and `nextAction`. Authentication and permission failures fail the whole call with a coded error
+- **Response**: `data` (each group as FuseScope returns it, plus `mappers` with each mapper's sources), `incomplete`, and, when the mappers of some groups could not be read, `failedGroups` (`groupId`, `name`, `code`, `status`, `message`) and `nextAction`. Authentication and permission failures fail the whole call with a coded error
 
 #### `fusescope_test_ai_attribute_mapping`
 
-Run sample spans through the mapping groups in a sandbox and return each span as SigNoz would store it. Nothing is saved and no real span changes. A span that gains `gen_ai.request.model` counts as a model call.
+Run sample spans through the mapping groups in a sandbox and return each span as FuseScope would store it. Nothing is saved and no real span changes. A span that gains `gen_ai.request.model` counts as a model call.
 
 - **Parameters**:
   - `spans` (required) - 1 to 100 sample spans, each `{attributes, resource}` with key-value maps. Example: `[{"attributes":{"llm.model_name":"gpt-4o","llm.token_count.prompt":120,"llm.token_count.completion":45}}]`
-  - `groups` (optional) - Mapping groups to test instead of the saved ones, in the shape SigNoz accepts (`name`, `condition`, `enabled`, `mappers`). Omit to test the saved groups; an empty list tests none. A group without `mappers` uses the saved mappers of the group with the same name. SigNoz skips disabled groups, mappers, and condition keys, so set `enabled: true` on each
-- **Response**: `groupSource` (`saved` or `provided`), `testedGroups` (names of the enabled groups sent), `spans` (the mapped spans, in input order), and `collectorLogs`. `spans` and `groups` reach SigNoz exactly as sent, so large integers keep their precision; a response without one mapped span per sample is a coded upstream error
+  - `groups` (optional) - Mapping groups to test instead of the saved ones, in the shape FuseScope accepts (`name`, `condition`, `enabled`, `mappers`). Omit to test the saved groups; an empty list tests none. A group without `mappers` uses the saved mappers of the group with the same name. FuseScope skips disabled groups, mappers, and condition keys, so set `enabled: true` on each
+- **Response**: `groupSource` (`saved` or `provided`), `testedGroups` (names of the enabled groups sent), `spans` (the mapped spans, in input order), and `collectorLogs`. `spans` and `groups` reach FuseScope exactly as sent, so large integers keep their precision; a response without one mapped span per sample is a coded upstream error
 
 
 
 #### `fusescope_create_alert`
 
-Create a new alert rule in SigNoz via `POST /api/v2/rules`.
+Create a new alert rule in FuseScope via `POST /api/v2/rules`.
 
-- **Parameters**: JSON payload matching the SigNoz alert rule schema.
-- **Schema**: every `ruleType` (`threshold_rule`, `promql_rule`, `anomaly_rule`) uses **v2alpha1**: structured `condition.thresholds`, `evaluation`, `notificationSettings`, and `schemaVersion: "v2alpha1"` set explicitly, since SigNoz reads an omitted value as the retired v1 schema. `anomaly_rule` is metrics only, adds `condition.algorithm` and `condition.seasonality`, and compares each tier's signed target with the anomaly score (`below` with target `-2` fires on a drop of more than 2 standard deviations; `outside_bounds` with target `2` fires on a move of more than 2 either way).
-- **Notification routing**: For direct routing, reuse a fully paginated `fusescope_list_notification_channels` result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. V2 needs an exact returned displayName on every tier: SigNoz rejects a tier with no channels or a channel name that does not exist, and top-level `preferredChannels` plays no part in routing. If none fits, ask the user or offer `fusescope_create_notification_channel` with user-provided config; never create automatically. Confirmed v2 policy routing may omit tier channels.
+- **Parameters**: JSON payload matching the FuseScope alert rule schema.
+- **Schema**: every `ruleType` (`threshold_rule`, `promql_rule`, `anomaly_rule`) uses **v2alpha1**: structured `condition.thresholds`, `evaluation`, `notificationSettings`, and `schemaVersion: "v2alpha1"` set explicitly, since FuseScope reads an omitted value as the retired v1 schema. `anomaly_rule` is metrics only, adds `condition.algorithm` and `condition.seasonality`, and compares each tier's signed target with the anomaly score (`below` with target `-2` fires on a drop of more than 2 standard deviations; `outside_bounds` with target `2` fires on a move of more than 2 either way).
+- **Notification routing**: For direct routing, reuse a fully paginated `fusescope_list_notification_channels` result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. V2 needs an exact returned displayName on every tier: FuseScope rejects a tier with no channels or a channel name that does not exist, and top-level `preferredChannels` plays no part in routing. If none fits, ask the user or offer `fusescope_create_notification_channel` with user-provided config; never create automatically. Confirmed v2 policy routing may omit tier channels.
 - **Tip**: Reuse alert resources only when already read for the same prepared operation; otherwise read `fusescope://alert/instructions` and `fusescope://alert/examples`. For PromQL, read `fusescope://promql/instructions` when needed.
 
 #### `fusescope_update_alert`
@@ -1042,14 +856,14 @@ Create a notification channel from `config: {kind, spec}`. Check existing
 display names before creating a channel.
 
 - **Parameters**: `config` is required. Supply a DNS1123 `name`, or use
-  `generateName: true` with a `displayName`. SigNoz defaults `displayName` from
+  `generateName: true` with a `displayName`. FuseScope defaults `displayName` from
   an explicit `name` when omitted. Both names become immutable after creation.
   Alert routing references use `displayName`, not `name`.
 - **Provider kinds**: `fusescope://notification-channel/examples` lists every
-  kind the pinned SigNoz release accepts, each kind's `config.spec` fields, and a
+  kind the pinned FuseScope release accepts, each kind's `config.spec` fields, and a
   worked payload per kind; it is generated from the SigNoz OpenAPI spec by
-  `make gen`. SigNoz validates the kind and its rejection lists the kinds it
-  accepts. SigNoz also rejects an unknown or missing `config.spec` field with
+  `make gen`. FuseScope validates the kind and its rejection lists the kinds it
+  accepts. FuseScope also rejects an unknown or missing `config.spec` field with
   the exact requirement, and a duplicate name with `already-exists`.
 - **Resolve notifications**: `config.spec.sendResolved` uses the provider's
   default when omitted. Get returns its effective value; preserve it on update.
@@ -1080,7 +894,7 @@ Fully replace one channel's `config` using `id` and the complete canonical
 requested fields, then submit the complete object. Names cannot be changed.
 Preserve every untouched setting and credential without echoing secrets. A
 fetched config is writable as-is; to unset an optional field, omit it, because
-SigNoz rejects an empty string for template-backed fields such as titles and
+FuseScope rejects an empty string for template-backed fields such as titles and
 messages.
 `test` defaults to `false`; an explicit `true` sends a test after the update.
 A test failure does not undo the update. Do not replay an ambiguous write or
@@ -1101,7 +915,7 @@ that dependency error and resolve references before retrying.
 
 #### `fusescope_execute_builder_query`
 
-Runs a SigNoz Query Builder v5 request that the dedicated tools cannot express, such as multi-query requests, formulas, PromQL, or ClickHouse SQL. Prefer `fusescope_search_logs` / `fusescope_search_traces` for rows, `fusescope_aggregate_logs` / `fusescope_aggregate_traces` for grouped results, and `fusescope_query_metrics` for ordinary metrics.
+Runs a FuseScope Query Builder v5 request that the dedicated tools cannot express, such as multi-query requests, formulas, PromQL, or ClickHouse SQL. Prefer `fusescope_search_logs` / `fusescope_search_traces` for rows, `fusescope_aggregate_logs` / `fusescope_aggregate_traces` for grouped results, and `fusescope_query_metrics` for ordinary metrics.
 
 - **Parameters**: `query` (required) - the complete `query_range` request. The input schema describes its top-level fields (`start`, `end`, `requestType`, `compositeQuery`, `variables`, `formatOptions`, `noCache`) with the descriptions from the SigNoz OpenAPI spec; the query envelopes inside `compositeQuery.queries` are open objects the guides and `fusescope://query-builder/examples` cover.
 - **Query types**: the per-envelope `compositeQuery.queries[i].type` selects the spec shape:
@@ -1110,13 +924,13 @@ Runs a SigNoz Query Builder v5 request that the dedicated tools cannot express, 
   - `builder_formula`: formula expression referencing other query names (e.g. `A / B * 100`).
   - `promql`: `{name, query, disabled, step?, legend?}`. PromQL for OTel metrics requires the Prometheus 3.x UTF-8 quoted-selector form `{"metric.name.with.dots"}`; read the `fusescope://promql/instructions` resource for details.
   - `clickhouse_sql`: `{name, query, disabled, legend?}`.
-- **Builder result bounds**: for predictable authored queries, explicitly supply a positive `spec.limit` and non-empty v5 `spec.order` (not dashboard/editor `orderBy`) on every `builder_formula` and on each `builder_query` no formula references. When omitted, null, or zero, standalone limits and formula-result limits default to `100`. A builder query referenced by a formula gets no inserted limit or order, because SigNoz applies base-query limits before formula evaluation and they drop groups from the result. Raw logs order by `timestamp desc, id desc`; raw traces by `timestamp desc`; metric scalar/time-series queries and formulas by `__result desc`; and log/trace scalar/time-series queries by the primary aggregation descending. A `builder_ai_query` gets the same default limit as a `builder_query` of its request type and no default order, because SigNoz orders AI trace rows by last activity. Caller-supplied values are forwarded unchanged. The response appends a decisions note when defaults are inserted.
-- **Validation**: apart from inserted bounds, the request reaches SigNoz verbatim and SigNoz validates it. `requestType` has no default (`raw`, `trace`, `time_series`, or `scalar`), and `start` and `end` are required Unix-millisecond timestamps.
+- **Builder result bounds**: for predictable authored queries, explicitly supply a positive `spec.limit` and non-empty v5 `spec.order` (not dashboard/editor `orderBy`) on every `builder_formula` and on each `builder_query` no formula references. When omitted, null, or zero, standalone limits and formula-result limits default to `100`. A builder query referenced by a formula gets no inserted limit or order, because FuseScope applies base-query limits before formula evaluation and they drop groups from the result. Raw logs order by `timestamp desc, id desc`; raw traces by `timestamp desc`; metric scalar/time-series queries and formulas by `__result desc`; and log/trace scalar/time-series queries by the primary aggregation descending. A `builder_ai_query` gets the same default limit as a `builder_query` of its request type and no default order, because FuseScope orders AI trace rows by last activity. Caller-supplied values are forwarded unchanged. The response appends a decisions note when defaults are inserted.
+- **Validation**: apart from inserted bounds, the request reaches FuseScope verbatim and FuseScope validates it. `requestType` has no default (`raw`, `trace`, `time_series`, or `scalar`), and `start` and `end` are required Unix-millisecond timestamps.
 - **Guide routing**: read `fusescope://logs/query-builder-guide` for logs, `fusescope://traces/query-builder-guide` for traces, `fusescope://ai/query-builder-guide` for `builder_ai_query`, `fusescope://metrics-aggregation-guide` for metrics/formulas, and `fusescope://promql/instructions` for PromQL.
 - **Time-series ranking caveat**: top-N groups are ranked over the entire requested window. A short-lived spike can be omitted even when it dominates one bucket; narrow the window or adjust the limit when that matters.
 - **Backend warnings**: non-fatal warnings the backend returns (e.g. ambiguous-key resolution) are surfaced as a note alongside the raw response and WARN-logged, matching the search/aggregate/query_metrics tools (previously the body was returned verbatim and warnings were dropped).
 - **Key-not-found errors**: a filter referencing a key absent from the workspace's metadata for the queried signal fails with recovery guidance in the error text plus a machine-readable `missingKeys` array in the structured error content
-- **Documentation**: See [SigNoz Query Builder v5 docs](https://signoz.io/docs/userguide/query-builder-v5/)
+- **Documentation**: See [Query Builder](https://fuseone-io.github.io/fusescope-docs/querying/query-builder/) in the FuseScope docs
 
 </details>
 
@@ -1124,8 +938,8 @@ Runs a SigNoz Query Builder v5 request that the dedicated tools cannot express, 
 
 | Variable          | Description                                                                    | Required                            |
 | ----------------- | ------------------------------------------------------------------------------ | ----------------------------------- |
-| `SIGNOZ_URL`      | SigNoz instance URL                                                            | Yes (stdio); Optional (http with OAuth) |
-| `SIGNOZ_API_KEY`  | SigNoz API key (get from Settings → API Keys in the SigNoz UI) | Yes (stdio); Optional (http with OAuth) |
+| `SIGNOZ_URL`      | FuseScope instance URL                                                            | Yes (stdio); Optional (http with OAuth) |
+| `SIGNOZ_API_KEY`  | FuseScope service-account API key | Yes (stdio); Optional (http with OAuth) |
 | `LOG_LEVEL`       | Logging level: `info`(default), `debug`, `warn`, `error`                       | No                                  |
 | `TRANSPORT_MODE`  | MCP transport mode: `stdio`(default) or `http`                                 | No                                  |
 | `MCP_SERVER_HOST` | Host/interface for HTTP transport mode (default: empty, which listens on all interfaces). Set to `127.0.0.1` for loopback-only access. | No |
@@ -1141,8 +955,8 @@ Runs a SigNoz Query Builder v5 request that the dedicated tools cannot express, 
 | `OAUTH_ACCESS_TOKEN_TTL_MINUTES` | Access token lifetime in minutes (default: 60)                  | No                                  |
 | `OAUTH_REFRESH_TOKEN_TTL_MINUTES` | Refresh token lifetime in minutes (default: 43200 / 30d)      | No                                  |
 | `OAUTH_AUTH_CODE_TTL_SECONDS` | Authorization code lifetime in seconds (default: 600 / 10min)      | No                                  |
-| `SIGNOZ_CUSTOM_HEADERS` | Extra HTTP headers added to every API request, useful when SigNoz is behind a reverse proxy requiring auth (e.g. `CF-Access-Client-Id:id.access,CF-Access-Client-Secret:secret`). Format: `Key1:Value1,Key2:Value2` | No |
-| `SIGNOZ_INSTANCE_URL_ALLOWLIST` | Multi-tenant (http) only: comma-separated allowlist of SigNoz backend hosts the server will proxy to. Entries are exact hosts (`signoz.example.com`) or wildcards (`*.us.signoz.cloud`, which matches any subdomain ending in `.us.signoz.cloud`); a scheme/port/path accidentally included in an entry is tolerated and reduced to the bare host. When set, SigNoz instance URLs that do not match are refused at every ingress: the OAuth setup form and `X-SigNoz-URL` header return HTTP 403, the OAuth token endpoint (incl. existing refresh tokens) returns `invalid_grant`, and `/mcp` requests via an OAuth token return 403. All increment a `disallowed_signoz_url`-tagged failure metric for alerting (not logged per-request, to avoid noise from misconfigured/looping clients), and the rejection message points SigNoz Cloud users to their region's MCP URL (`mcp.<region>.signoz.cloud`) with a docs link. Empty/unset allows any host. The operator's own `SIGNOZ_URL` is exempt. | No |
+| `SIGNOZ_CUSTOM_HEADERS` | Extra HTTP headers added to every API request, useful when FuseScope is behind a reverse proxy requiring auth (e.g. `CF-Access-Client-Id:id.access,CF-Access-Client-Secret:secret`). Format: `Key1:Value1,Key2:Value2` | No |
+| `SIGNOZ_INSTANCE_URL_ALLOWLIST` | Multi-tenant (http) only: comma-separated allowlist of FuseScope backend hosts the server will proxy to. Entries are exact hosts (`fusescope.example.com`) or wildcards (`*.example.com`, which matches any subdomain ending in `.example.com`); a scheme/port/path accidentally included in an entry is tolerated and reduced to the bare host. When set, FuseScope instance URLs that do not match are refused at every ingress: the OAuth setup form and `X-SigNoz-URL` header return HTTP 403, the OAuth token endpoint (incl. existing refresh tokens) returns `invalid_grant`, and `/mcp` requests via an OAuth token return 403. All increment a `disallowed_signoz_url`-tagged failure metric for alerting (not logged per-request, to avoid noise from misconfigured/looping clients) The rejection message still carries the upstream wording, which points to SigNoz Cloud's MCP URLs. Empty/unset allows any host. The operator's own `SIGNOZ_URL` is exempt. | No |
 | `ANALYTICS_ENABLED` | Enable product analytics (`true`/`false`; default: `false`) | No |
 | `SEGMENT_KEY` | Segment write key used only when analytics is enabled | No |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP gRPC endpoint for the MCP server's own traces and metrics. Internal telemetry export is disabled when no OTLP endpoint/exporter is configured. For plaintext collectors, use an `http://` endpoint such as `http://localhost:4317`. | No |
@@ -1153,24 +967,24 @@ Runs a SigNoz Query Builder v5 request that the dedicated tools cannot express, 
 
 The MCP server does not run an OTLP log exporter; logs are emitted as JSON to stderr. `OTEL_LOGS_EXPORTER` is therefore not used.
 
-### Browser links for self-hosted SigNoz
+### Browser links for FuseScope
 
-> **Note:** Set `global.external_url` on the **SigNoz server** to the URL users open in their browser. The MCP server reads it from `GET /api/v1/global/config`, so the instance URL is configured in one place.
+> **Note:** Set `global.external_url` on the **FuseScope server** to the URL users open in their browser. The MCP server reads it from `GET /api/v1/global/config`, so the instance URL is configured in one place.
 
-For example, add this environment variable to the SigNoz deployment and restart SigNoz:
+For example, add this environment variable to the FuseScope deployment and restart FuseScope:
 
 ```bash
 SIGNOZ_GLOBAL_EXTERNAL__URL=https://observe.example.com
 ```
 
-There are two underscores before `URL`. The equivalent SigNoz YAML configuration is:
+There are two underscores before `URL`. The equivalent FuseScope YAML configuration is:
 
 ```yaml
 global:
   external_url: https://observe.example.com
 ```
 
-Keep `SIGNOZ_URL` on the MCP server pointed at its reachable API address, such as `http://signoz:8080`. If the deployment uses a path prefix, include it in the API address as required by SigNoz and your proxy routing. Configure a backend path in `SIGNOZ_URL`: per-request URLs supplied through OAuth or `X-SigNoz-URL` currently support origins only.
+Keep `SIGNOZ_URL` on the MCP server pointed at its reachable API address, such as `http://fusescope:8080`. If the deployment uses a path prefix, include it in the API address as required by FuseScope and your proxy routing. Configure a backend path in `SIGNOZ_URL`: per-request URLs supplied through OAuth or `X-SigNoz-URL` currently support origins only.
 
 Browser links use the discovered URL, including any configured base path, while API requests retain their destination and credentials. Each tenant client caches discovery for 15 minutes. An unset external URL uses the request's API URL; unavailable or invalid global configuration logs a warning and retries discovery after one minute. Authentication and permission errors are returned to the client.
 
@@ -1191,11 +1005,11 @@ make bundle
 3. Enter your `SIGNOZ_URL`, `SIGNOZ_API_KEY`, and optionally `LOG_LEVEL`
 4. Restart Claude Desktop
 
-For browser links, configure [SigNoz's global external URL](#browser-links-for-self-hosted-signoz).
+For browser links, configure [FuseScope's global external URL](#browser-links-for-fusescope).
 
 ## End-to-End Tests
 
-The e2e suite under [`tests/`](tests/README.md) runs the server (built from the working tree) against a real SigNoz instance provisioned by foundry and drives it over the MCP HTTP transport:
+The e2e suite under [`tests/`](tests/README.md) runs the server (built from the working tree) against a real SigNoz instance provisioned by SigNoz's foundry (FuseScope is API-compatible) and drives it over the MCP HTTP transport:
 
 ```bash
 make test-e2e          # cast SigNoz, run the suites, tear down
