@@ -1,0 +1,30 @@
+name: tmp-test-report
+
+on:
+  push:
+    branches:
+      - feat/fusescope-tool-names
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [test-race, check-guardrails]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - name: Report failures as one annotation
+        run: |
+          make ${{ matrix.target }} > out.txt 2>&1 && exit 0
+          grep -E -- '--- FAIL|^FAIL|_test\.go:[0-9]+:|panic:|cannot|undefined|wire oracle' out.txt | head -80 > fails.txt || true
+          [ -s fails.txt ] || tail -60 out.txt > fails.txt
+          msg=$(sed -e 's/%/%25/g' fails.txt | awk '{printf "%s%%0A", $0}')
+          echo "::error title=${{ matrix.target }}::${msg}"
+          exit 1
