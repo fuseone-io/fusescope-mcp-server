@@ -101,6 +101,7 @@ func (h *Handler) RegisterAlertsHandlers(s *mcp.Server) {
 				"For direct routing, reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If none fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never guess or create automatically. FuseScope rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
 		),
 		mcp.WithInputSchema[types.CreateAlertInput](),
+		withSupportedRuleTypes(),
 	)
 	h.addTool(s, createAlertTool, h.handleCreateAlert)
 
@@ -111,6 +112,7 @@ func (h *Handler) RegisterAlertsHandlers(s *mcp.Server) {
 			"Use this when the user wants to change an existing FuseScope alert rule; use fusescope_create_alert for a new rule. This is a full replacement: call fusescope_get_alert unless its complete result is available from the same still-current prepared operation, then preserve every unchanged field. Likewise reuse fusescope://alert/instructions, fusescope://alert/examples, and a fully paginated fusescope_list_notification_channels result only from that operation; otherwise read/call them, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If no direct channel fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never create automatically. FuseScope rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
 		),
 		mcp.WithInputSchema[types.UpdateAlertInput](),
+		withSupportedRuleTypes(),
 	)
 	h.addTool(s, updateAlertTool, h.handleUpdateAlert)
 
