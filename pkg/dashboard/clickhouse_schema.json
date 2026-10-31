@@ -1,0 +1,3026 @@
+{
+  "schema_migrator_version": "0.145.0",
+  "tables": [
+    {
+      "database": "signoz_logs",
+      "name": "distributed_logs_v2",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "ts_bucket_start",
+          "type": "UInt64"
+        },
+        {
+          "name": "resource_fingerprint",
+          "type": "String"
+        },
+        {
+          "name": "timestamp",
+          "type": "UInt64"
+        },
+        {
+          "name": "observed_timestamp",
+          "type": "UInt64"
+        },
+        {
+          "name": "id",
+          "type": "String"
+        },
+        {
+          "name": "trace_id",
+          "type": "String"
+        },
+        {
+          "name": "span_id",
+          "type": "String"
+        },
+        {
+          "name": "trace_flags",
+          "type": "UInt32"
+        },
+        {
+          "name": "severity_text",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "severity_number",
+          "type": "UInt8"
+        },
+        {
+          "name": "body",
+          "type": "String"
+        },
+        {
+          "name": "body_v2",
+          "type": "JSON(max_dynamic_paths=0, message String)"
+        },
+        {
+          "name": "body_promoted",
+          "type": "JSON"
+        },
+        {
+          "name": "attributes_string",
+          "type": "Map(LowCardinality(String), String)"
+        },
+        {
+          "name": "attributes_number",
+          "type": "Map(LowCardinality(String), Float64)"
+        },
+        {
+          "name": "attributes_bool",
+          "type": "Map(LowCardinality(String), Bool)"
+        },
+        {
+          "name": "resources_string",
+          "type": "Map(LowCardinality(String), String)"
+        },
+        {
+          "name": "scope_name",
+          "type": "String"
+        },
+        {
+          "name": "scope_version",
+          "type": "String"
+        },
+        {
+          "name": "scope_string",
+          "type": "Map(LowCardinality(String), String)"
+        },
+        {
+          "name": "_retention_days",
+          "type": "UInt16",
+          "default_kind": "DEFAULT",
+          "default_expression": "15"
+        },
+        {
+          "name": "_retention_days_cold",
+          "type": "UInt16",
+          "default_kind": "DEFAULT",
+          "default_expression": "0"
+        },
+        {
+          "name": "resource",
+          "type": "JSON(max_dynamic_paths=100)"
+        },
+        {
+          "name": "inserted_at",
+          "type": "DateTime64(3)"
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime64(3)",
+          "default_kind": "DEFAULT",
+          "default_expression": "now64(3)"
+        }
+      ]
+    },
+    {
+      "database": "signoz_logs",
+      "name": "distributed_logs_v2_resource",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "labels",
+          "type": "String"
+        },
+        {
+          "name": "fingerprint",
+          "type": "String"
+        },
+        {
+          "name": "seen_at_ts_bucket_start",
+          "type": "Int64"
+        },
+        {
+          "name": "_retention_days",
+          "type": "UInt16",
+          "default_kind": "DEFAULT",
+          "default_expression": "15"
+        },
+        {
+          "name": "_retention_days_cold",
+          "type": "UInt16",
+          "default_kind": "DEFAULT",
+          "default_expression": "0"
+        }
+      ]
+    },
+    {
+      "database": "signoz_logs",
+      "name": "distributed_tag_attributes_v2",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "tag_key",
+          "type": "String"
+        },
+        {
+          "name": "tag_type",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "tag_data_type",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "string_value",
+          "type": "String"
+        },
+        {
+          "name": "number_value",
+          "type": "Nullable(Float64)"
+        }
+      ]
+    },
+    {
+      "database": "signoz_logs",
+      "name": "logs_v2",
+      "engine": "MergeTree",
+      "columns": [
+        {
+          "name": "ts_bucket_start",
+          "type": "UInt64"
+        },
+        {
+          "name": "resource_fingerprint",
+          "type": "String"
+        },
+        {
+          "name": "timestamp",
+          "type": "UInt64"
+        },
+        {
+          "name": "observed_timestamp",
+          "type": "UInt64"
+        },
+        {
+          "name": "id",
+          "type": "String"
+        },
+        {
+          "name": "trace_id",
+          "type": "String"
+        },
+        {
+          "name": "span_id",
+          "type": "String"
+        },
+        {
+          "name": "trace_flags",
+          "type": "UInt32"
+        },
+        {
+          "name": "severity_text",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "severity_number",
+          "type": "UInt8"
+        },
+        {
+          "name": "body",
+          "type": "String"
+        },
+        {
+          "name": "body_v2",
+          "type": "JSON(max_dynamic_paths=0, message String)"
+        },
+        {
+          "name": "body_promoted",
+          "type": "JSON"
+        },
+        {
+          "name": "attributes_string",
+          "type": "Map(LowCardinality(String), String)"
+        },
+        {
+          "name": "attributes_number",
+          "type": "Map(LowCardinality(String), Float64)"
+        },
+        {
+          "name": "attributes_bool",
+          "type": "Map(LowCardinality(String), Bool)"
+        },
+        {
+          "name": "resources_string",
+          "type": "Map(LowCardinality(String), String)"
+        },
+        {
+          "name": "scope_name",
+          "type": "String"
+        },
+        {
+          "name": "scope_version",
+          "type": "String"
+        },
+        {
+          "name": "scope_string",
+          "type": "Map(LowCardinality(String), String)"
+        },
+        {
+          "name": "_retention_days",
+          "type": "UInt16",
+          "default_kind": "DEFAULT",
+          "default_expression": "15"
+        },
+        {
+          "name": "_retention_days_cold",
+          "type": "UInt16",
+          "default_kind": "DEFAULT",
+          "default_expression": "0"
+        },
+        {
+          "name": "resource",
+          "type": "JSON(max_dynamic_paths=100)"
+        },
+        {
+          "name": "inserted_at",
+          "type": "DateTime64(3)"
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime64(3)",
+          "default_kind": "DEFAULT",
+          "default_expression": "now64(3)"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "id_minmax",
+          "expression": "id",
+          "type": "minmax"
+        },
+        {
+          "name": "severity_number_idx",
+          "expression": "severity_number",
+          "type": "set(25)"
+        },
+        {
+          "name": "severity_text_idx",
+          "expression": "severity_text",
+          "type": "set(25)"
+        },
+        {
+          "name": "trace_flags_idx",
+          "expression": "trace_flags",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "body_index_v2_token",
+          "expression": "lower(body)",
+          "type": "tokenbf_v1(10000, 2, 0)"
+        },
+        {
+          "name": "body_index_v2_ngram",
+          "expression": "lower(body)",
+          "type": "ngrambf_v1(4, 15000, 3, 0)"
+        },
+        {
+          "name": "scope_name_idx",
+          "expression": "scope_name",
+          "type": "tokenbf_v1(10240, 3, 0)"
+        },
+        {
+          "name": "attributes_string_idx_key",
+          "expression": "mapKeys(attributes_string)",
+          "type": "tokenbf_v1(1024, 2, 0)"
+        },
+        {
+          "name": "attributes_string_idx_val",
+          "expression": "mapValues(attributes_string)",
+          "type": "ngrambf_v1(4, 5000, 2, 0)"
+        },
+        {
+          "name": "attributes_number_idx_key",
+          "expression": "mapKeys(attributes_number)",
+          "type": "tokenbf_v1(1024, 2, 0)"
+        },
+        {
+          "name": "attributes_number_idx_val",
+          "expression": "mapValues(attributes_number)",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "attributes_bool_idx_key",
+          "expression": "mapKeys(attributes_bool)",
+          "type": "tokenbf_v1(1024, 2, 0)"
+        },
+        {
+          "name": "trace_id_idx",
+          "expression": "trace_id",
+          "type": "tokenbf_v1(10000, 5, 0)"
+        },
+        {
+          "name": "span_id_idx",
+          "expression": "span_id",
+          "type": "tokenbf_v1(5000, 5, 0)"
+        },
+        {
+          "name": "body_v2_string_ngram_idx",
+          "expression": "lower(toString(body_v2))",
+          "type": "ngrambf_v1(4, 15000, 3, 0)"
+        },
+        {
+          "name": "body_v2_string_token_idx",
+          "expression": "lower(toString(body_v2))",
+          "type": "tokenbf_v1(10000, 2, 0)"
+        },
+        {
+          "name": "body_v2_paths_ngram_idx",
+          "expression": "JSONAllPaths(body_v2)",
+          "type": "ngrambf_v1(4, 15000, 3, 0)"
+        },
+        {
+          "name": "body_v2_paths_token_idx",
+          "expression": "JSONAllPaths(body_v2)",
+          "type": "tokenbf_v1(10000, 2, 0)"
+        }
+      ]
+    },
+    {
+      "database": "signoz_logs",
+      "name": "logs_v2_resource",
+      "engine": "ReplacingMergeTree",
+      "columns": [
+        {
+          "name": "labels",
+          "type": "String"
+        },
+        {
+          "name": "fingerprint",
+          "type": "String"
+        },
+        {
+          "name": "seen_at_ts_bucket_start",
+          "type": "Int64"
+        },
+        {
+          "name": "_retention_days",
+          "type": "UInt16",
+          "default_kind": "DEFAULT",
+          "default_expression": "15"
+        },
+        {
+          "name": "_retention_days_cold",
+          "type": "UInt16",
+          "default_kind": "DEFAULT",
+          "default_expression": "0"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "idx_labels",
+          "expression": "lower(labels)",
+          "type": "ngrambf_v1(4, 1024, 3, 0)"
+        },
+        {
+          "name": "idx_labels_v1",
+          "expression": "labels",
+          "type": "ngrambf_v1(4, 1024, 3, 0)"
+        }
+      ]
+    },
+    {
+      "database": "signoz_logs",
+      "name": "tag_attributes_v2",
+      "engine": "ReplacingMergeTree",
+      "columns": [
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "tag_key",
+          "type": "String"
+        },
+        {
+          "name": "tag_type",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "tag_data_type",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "string_value",
+          "type": "String"
+        },
+        {
+          "name": "number_value",
+          "type": "Nullable(Float64)"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "string_value_index",
+          "expression": "string_value",
+          "type": "ngrambf_v1(4, 1024, 3, 0)"
+        },
+        {
+          "name": "number_value_index",
+          "expression": "number_value",
+          "type": "minmax"
+        }
+      ]
+    },
+    {
+      "database": "signoz_metrics",
+      "name": "distributed_exp_hist",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "env",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'default'"
+        },
+        {
+          "name": "temporality",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'Unspecified'"
+        },
+        {
+          "name": "metric_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "fingerprint",
+          "type": "UInt64"
+        },
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "count",
+          "type": "UInt64"
+        },
+        {
+          "name": "sum",
+          "type": "Float64"
+        },
+        {
+          "name": "min",
+          "type": "Float64"
+        },
+        {
+          "name": "max",
+          "type": "Float64"
+        },
+        {
+          "name": "sketch",
+          "type": "AggregateFunction(quantilesDD(0.01, 0.5, 0.75, 0.9, 0.95, 0.99), UInt64)"
+        },
+        {
+          "name": "flags",
+          "type": "UInt32",
+          "default_kind": "DEFAULT",
+          "default_expression": "0"
+        },
+        {
+          "name": "inserted_at_unix_milli",
+          "type": "Int64"
+        }
+      ]
+    },
+    {
+      "database": "signoz_metrics",
+      "name": "distributed_samples_v4",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "env",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'default'"
+        },
+        {
+          "name": "temporality",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'Unspecified'"
+        },
+        {
+          "name": "metric_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "fingerprint",
+          "type": "UInt64"
+        },
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "value",
+          "type": "Float64"
+        },
+        {
+          "name": "flags",
+          "type": "UInt32",
+          "default_kind": "DEFAULT",
+          "default_expression": "0"
+        },
+        {
+          "name": "inserted_at_unix_milli",
+          "type": "Int64"
+        }
+      ]
+    },
+    {
+      "database": "signoz_metrics",
+      "name": "distributed_time_series_v4",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "env",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'default'"
+        },
+        {
+          "name": "temporality",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'Unspecified'"
+        },
+        {
+          "name": "metric_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "description",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "unit",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "type",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "is_monotonic",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "false"
+        },
+        {
+          "name": "fingerprint",
+          "type": "UInt64"
+        },
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "labels",
+          "type": "String"
+        },
+        {
+          "name": "attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "scope_attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "resource_attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "__normalized",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "true"
+        },
+        {
+          "name": "inserted_at_unix_milli",
+          "type": "Int64"
+        }
+      ]
+    },
+    {
+      "database": "signoz_metrics",
+      "name": "distributed_time_series_v4_1day",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "env",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'default'"
+        },
+        {
+          "name": "temporality",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'Unspecified'"
+        },
+        {
+          "name": "metric_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "description",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "unit",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "type",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "is_monotonic",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "false"
+        },
+        {
+          "name": "fingerprint",
+          "type": "UInt64"
+        },
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "labels",
+          "type": "String"
+        },
+        {
+          "name": "attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "scope_attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "resource_attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "__normalized",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "true"
+        }
+      ]
+    },
+    {
+      "database": "signoz_metrics",
+      "name": "distributed_time_series_v4_6hrs",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "env",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'default'"
+        },
+        {
+          "name": "temporality",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'Unspecified'"
+        },
+        {
+          "name": "metric_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "description",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "unit",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "type",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "is_monotonic",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "false"
+        },
+        {
+          "name": "fingerprint",
+          "type": "UInt64"
+        },
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "labels",
+          "type": "String"
+        },
+        {
+          "name": "attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "scope_attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "resource_attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "__normalized",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "true"
+        }
+      ]
+    },
+    {
+      "database": "signoz_metrics",
+      "name": "exp_hist",
+      "engine": "MergeTree",
+      "columns": [
+        {
+          "name": "env",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'default'"
+        },
+        {
+          "name": "temporality",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'Unspecified'"
+        },
+        {
+          "name": "metric_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "fingerprint",
+          "type": "UInt64"
+        },
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "count",
+          "type": "UInt64"
+        },
+        {
+          "name": "sum",
+          "type": "Float64"
+        },
+        {
+          "name": "min",
+          "type": "Float64"
+        },
+        {
+          "name": "max",
+          "type": "Float64"
+        },
+        {
+          "name": "sketch",
+          "type": "AggregateFunction(quantilesDD(0.01, 0.5, 0.75, 0.9, 0.95, 0.99), UInt64)"
+        },
+        {
+          "name": "flags",
+          "type": "UInt32",
+          "default_kind": "DEFAULT",
+          "default_expression": "0"
+        },
+        {
+          "name": "inserted_at_unix_milli",
+          "type": "Int64"
+        }
+      ]
+    },
+    {
+      "database": "signoz_metrics",
+      "name": "samples_v4",
+      "engine": "MergeTree",
+      "columns": [
+        {
+          "name": "env",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'default'"
+        },
+        {
+          "name": "temporality",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'Unspecified'"
+        },
+        {
+          "name": "metric_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "fingerprint",
+          "type": "UInt64"
+        },
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "value",
+          "type": "Float64"
+        },
+        {
+          "name": "flags",
+          "type": "UInt32",
+          "default_kind": "DEFAULT",
+          "default_expression": "0"
+        },
+        {
+          "name": "inserted_at_unix_milli",
+          "type": "Int64"
+        }
+      ]
+    },
+    {
+      "database": "signoz_metrics",
+      "name": "time_series_v4",
+      "engine": "ReplacingMergeTree",
+      "columns": [
+        {
+          "name": "env",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'default'"
+        },
+        {
+          "name": "temporality",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'Unspecified'"
+        },
+        {
+          "name": "metric_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "description",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "unit",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "type",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "is_monotonic",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "false"
+        },
+        {
+          "name": "fingerprint",
+          "type": "UInt64"
+        },
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "labels",
+          "type": "String"
+        },
+        {
+          "name": "attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "scope_attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "resource_attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "__normalized",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "true"
+        },
+        {
+          "name": "inserted_at_unix_milli",
+          "type": "Int64"
+        }
+      ]
+    },
+    {
+      "database": "signoz_metrics",
+      "name": "time_series_v4_1day",
+      "engine": "ReplacingMergeTree",
+      "columns": [
+        {
+          "name": "env",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'default'"
+        },
+        {
+          "name": "temporality",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'Unspecified'"
+        },
+        {
+          "name": "metric_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "description",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "unit",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "type",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "is_monotonic",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "false"
+        },
+        {
+          "name": "fingerprint",
+          "type": "UInt64"
+        },
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "labels",
+          "type": "String"
+        },
+        {
+          "name": "attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "scope_attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "resource_attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "__normalized",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "true"
+        }
+      ]
+    },
+    {
+      "database": "signoz_metrics",
+      "name": "time_series_v4_6hrs",
+      "engine": "ReplacingMergeTree",
+      "columns": [
+        {
+          "name": "env",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'default'"
+        },
+        {
+          "name": "temporality",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "'Unspecified'"
+        },
+        {
+          "name": "metric_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "description",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "unit",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "type",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "''"
+        },
+        {
+          "name": "is_monotonic",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "false"
+        },
+        {
+          "name": "fingerprint",
+          "type": "UInt64"
+        },
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "labels",
+          "type": "String"
+        },
+        {
+          "name": "attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "scope_attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "resource_attrs",
+          "type": "Map(LowCardinality(String), String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "map()"
+        },
+        {
+          "name": "__normalized",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "true"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "dependency_graph_minutes_v2",
+      "engine": "AggregatingMergeTree",
+      "columns": [
+        {
+          "name": "src",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "dest",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "duration_quantiles_state",
+          "type": "AggregateFunction(quantiles(0.5, 0.75, 0.9, 0.95, 0.99), Float64)"
+        },
+        {
+          "name": "error_count",
+          "type": "SimpleAggregateFunction(sum, UInt64)"
+        },
+        {
+          "name": "total_count",
+          "type": "SimpleAggregateFunction(sum, UInt64)"
+        },
+        {
+          "name": "timestamp",
+          "type": "DateTime"
+        },
+        {
+          "name": "deployment_environment",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "k8s_cluster_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "k8s_namespace_name",
+          "type": "LowCardinality(String)"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "distributed_dependency_graph_minutes_v2",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "src",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "dest",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "duration_quantiles_state",
+          "type": "AggregateFunction(quantiles(0.5, 0.75, 0.9, 0.95, 0.99), Float64)"
+        },
+        {
+          "name": "error_count",
+          "type": "SimpleAggregateFunction(sum, UInt64)"
+        },
+        {
+          "name": "total_count",
+          "type": "SimpleAggregateFunction(sum, UInt64)"
+        },
+        {
+          "name": "timestamp",
+          "type": "DateTime"
+        },
+        {
+          "name": "deployment_environment",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "k8s_cluster_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "k8s_namespace_name",
+          "type": "LowCardinality(String)"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "distributed_signoz_error_index_v2",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "timestamp",
+          "type": "DateTime64(9)"
+        },
+        {
+          "name": "errorID",
+          "type": "FixedString(32)"
+        },
+        {
+          "name": "groupID",
+          "type": "FixedString(32)"
+        },
+        {
+          "name": "traceID",
+          "type": "FixedString(32)"
+        },
+        {
+          "name": "spanID",
+          "type": "String"
+        },
+        {
+          "name": "serviceName",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "exceptionType",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "exceptionMessage",
+          "type": "String"
+        },
+        {
+          "name": "exceptionStacktrace",
+          "type": "String"
+        },
+        {
+          "name": "exceptionEscaped",
+          "type": "Bool"
+        },
+        {
+          "name": "resourceTagsMap",
+          "type": "Map(LowCardinality(String), String)"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "distributed_signoz_index_v3",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "ts_bucket_start",
+          "type": "UInt64"
+        },
+        {
+          "name": "resource_fingerprint",
+          "type": "String"
+        },
+        {
+          "name": "timestamp",
+          "type": "DateTime64(9)"
+        },
+        {
+          "name": "trace_id",
+          "type": "FixedString(32)"
+        },
+        {
+          "name": "span_id",
+          "type": "String"
+        },
+        {
+          "name": "trace_state",
+          "type": "String"
+        },
+        {
+          "name": "parent_span_id",
+          "type": "String"
+        },
+        {
+          "name": "flags",
+          "type": "UInt32"
+        },
+        {
+          "name": "name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "kind",
+          "type": "Int8"
+        },
+        {
+          "name": "kind_string",
+          "type": "String"
+        },
+        {
+          "name": "duration_nano",
+          "type": "UInt64"
+        },
+        {
+          "name": "status_code",
+          "type": "Int16"
+        },
+        {
+          "name": "status_message",
+          "type": "String"
+        },
+        {
+          "name": "status_code_string",
+          "type": "String"
+        },
+        {
+          "name": "attributes_string",
+          "type": "Map(LowCardinality(String), String)"
+        },
+        {
+          "name": "attributes_number",
+          "type": "Map(LowCardinality(String), Float64)"
+        },
+        {
+          "name": "attributes_bool",
+          "type": "Map(LowCardinality(String), Bool)"
+        },
+        {
+          "name": "attributes",
+          "type": "JSON(max_dynamic_paths=0)"
+        },
+        {
+          "name": "attributes_promoted",
+          "type": "JSON"
+        },
+        {
+          "name": "resources_string",
+          "type": "Map(LowCardinality(String), String)"
+        },
+        {
+          "name": "events",
+          "type": "Array(String)"
+        },
+        {
+          "name": "links",
+          "type": "String"
+        },
+        {
+          "name": "response_status_code",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "external_http_url",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "http_url",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "external_http_method",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "http_method",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "http_host",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "db_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "db_operation",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "has_error",
+          "type": "Bool"
+        },
+        {
+          "name": "is_remote",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "resource_string_service$$name",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "resources_string['service.name']"
+        },
+        {
+          "name": "attribute_string_http$$route",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['http.route']"
+        },
+        {
+          "name": "attribute_string_messaging$$system",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['messaging.system']"
+        },
+        {
+          "name": "attribute_string_messaging$$operation",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['messaging.operation']"
+        },
+        {
+          "name": "attribute_string_db$$system",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['db.system']"
+        },
+        {
+          "name": "attribute_string_rpc$$system",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['rpc.system']"
+        },
+        {
+          "name": "attribute_string_rpc$$service",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['rpc.service']"
+        },
+        {
+          "name": "attribute_string_rpc$$method",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['rpc.method']"
+        },
+        {
+          "name": "attribute_string_peer$$service",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['peer.service']"
+        },
+        {
+          "name": "traceID",
+          "type": "FixedString(32)",
+          "default_kind": "ALIAS",
+          "default_expression": "trace_id"
+        },
+        {
+          "name": "spanID",
+          "type": "String",
+          "default_kind": "ALIAS",
+          "default_expression": "span_id"
+        },
+        {
+          "name": "parentSpanID",
+          "type": "String",
+          "default_kind": "ALIAS",
+          "default_expression": "parent_span_id"
+        },
+        {
+          "name": "spanKind",
+          "type": "String",
+          "default_kind": "ALIAS",
+          "default_expression": "kind_string"
+        },
+        {
+          "name": "durationNano",
+          "type": "UInt64",
+          "default_kind": "ALIAS",
+          "default_expression": "duration_nano"
+        },
+        {
+          "name": "statusCode",
+          "type": "Int16",
+          "default_kind": "ALIAS",
+          "default_expression": "status_code"
+        },
+        {
+          "name": "statusMessage",
+          "type": "String",
+          "default_kind": "ALIAS",
+          "default_expression": "status_message"
+        },
+        {
+          "name": "statusCodeString",
+          "type": "String",
+          "default_kind": "ALIAS",
+          "default_expression": "status_code_string"
+        },
+        {
+          "name": "references",
+          "type": "String",
+          "default_kind": "ALIAS",
+          "default_expression": "links"
+        },
+        {
+          "name": "responseStatusCode",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "response_status_code"
+        },
+        {
+          "name": "externalHttpUrl",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "external_http_url"
+        },
+        {
+          "name": "httpUrl",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "http_url"
+        },
+        {
+          "name": "externalHttpMethod",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "external_http_method"
+        },
+        {
+          "name": "httpMethod",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "http_method"
+        },
+        {
+          "name": "httpHost",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "http_host"
+        },
+        {
+          "name": "dbName",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "db_name"
+        },
+        {
+          "name": "dbOperation",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "db_operation"
+        },
+        {
+          "name": "hasError",
+          "type": "Bool",
+          "default_kind": "ALIAS",
+          "default_expression": "has_error"
+        },
+        {
+          "name": "isRemote",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "is_remote"
+        },
+        {
+          "name": "serviceName",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`resource_string_service$$name`"
+        },
+        {
+          "name": "httpRoute",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_http$$route`"
+        },
+        {
+          "name": "msgSystem",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_messaging$$system`"
+        },
+        {
+          "name": "msgOperation",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_messaging$$operation`"
+        },
+        {
+          "name": "dbSystem",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_db$$system`"
+        },
+        {
+          "name": "rpcSystem",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_rpc$$system`"
+        },
+        {
+          "name": "rpcService",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_rpc$$service`"
+        },
+        {
+          "name": "rpcMethod",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_rpc$$method`"
+        },
+        {
+          "name": "peerService",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_peer$$service`"
+        },
+        {
+          "name": "resource_string_service$$name_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(resources_string, 'service.name') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_http$$route_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'http.route') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_messaging$$system_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'messaging.system') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_messaging$$operation_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'messaging.operation') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_db$$system_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'db.system') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_rpc$$system_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'rpc.system') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_rpc$$service_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'rpc.service') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_rpc$$method_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'rpc.method') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_peer$$service_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'peer.service') != 0, true, false)"
+        },
+        {
+          "name": "resource",
+          "type": "JSON(max_dynamic_paths=100)"
+        },
+        {
+          "name": "scope",
+          "type": "JSON(max_dynamic_paths=0, attributes JSON(max_dynamic_paths=0), name String, version String)"
+        },
+        {
+          "name": "inserted_at",
+          "type": "DateTime64(3)"
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime64(3)",
+          "default_kind": "DEFAULT",
+          "default_expression": "now64(3)"
+        },
+        {
+          "name": "attribute_string_gen_ai$$request$$model",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['gen_ai.request.model']"
+        },
+        {
+          "name": "attribute_string_gen_ai$$request$$model_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'gen_ai.request.model') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_gen_ai$$provider$$name",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['gen_ai.provider.name']"
+        },
+        {
+          "name": "attribute_string_gen_ai$$provider$$name_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'gen_ai.provider.name') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_gen_ai$$tool$$name",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['gen_ai.tool.name']"
+        },
+        {
+          "name": "attribute_string_gen_ai$$tool$$name_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'gen_ai.tool.name') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_gen_ai$$agent$$name",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['gen_ai.agent.name']"
+        },
+        {
+          "name": "attribute_string_gen_ai$$agent$$name_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'gen_ai.agent.name') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$tokens$$cost",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['signoz.gen_ai.usage.tokens.cost']"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$tokens$$cost_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'signoz.gen_ai.usage.tokens.cost') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$input_tokens",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['gen_ai.usage.input_tokens']"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$input_tokens_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'gen_ai.usage.input_tokens') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$output_tokens",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['gen_ai.usage.output_tokens']"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$output_tokens_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'gen_ai.usage.output_tokens') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$cache_read$$input_tokens",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['gen_ai.usage.cache_read.input_tokens']"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$cache_read$$input_tokens_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'gen_ai.usage.cache_read.input_tokens') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$cache_creation$$input_tokens",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['gen_ai.usage.cache_creation.input_tokens']"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$cache_creation$$input_tokens_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'gen_ai.usage.cache_creation.input_tokens') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$input_tokens$$cost",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['signoz.gen_ai.usage.input_tokens.cost']"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$input_tokens$$cost_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'signoz.gen_ai.usage.input_tokens.cost') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$output_tokens$$cost",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['signoz.gen_ai.usage.output_tokens.cost']"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$output_tokens$$cost_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'signoz.gen_ai.usage.output_tokens.cost') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$cache_read$$input_tokens$$cost",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['signoz.gen_ai.usage.cache_read.input_tokens.cost']"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$cache_read$$input_tokens$$cost_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'signoz.gen_ai.usage.cache_read.input_tokens.cost') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$cache_write$$input_tokens$$cost",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['signoz.gen_ai.usage.cache_write.input_tokens.cost']"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$cache_write$$input_tokens$$cost_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'signoz.gen_ai.usage.cache_write.input_tokens.cost') != 0, true, false)"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "distributed_signoz_spans",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "timestamp",
+          "type": "DateTime64(9)"
+        },
+        {
+          "name": "traceID",
+          "type": "FixedString(32)"
+        },
+        {
+          "name": "model",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "distributed_span_attributes_keys",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "tagKey",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "tagType",
+          "type": "Enum8('tag' = 1, 'resource' = 2, 'scope' = 3)"
+        },
+        {
+          "name": "dataType",
+          "type": "Enum8('string' = 1, 'bool' = 2, 'float64' = 3)"
+        },
+        {
+          "name": "isColumn",
+          "type": "Bool"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "distributed_tag_attributes_v2",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "tag_key",
+          "type": "String"
+        },
+        {
+          "name": "tag_type",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "tag_data_type",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "string_value",
+          "type": "String"
+        },
+        {
+          "name": "number_value",
+          "type": "Nullable(Float64)"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "distributed_top_level_operations",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "serviceName",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "time",
+          "type": "DateTime",
+          "default_kind": "DEFAULT",
+          "default_expression": "now()"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "distributed_trace_summary",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "trace_id",
+          "type": "String"
+        },
+        {
+          "name": "start",
+          "type": "SimpleAggregateFunction(min, DateTime64(9))"
+        },
+        {
+          "name": "end",
+          "type": "SimpleAggregateFunction(max, DateTime64(9))"
+        },
+        {
+          "name": "num_spans",
+          "type": "SimpleAggregateFunction(sum, UInt64)"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "distributed_traces_v3_resource",
+      "engine": "Distributed",
+      "columns": [
+        {
+          "name": "labels",
+          "type": "String"
+        },
+        {
+          "name": "fingerprint",
+          "type": "String"
+        },
+        {
+          "name": "seen_at_ts_bucket_start",
+          "type": "Int64"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "signoz_error_index_v2",
+      "engine": "MergeTree",
+      "columns": [
+        {
+          "name": "timestamp",
+          "type": "DateTime64(9)"
+        },
+        {
+          "name": "errorID",
+          "type": "FixedString(32)"
+        },
+        {
+          "name": "groupID",
+          "type": "FixedString(32)"
+        },
+        {
+          "name": "traceID",
+          "type": "FixedString(32)"
+        },
+        {
+          "name": "spanID",
+          "type": "String"
+        },
+        {
+          "name": "serviceName",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "exceptionType",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "exceptionMessage",
+          "type": "String"
+        },
+        {
+          "name": "exceptionStacktrace",
+          "type": "String"
+        },
+        {
+          "name": "exceptionEscaped",
+          "type": "Bool"
+        },
+        {
+          "name": "resourceTagsMap",
+          "type": "Map(LowCardinality(String), String)"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "idx_error_id",
+          "expression": "errorID",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "idx_resourceTagsMapKeys",
+          "expression": "mapKeys(resourceTagsMap)",
+          "type": "bloom_filter(0.01)"
+        },
+        {
+          "name": "idx_resourceTagsMapValues",
+          "expression": "mapValues(resourceTagsMap)",
+          "type": "bloom_filter(0.01)"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "signoz_index_v3",
+      "engine": "MergeTree",
+      "columns": [
+        {
+          "name": "ts_bucket_start",
+          "type": "UInt64"
+        },
+        {
+          "name": "resource_fingerprint",
+          "type": "String"
+        },
+        {
+          "name": "timestamp",
+          "type": "DateTime64(9)"
+        },
+        {
+          "name": "trace_id",
+          "type": "FixedString(32)"
+        },
+        {
+          "name": "span_id",
+          "type": "String"
+        },
+        {
+          "name": "trace_state",
+          "type": "String"
+        },
+        {
+          "name": "parent_span_id",
+          "type": "String"
+        },
+        {
+          "name": "flags",
+          "type": "UInt32"
+        },
+        {
+          "name": "name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "kind",
+          "type": "Int8"
+        },
+        {
+          "name": "kind_string",
+          "type": "String"
+        },
+        {
+          "name": "duration_nano",
+          "type": "UInt64"
+        },
+        {
+          "name": "status_code",
+          "type": "Int16"
+        },
+        {
+          "name": "status_message",
+          "type": "String"
+        },
+        {
+          "name": "status_code_string",
+          "type": "String"
+        },
+        {
+          "name": "attributes_string",
+          "type": "Map(LowCardinality(String), String)"
+        },
+        {
+          "name": "attributes_number",
+          "type": "Map(LowCardinality(String), Float64)"
+        },
+        {
+          "name": "attributes_bool",
+          "type": "Map(LowCardinality(String), Bool)"
+        },
+        {
+          "name": "attributes",
+          "type": "JSON(max_dynamic_paths=0)"
+        },
+        {
+          "name": "attributes_promoted",
+          "type": "JSON"
+        },
+        {
+          "name": "resources_string",
+          "type": "Map(LowCardinality(String), String)"
+        },
+        {
+          "name": "events",
+          "type": "Array(String)"
+        },
+        {
+          "name": "links",
+          "type": "String"
+        },
+        {
+          "name": "response_status_code",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "external_http_url",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "http_url",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "external_http_method",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "http_method",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "http_host",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "db_name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "db_operation",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "has_error",
+          "type": "Bool"
+        },
+        {
+          "name": "is_remote",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "resource_string_service$$name",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "resources_string['service.name']"
+        },
+        {
+          "name": "attribute_string_http$$route",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['http.route']"
+        },
+        {
+          "name": "attribute_string_messaging$$system",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['messaging.system']"
+        },
+        {
+          "name": "attribute_string_messaging$$operation",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['messaging.operation']"
+        },
+        {
+          "name": "attribute_string_db$$system",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['db.system']"
+        },
+        {
+          "name": "attribute_string_rpc$$system",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['rpc.system']"
+        },
+        {
+          "name": "attribute_string_rpc$$service",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['rpc.service']"
+        },
+        {
+          "name": "attribute_string_rpc$$method",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['rpc.method']"
+        },
+        {
+          "name": "attribute_string_peer$$service",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['peer.service']"
+        },
+        {
+          "name": "traceID",
+          "type": "FixedString(32)",
+          "default_kind": "ALIAS",
+          "default_expression": "trace_id"
+        },
+        {
+          "name": "spanID",
+          "type": "String",
+          "default_kind": "ALIAS",
+          "default_expression": "span_id"
+        },
+        {
+          "name": "parentSpanID",
+          "type": "String",
+          "default_kind": "ALIAS",
+          "default_expression": "parent_span_id"
+        },
+        {
+          "name": "spanKind",
+          "type": "String",
+          "default_kind": "ALIAS",
+          "default_expression": "kind_string"
+        },
+        {
+          "name": "durationNano",
+          "type": "UInt64",
+          "default_kind": "ALIAS",
+          "default_expression": "duration_nano"
+        },
+        {
+          "name": "statusCode",
+          "type": "Int16",
+          "default_kind": "ALIAS",
+          "default_expression": "status_code"
+        },
+        {
+          "name": "statusMessage",
+          "type": "String",
+          "default_kind": "ALIAS",
+          "default_expression": "status_message"
+        },
+        {
+          "name": "statusCodeString",
+          "type": "String",
+          "default_kind": "ALIAS",
+          "default_expression": "status_code_string"
+        },
+        {
+          "name": "references",
+          "type": "String",
+          "default_kind": "ALIAS",
+          "default_expression": "links"
+        },
+        {
+          "name": "responseStatusCode",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "response_status_code"
+        },
+        {
+          "name": "externalHttpUrl",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "external_http_url"
+        },
+        {
+          "name": "httpUrl",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "http_url"
+        },
+        {
+          "name": "externalHttpMethod",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "external_http_method"
+        },
+        {
+          "name": "httpMethod",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "http_method"
+        },
+        {
+          "name": "httpHost",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "http_host"
+        },
+        {
+          "name": "dbName",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "db_name"
+        },
+        {
+          "name": "dbOperation",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "db_operation"
+        },
+        {
+          "name": "hasError",
+          "type": "Bool",
+          "default_kind": "ALIAS",
+          "default_expression": "has_error"
+        },
+        {
+          "name": "isRemote",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "is_remote"
+        },
+        {
+          "name": "serviceName",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`resource_string_service$$name`"
+        },
+        {
+          "name": "httpRoute",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_http$$route`"
+        },
+        {
+          "name": "msgSystem",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_messaging$$system`"
+        },
+        {
+          "name": "msgOperation",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_messaging$$operation`"
+        },
+        {
+          "name": "dbSystem",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_db$$system`"
+        },
+        {
+          "name": "rpcSystem",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_rpc$$system`"
+        },
+        {
+          "name": "rpcService",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_rpc$$service`"
+        },
+        {
+          "name": "rpcMethod",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_rpc$$method`"
+        },
+        {
+          "name": "peerService",
+          "type": "LowCardinality(String)",
+          "default_kind": "ALIAS",
+          "default_expression": "`attribute_string_peer$$service`"
+        },
+        {
+          "name": "resource_string_service$$name_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(resources_string, 'service.name') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_http$$route_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'http.route') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_messaging$$system_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'messaging.system') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_messaging$$operation_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'messaging.operation') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_db$$system_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'db.system') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_rpc$$system_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'rpc.system') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_rpc$$service_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'rpc.service') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_rpc$$method_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'rpc.method') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_peer$$service_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'peer.service') != 0, true, false)"
+        },
+        {
+          "name": "resource",
+          "type": "JSON(max_dynamic_paths=100)"
+        },
+        {
+          "name": "scope",
+          "type": "JSON(max_dynamic_paths=0, attributes JSON(max_dynamic_paths=0), name String, version String)"
+        },
+        {
+          "name": "inserted_at",
+          "type": "DateTime64(3)"
+        },
+        {
+          "name": "created_at",
+          "type": "DateTime64(3)",
+          "default_kind": "DEFAULT",
+          "default_expression": "now64(3)"
+        },
+        {
+          "name": "attribute_string_gen_ai$$request$$model",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['gen_ai.request.model']"
+        },
+        {
+          "name": "attribute_string_gen_ai$$request$$model_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'gen_ai.request.model') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_gen_ai$$provider$$name",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['gen_ai.provider.name']"
+        },
+        {
+          "name": "attribute_string_gen_ai$$provider$$name_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'gen_ai.provider.name') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_gen_ai$$tool$$name",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['gen_ai.tool.name']"
+        },
+        {
+          "name": "attribute_string_gen_ai$$tool$$name_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'gen_ai.tool.name') != 0, true, false)"
+        },
+        {
+          "name": "attribute_string_gen_ai$$agent$$name",
+          "type": "LowCardinality(String)",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_string['gen_ai.agent.name']"
+        },
+        {
+          "name": "attribute_string_gen_ai$$agent$$name_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_string, 'gen_ai.agent.name') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$tokens$$cost",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['signoz.gen_ai.usage.tokens.cost']"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$tokens$$cost_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'signoz.gen_ai.usage.tokens.cost') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$input_tokens",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['gen_ai.usage.input_tokens']"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$input_tokens_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'gen_ai.usage.input_tokens') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$output_tokens",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['gen_ai.usage.output_tokens']"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$output_tokens_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'gen_ai.usage.output_tokens') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$cache_read$$input_tokens",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['gen_ai.usage.cache_read.input_tokens']"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$cache_read$$input_tokens_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'gen_ai.usage.cache_read.input_tokens') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$cache_creation$$input_tokens",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['gen_ai.usage.cache_creation.input_tokens']"
+        },
+        {
+          "name": "attribute_number_gen_ai$$usage$$cache_creation$$input_tokens_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'gen_ai.usage.cache_creation.input_tokens') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$input_tokens$$cost",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['signoz.gen_ai.usage.input_tokens.cost']"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$input_tokens$$cost_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'signoz.gen_ai.usage.input_tokens.cost') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$output_tokens$$cost",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['signoz.gen_ai.usage.output_tokens.cost']"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$output_tokens$$cost_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'signoz.gen_ai.usage.output_tokens.cost') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$cache_read$$input_tokens$$cost",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['signoz.gen_ai.usage.cache_read.input_tokens.cost']"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$cache_read$$input_tokens$$cost_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'signoz.gen_ai.usage.cache_read.input_tokens.cost') != 0, true, false)"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$cache_write$$input_tokens$$cost",
+          "type": "Float64",
+          "default_kind": "DEFAULT",
+          "default_expression": "attributes_number['signoz.gen_ai.usage.cache_write.input_tokens.cost']"
+        },
+        {
+          "name": "attribute_number_signoz$$gen_ai$$usage$$cache_write$$input_tokens$$cost_exists",
+          "type": "Bool",
+          "default_kind": "DEFAULT",
+          "default_expression": "if(mapContains(attributes_number, 'signoz.gen_ai.usage.cache_write.input_tokens.cost') != 0, true, false)"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "idx_trace_id",
+          "expression": "trace_id",
+          "type": "tokenbf_v1(10000, 5, 0)"
+        },
+        {
+          "name": "idx_span_id",
+          "expression": "span_id",
+          "type": "tokenbf_v1(5000, 5, 0)"
+        },
+        {
+          "name": "idx_duration",
+          "expression": "duration_nano",
+          "type": "minmax"
+        },
+        {
+          "name": "idx_name",
+          "expression": "name",
+          "type": "ngrambf_v1(4, 5000, 2, 0)"
+        },
+        {
+          "name": "idx_kind",
+          "expression": "kind",
+          "type": "minmax"
+        },
+        {
+          "name": "idx_http_route",
+          "expression": "`attribute_string_http$$route`",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "idx_http_url",
+          "expression": "http_url",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "idx_http_host",
+          "expression": "http_host",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "idx_http_method",
+          "expression": "http_method",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "idx_timestamp",
+          "expression": "timestamp",
+          "type": "minmax"
+        },
+        {
+          "name": "idx_rpc_method",
+          "expression": "`attribute_string_rpc$$method`",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "idx_response_statusCode",
+          "expression": "response_status_code",
+          "type": "set(0)"
+        },
+        {
+          "name": "idx_status_code_string",
+          "expression": "status_code_string",
+          "type": "set(3)"
+        },
+        {
+          "name": "idx_kind_string",
+          "expression": "kind_string",
+          "type": "set(5)"
+        },
+        {
+          "name": "attributes_string_idx_key",
+          "expression": "mapKeys(attributes_string)",
+          "type": "tokenbf_v1(1024, 2, 0)"
+        },
+        {
+          "name": "attributes_string_idx_val",
+          "expression": "mapValues(attributes_string)",
+          "type": "ngrambf_v1(4, 5000, 2, 0)"
+        },
+        {
+          "name": "attributes_number_idx_key",
+          "expression": "mapKeys(attributes_number)",
+          "type": "tokenbf_v1(1024, 2, 0)"
+        },
+        {
+          "name": "attributes_number_idx_val",
+          "expression": "mapValues(attributes_number)",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "attributes_bool_idx_key",
+          "expression": "mapKeys(attributes_bool)",
+          "type": "tokenbf_v1(1024, 2, 0)"
+        },
+        {
+          "name": "resources_string_idx_key",
+          "expression": "mapKeys(resources_string)",
+          "type": "tokenbf_v1(1024, 2, 0)"
+        },
+        {
+          "name": "resources_string_idx_val",
+          "expression": "mapValues(resources_string)",
+          "type": "ngrambf_v1(4, 5000, 2, 0)"
+        },
+        {
+          "name": "attributes_paths_tokenbf",
+          "expression": "JSONAllPaths(attributes)",
+          "type": "tokenbf_v1(1024, 2, 0)"
+        },
+        {
+          "name": "attributes_promoted_paths_tokenbf",
+          "expression": "JSONAllPaths(attributes_promoted)",
+          "type": "tokenbf_v1(1024, 2, 0)"
+        },
+        {
+          "name": "idx_gen_ai_request_model",
+          "expression": "`attribute_string_gen_ai$$request$$model`",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "idx_gen_ai_provider_name",
+          "expression": "`attribute_string_gen_ai$$provider$$name`",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "idx_gen_ai_span_exists",
+          "expression": "`attribute_string_gen_ai$$request$$model_exists`, `attribute_string_gen_ai$$tool$$name_exists`, `attribute_string_gen_ai$$agent$$name_exists`",
+          "type": "set(8)"
+        },
+        {
+          "name": "idx_attributes_http_route",
+          "expression": "CAST(attributes.http.route, 'String')",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "idx_attributes_rpc_method",
+          "expression": "CAST(attributes.rpc.method, 'String')",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "idx_attributes_gen_ai_request_model",
+          "expression": "CAST(attributes.gen_ai.request.model, 'String')",
+          "type": "bloom_filter"
+        },
+        {
+          "name": "idx_attributes_gen_ai_provider_name",
+          "expression": "CAST(attributes.gen_ai.provider.name, 'String')",
+          "type": "bloom_filter"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "signoz_spans",
+      "engine": "MergeTree",
+      "columns": [
+        {
+          "name": "timestamp",
+          "type": "DateTime64(9)"
+        },
+        {
+          "name": "traceID",
+          "type": "FixedString(32)"
+        },
+        {
+          "name": "model",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "span_attributes_keys",
+      "engine": "ReplacingMergeTree",
+      "columns": [
+        {
+          "name": "tagKey",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "tagType",
+          "type": "Enum8('tag' = 1, 'resource' = 2, 'scope' = 3)"
+        },
+        {
+          "name": "dataType",
+          "type": "Enum8('string' = 1, 'bool' = 2, 'float64' = 3)"
+        },
+        {
+          "name": "isColumn",
+          "type": "Bool"
+        },
+        {
+          "name": "timestamp",
+          "type": "DateTime",
+          "default_kind": "DEFAULT",
+          "default_expression": "toDateTime(now())"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "tag_attributes_v2",
+      "engine": "ReplacingMergeTree",
+      "columns": [
+        {
+          "name": "unix_milli",
+          "type": "Int64"
+        },
+        {
+          "name": "tag_key",
+          "type": "String"
+        },
+        {
+          "name": "tag_type",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "tag_data_type",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "string_value",
+          "type": "String"
+        },
+        {
+          "name": "number_value",
+          "type": "Nullable(Float64)"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "string_value_index",
+          "expression": "string_value",
+          "type": "ngrambf_v1(4, 1024, 3, 0)"
+        },
+        {
+          "name": "number_value_index",
+          "expression": "number_value",
+          "type": "minmax"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "top_level_operations",
+      "engine": "ReplacingMergeTree",
+      "columns": [
+        {
+          "name": "name",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "serviceName",
+          "type": "LowCardinality(String)"
+        },
+        {
+          "name": "time",
+          "type": "DateTime",
+          "default_kind": "DEFAULT",
+          "default_expression": "now()"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "trace_summary",
+      "engine": "AggregatingMergeTree",
+      "columns": [
+        {
+          "name": "trace_id",
+          "type": "String"
+        },
+        {
+          "name": "start",
+          "type": "SimpleAggregateFunction(min, DateTime64(9))"
+        },
+        {
+          "name": "end",
+          "type": "SimpleAggregateFunction(max, DateTime64(9))"
+        },
+        {
+          "name": "num_spans",
+          "type": "SimpleAggregateFunction(sum, UInt64)"
+        }
+      ]
+    },
+    {
+      "database": "signoz_traces",
+      "name": "traces_v3_resource",
+      "engine": "ReplacingMergeTree",
+      "columns": [
+        {
+          "name": "labels",
+          "type": "String"
+        },
+        {
+          "name": "fingerprint",
+          "type": "String"
+        },
+        {
+          "name": "seen_at_ts_bucket_start",
+          "type": "Int64"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "idx_labels",
+          "expression": "lower(labels)",
+          "type": "ngrambf_v1(4, 1024, 3, 0)"
+        },
+        {
+          "name": "idx_labels_v1",
+          "expression": "labels",
+          "type": "ngrambf_v1(4, 1024, 3, 0)"
+        }
+      ]
+    }
+  ]
+}

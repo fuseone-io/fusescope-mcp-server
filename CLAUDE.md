@@ -9,7 +9,7 @@ contracts.
 ## Commands
 
 - `make ci`: run before pushing. Runs everything the PR gate runs except the live e2e suite:
-  `check-fmt`, `lint` (golangci-lint pinned to CI's version), `check-deps`, `check-build`,
+  `check-fmt`, `lint` (golangci-lint pinned to CI's version), `check-deps`, `check-agpl`, `check-build`,
   `test-race`, `check-guardrails`, `check-protocol`, `check-conformance`, `check-e2e-style`, and
   `check-repo-docs`. Each step is also its own target. Needs Node, uv, goimports
   (`make install-goimports`), and GNU `timeout` (on macOS, `brew install coreutils`). CI uses
@@ -26,6 +26,11 @@ contracts.
   `fusescope://*/examples` resources (`tools/specgen/specgen.py`). Takes several minutes and needs a
   `gh` login that can read SigNoz/skaff; `make gen-spec` regenerates only the schemas and
   examples and needs neither. `make gen-check` fails when any committed generated file is stale.
+- `make gen-chschema`: rebuild `pkg/dashboard/clickhouse_schema.json`, the ClickHouse schema behind
+  the `fusescope://dashboard/clickhouse-schema-for-*` resources, from a throwaway ClickHouse migrated
+  by `fusescope-schema-migrator` (`SCHEMA_MIGRATOR_VERSION`). Needs Docker.
+- `make check-agpl`: fails if any `signoz-otel-collector`/`fusescope-otel-collector` (AGPL-3.0)
+  package is linked; this server is Apache-2.0.
 - `make check-repo-docs READY=1`: the plan rules CI applies once a PR leaves draft.
 
 ## Tests
