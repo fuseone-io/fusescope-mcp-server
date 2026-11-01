@@ -1,14 +1,25 @@
-# FuseScope MCP Server
+<p align="center">
+  <img alt="FuseScope" src=".github/brand/fusescope-logo-universal.svg" width="440">
+</p>
 
-[![Go Version](https://img.shields.io/badge/Go-1.26+-blue.svg)](https://golang.org)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![MCP Protocol](https://img.shields.io/badge/MCP-2025--11--25_%7C_2026--07--28-orange.svg)](https://modelcontextprotocol.io)
+<h1 align="center">FuseScope MCP Server</h1>
+
+<p align="center">
+  <b>Let AI assistants query and manage FuseScope: traces, logs, metrics, alerts and dashboards.</b>
+</p>
+
+<p align="center">
+  <a href="https://docs.fusescope.fuseone.io/mcp/">Docs</a> ·
+  <a href="https://github.com/fuseone-io/fusescope-mcp-server/releases">Releases</a> ·
+  <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-0f5fb8"></a>
+  <a href="https://golang.org"><img alt="Go 1.26+" src="https://img.shields.io/badge/Go-1.26+-0f5fb8"></a>
+  <a href="https://modelcontextprotocol.io"><img alt="MCP 2025-11-25 | 2026-07-28" src="https://img.shields.io/badge/MCP-2025--11--25_%7C_2026--07--28-950fb8"></a>
+  <a href="https://github.com/fuseone-io/fusescope-mcp-server/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/fuseone-io/fusescope-mcp-server?color=950fb8"></a>
+</p>
 
 A Model Context Protocol (MCP) server that gives AI assistants and LLMs access to [FuseScope](https://github.com/fuseone-io/fusescope) observability data. Query metrics, traces, logs, alerts, dashboards, and services in natural language.
 
 This is FuseOne's independent fork of [SigNoz MCP Server](https://github.com/SigNoz/signoz-mcp-server) (Apache-2.0). It does not track upstream; attribution is in [NOTICE](NOTICE). FuseScope keeps SigNoz-compatible APIs, so the `SIGNOZ-API-KEY` and `X-SigNoz-URL` headers keep their SigNoz names; the server's own environment variables use `FUSESCOPE_*`.
-
-**[📖 FuseScope documentation](https://docs.fusescope.fuseone.io/)**
 
 ## Table of Contents
 
