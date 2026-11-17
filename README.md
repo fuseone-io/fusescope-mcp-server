@@ -39,8 +39,8 @@ This is FuseOne's independent fork of [SigNoz MCP Server](https://github.com/Sig
 Download a binary for Linux, macOS or Windows (amd64, arm64) from the [releases](https://github.com/fuseone-io/fusescope-mcp-server/releases), or pull the signed multi-arch image:
 
 ```bash
-docker pull ghcr.io/fuseone-io/fusescope-mcp-server:0.18.1
-cosign verify ghcr.io/fuseone-io/fusescope-mcp-server:0.18.1 \
+docker pull ghcr.io/fuseone-io/fusescope-mcp-server:0.19.0
+cosign verify ghcr.io/fuseone-io/fusescope-mcp-server:0.19.0 \
   --certificate-identity-regexp '^https://github.com/fuseone-io/fusescope-mcp-server/.github/workflows/release.yaml@refs/tags/v' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
@@ -69,7 +69,7 @@ docker run -p 8000:8000 \
   -e MCP_SERVER_PORT=8000 \
   -e FUSESCOPE_URL=https://your-fusescope-instance.com \
   -e FUSESCOPE_API_KEY=your-api-key \
-  ghcr.io/fuseone-io/fusescope-mcp-server:0.18.1
+  ghcr.io/fuseone-io/fusescope-mcp-server:0.19.0
 ```
 
 ## Connect to FuseScope
