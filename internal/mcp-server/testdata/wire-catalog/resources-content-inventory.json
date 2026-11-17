@@ -20,8 +20,8 @@
         "kind": "text",
         "uri": "fusescope://alert/examples",
         "mimeType": "text/markdown",
-        "serializedLength": 33852,
-        "sha256": "dfa02874ed761d8d1c23d538dd6acbb5e023857ba9aa83603ac97befa005cbf3"
+        "serializedLength": 35727,
+        "sha256": "2ec9a3560e974e98bdbabb0557654325ef0949daab6df745dc87f133b3f56ca7"
       }
     ]
   },
@@ -33,8 +33,8 @@
         "kind": "text",
         "uri": "fusescope://alert/instructions",
         "mimeType": "text/markdown",
-        "serializedLength": 19132,
-        "sha256": "e63c230fa63e131a8abfd067c7779a6117d14a36d4d6135ee06be296923a3bb2"
+        "serializedLength": 22374,
+        "sha256": "0971e309a115f0a7b8bc08fc3ea75a94dfd05f8b54bfd3b438285f32c67e3f1e"
       }
     ]
   },

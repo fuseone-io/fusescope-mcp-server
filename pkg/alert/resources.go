@@ -7,18 +7,18 @@ const Instructions = `# FuseScope Alert Rule — Instructions
 An alert rule monitors a signal (metrics, logs, traces, or exceptions) and fires when a condition is met.
 The alert is created via POST /api/v2/rules.
 
-Every rule type (threshold_rule, promql_rule) uses schemaVersion **v2alpha1**: structured thresholds + evaluation + notificationSettings. Always set schemaVersion="v2alpha1" explicitly: FuseScope treats an omitted schemaVersion as the retired v1 schema and then requires the v1 condition fields instead.
+threshold_rule and promql_rule use schemaVersion **v2alpha1**: structured thresholds + evaluation + notificationSettings. Always set schemaVersion="v2alpha1" explicitly for them: FuseScope treats an omitted schemaVersion as the v1 schema and then requires the v1 condition fields instead. anomaly_rule takes schemaVersion **v1** only; see "Anomaly Alerts".
 
 ## Before Creating or Updating an Alert
 1. Read fusescope://alert/examples for complete payloads unless already read for the same prepared operation.
 2. Update is a full replacement. Reuse fusescope_get_alert only from the same still-current prepared operation; refresh if state may have changed, then preserve unchanged fields.
 3. Use fusescope_get_field_keys to discover filter/groupBy attributes, reusing results from that operation.
-4. NOTIFICATION ROUTING: Reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. The list is config-free, defaults to 20 rows, and accepts at most 200 per page; follow its filtered total. The immutable routing identity is displayName, not machine name. For v2 direct routing, every threshold tier needs an exact returned displayName: FuseScope rejects a tier with no channels and a channel name that does not exist. Top-level preferredChannels plays no part in v2 routing (FuseScope stores it unused), so omit it. If no direct channel fits, show the returned choices and ask; if none exists, offer fusescope_create_notification_channel with settings the user provides. Never guess or create automatically. Channel create and update default test to false; set test=true only when the user asks to send a test. Confirmed v2 policy routing sets notificationSettings.usePolicy=true and may omit tier channels.
+4. NOTIFICATION ROUTING: Reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. The list is config-free, defaults to 20 rows, and accepts at most 200 per page; follow its filtered total. The immutable routing identity is displayName, not machine name. For v2 direct routing, every threshold tier needs an exact returned displayName: FuseScope rejects a tier with no channels and a channel name that does not exist. Top-level preferredChannels plays no part in v2 routing (FuseScope stores it unused), so omit it; v1 anomaly rules route through it instead. If no direct channel fits, show the returned choices and ask; if none exists, offer fusescope_create_notification_channel with settings the user provides. Never guess or create automatically. Channel create and update default test to false; set test=true only when the user asks to send a test. Confirmed v2 policy routing sets notificationSettings.usePolicy=true and may omit tier channels.
 
 ## Quick Workflow: From User Intent to Payload
 A repeatable mental model for going from a user request ("alert me when login p99 > 2s") to a valid payload:
 1. **Signal -> alertType.** CPU, memory, latency histograms, request rate -> METRIC_BASED_ALERT. Log lines or log volume -> LOGS_BASED_ALERT. Span latency or span error rate -> TRACES_BASED_ALERT. Exception counts -> EXCEPTIONS_BASED_ALERT. FuseScope validates the value.
-2. **Pick ruleType.** Default to threshold_rule. Use promql_rule only if the user provided a PromQL expression. FuseScope rejects anomaly_rule.
+2. **Pick ruleType.** Default to threshold_rule. Use promql_rule only if the user provided a PromQL expression. Use anomaly_rule only for deviation from a metric's usual pattern (seasonal history) rather than a fixed value; see "Anomaly Alerts" for its v1 shape.
 3. **Pick compositeQuery.queryType + matching envelope type.** See the "Query envelope type" table.
 4. **Pick the aggregation shape.** Metrics -> object {metricName, timeAggregation, spaceAggregation}. Logs/traces -> {expression: "count()" | "p99(duration_nano)" | ...}.
 5. **Write the filter.** See "Filter & Having Expressions" for the operator set. Prefer resource attributes (service.name, deployment.environment, k8s.*); the backend indexes them.
@@ -49,7 +49,7 @@ The envelope type must match compositeQuery.queryType:
 - filter: {expression: "service.name = 'frontend' AND http.status_code >= 500"}
 - groupBy: [{name, fieldContext: "resource" | "attribute", fieldDataType}]
 - order and limit: omit both on alert queries. On a grouped query they cap evaluation to the top-N series (FuseScope builds a top-N CTE from them), so series beyond N are silently never evaluated; a "below" alert ordered descending can miss every breaching series. Set them only when top-N alerting is the explicit intent, using Query Builder v5 wire ordering (metrics: [{key: {name: "__result"}, direction: "desc"}]), never dashboard editor orderBy.
-- functions: post-query transforms
+- functions: post-query transforms. An anomaly_rule query ends with the anomaly function; see "Anomaly Alerts".
 - disabled: true when the query is used only as an input to a formula
 
 ### PromQL / ClickHouse query spec (envelope type=promql or clickhouse_sql)
@@ -266,10 +266,34 @@ Example: deployment.environment = "production" AND threshold.name = "critical"
 | false | absent on any tier | Invalid; preferredChannels is not a v2 fallback |
 | true | omit (any supplied names are still validated) | Match alert labels against the org-level routing policy; send to policy-matched channels |
 
+## Anomaly Alerts (ruleType: anomaly_rule)
+An anomaly rule scores the selected metrics query against the same time in its 4 previous seasons and fires when the score passes condition.target. The score is unitless: how many scaled deviations the value sits from the seasonal median. It uses schemaVersion **v1** only; FuseScope rejects a v2alpha1 anomaly rule.
+
+Required shape:
+- alertType: METRIC_BASED_ALERT; ruleType: anomaly_rule; schemaVersion: "v1".
+- condition.compositeQuery: queryType builder with exactly one anomaly function in the request, on a metrics builder_query with one aggregation and no limit, having, source "meter", or timeShift or fillZero before it. The anomaly function is the query's last function, e.g. [{name: "anomaly", args: [{name: "z_score_threshold", value: 3}]}]. The query-time rules of fusescope://metrics-aggregation-guide "Anomaly Function" apply at evaluation.
+- condition.selectedQueryName: the query holding the anomaly function.
+- condition.target: the z-score, 1 to 7. Leave targetUnit empty; FuseScope ignores it.
+- condition.op: above (score rises past target), below (drops past target; keep target positive), or outside_bounds (either way).
+- condition.matchType: at_least_once, all_the_times, on_average, in_total or last, as for v1 threshold rules.
+- condition.algorithm: "standard" (the default and only value).
+- condition.seasonality: "hourly" (default), "daily" or "weekly". Pick the period the traffic repeats over: daily for business-hours patterns, weekly for weekday-vs-weekend.
+- evalWindow and frequency (top level, Go durations; defaults 5m and 1m), and preferredChannels: the exact displayName values to notify. Omit thresholds, evaluation and notificationSettings: FuseScope builds them from these fields, renotifies every 4h, and does not use routing policies for v1 rules.
+
+condition.target and condition.seasonality override the function's own z_score_threshold and seasonality, so the band and what fires never disagree.
+
+Alerts carry the score in $value and the target in $threshold, both unitless. An alert scored against a flat baseline (no variation across the seasons) carries the annotation anomaly_baseline: flat; that annotation name is reserved, and FuseScope rejects a rule that sets it.
+
+FuseScope answers 400 for a v2alpha1 schemaVersion, an algorithm other than standard, a target outside 1 to 7, the reserved annotation, a request without exactly one anomaly function, or a selectedQueryName that is not the anomaly query.
+
+Choosing target: 3 is a balanced default; 4 or more catches only strong deviations; 2 catches small ones at the cost of noise. A point needs data in at least 2 of the 4 previous seasons to be scored, so weekly seasonality needs weeks of history.
+
+See fusescope://alert/examples, "Metric anomaly alert (v1)", for a complete payload.
+
 ## Set These Explicitly
 The payload is forwarded to FuseScope exactly as composed, and FuseScope fills in very little (version="v5" and notificationSettings.usePolicy=false). Everything else is on the author:
-- schemaVersion: always "v2alpha1"; FuseScope treats an omitted schemaVersion as the retired v1 schema and then requires the v1 condition fields.
-- evaluation and notificationSettings: FuseScope rejects a v2alpha1 rule missing either block.
+- schemaVersion: "v2alpha1" for threshold_rule and promql_rule, "v1" for anomaly_rule; FuseScope treats an omitted schemaVersion as v1 and then requires the v1 condition fields.
+- evaluation and notificationSettings: FuseScope rejects a v2alpha1 rule missing either block. A v1 anomaly rule omits both.
 - panelType: set "graph"; FuseScope stores an empty value when omitted.
 - selectedQueryName: set it on every rule to the query or formula the rule alerts on, even when there is only one query.
 - labels.severity and annotations: FuseScope adds no defaults; include them so routing tiers and notification text work.

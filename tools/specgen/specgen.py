@@ -228,8 +228,8 @@ def dashboard_schemas(spec: Spec) -> dict[str, dict]:
 
 # ---- examples rendering -----------------------------------------------------------
 
-# Spec examples for features the FuseScope community build rejects
-# (anomaly_rule: "unsupported rule type").
+# Spec examples FuseScope rejects (metric_anomaly is a v2alpha1 anomaly_rule;
+# FuseScope takes anomaly_rule on schemaVersion v1 only).
 UNSUPPORTED_EXAMPLES = {("post", "/api/v2/rules"): {"metric_anomaly"}}
 
 

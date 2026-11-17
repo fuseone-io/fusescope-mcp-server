@@ -465,7 +465,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants a new FuseScope alert rule; use fusescope_update_alert to change an existing rule. Supports v2alpha1 threshold and PromQL alerts; FuseScope rejects anomaly_rule. Read fusescope://alert/instructions and fusescope://alert/examples before composing any payload, unless already read in the same prepared operation; for PromQL also read fusescope://promql/instructions. For direct routing, reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If none fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never guess or create automatically. FuseScope rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
+          "description": "Use this when the user wants a new FuseScope alert rule; use fusescope_update_alert to change an existing rule. Supports v2alpha1 threshold and PromQL alerts and v1 metric anomaly alerts. Read fusescope://alert/instructions and fusescope://alert/examples before composing any payload, unless already read in the same prepared operation; for PromQL also read fusescope://promql/instructions. For direct routing, reuse a fully paginated fusescope_list_notification_channels result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If none fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never guess or create automatically. FuseScope rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels routes only v1 anomaly rules.",
           "inputSchema": {
             "properties": {
               "alert": {
@@ -501,6 +501,13 @@
                     "type": [
                       "null",
                       "boolean"
+                    ]
+                  },
+                  "algorithm": {
+                    "description": "anomaly_rule only: the anomaly detection algorithm. The supported value is standard.",
+                    "type": [
+                      "null",
+                      "string"
                     ]
                   },
                   "compositeQuery": {
@@ -567,6 +574,13 @@
                       "integer"
                     ]
                   },
+                  "seasonality": {
+                    "description": "anomaly_rule only: the seasonal period the history is compared against, hourly, daily or weekly.",
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
                   "selectedQueryName": {
                     "description": "The name of the query whose result is evaluated, such as A or F1. Must match a query in compositeQuery.",
                     "type": "string"
@@ -592,8 +606,7 @@
                 },
                 "required": [
                   "compositeQuery",
-                  "selectedQueryName",
-                  "thresholds"
+                  "selectedQueryName"
                 ],
                 "type": "object"
               },
@@ -713,10 +726,11 @@
                 ]
               },
               "ruleType": {
-                "description": "The evaluation strategy: threshold_rule compares against thresholds, promql_rule evaluates a PromQL expression. Defaults to threshold_rule for builder and clickhouse_sql queries and is forced to promql_rule for promql queries.",
+                "description": "The evaluation strategy: threshold_rule compares against thresholds, promql_rule evaluates a PromQL expression, anomaly_rule fires when the anomaly score of a metrics query carrying the anomaly function passes condition.target, a z-score from 1 to 7. Defaults to threshold_rule for builder and clickhouse_sql queries and is forced to promql_rule for promql queries. anomaly_rule takes schemaVersion v1 only: condition.target, op and matchType, evalWindow, frequency and preferredChannels replace thresholds, evaluation and notificationSettings.",
                 "enum": [
                   "threshold_rule",
-                  "promql_rule"
+                  "promql_rule",
+                  "anomaly_rule"
                 ],
                 "type": "string"
               },
@@ -747,8 +761,6 @@
               "alert",
               "alertType",
               "condition",
-              "evaluation",
-              "notificationSettings",
               "ruleType",
               "schemaVersion"
             ],
@@ -7984,7 +7996,7 @@
             "openWorldHint": true,
             "readOnlyHint": false
           },
-          "description": "Use this when the user wants to change an existing FuseScope alert rule; use fusescope_create_alert for a new rule. This is a full replacement: call fusescope_get_alert unless its complete result is available from the same still-current prepared operation, then preserve every unchanged field. Likewise reuse fusescope://alert/instructions, fusescope://alert/examples, and a fully paginated fusescope_list_notification_channels result only from that operation; otherwise read/call them, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If no direct channel fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never create automatically. FuseScope rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels plays no part in routing.",
+          "description": "Use this when the user wants to change an existing FuseScope alert rule; use fusescope_create_alert for a new rule. This is a full replacement: call fusescope_get_alert unless its complete result is available from the same still-current prepared operation, then preserve every unchanged field. Likewise reuse fusescope://alert/instructions, fusescope://alert/examples, and a fully paginated fusescope_list_notification_channels result only from that operation; otherwise read/call them, refreshing only if state may have changed. Use exact returned immutable routing displayName values, not machine name. If no direct channel fits, ask the user or offer fusescope_create_notification_channel with settings the user provides; never create automatically. FuseScope rejects a threshold tier with no channels or an unknown channel name; confirmed v2 policy routing may omit tier channels. Top-level preferredChannels routes only v1 anomaly rules.",
           "inputSchema": {
             "properties": {
               "alert": {
@@ -8020,6 +8032,13 @@
                     "type": [
                       "null",
                       "boolean"
+                    ]
+                  },
+                  "algorithm": {
+                    "description": "anomaly_rule only: the anomaly detection algorithm. The supported value is standard.",
+                    "type": [
+                      "null",
+                      "string"
                     ]
                   },
                   "compositeQuery": {
@@ -8086,6 +8105,13 @@
                       "integer"
                     ]
                   },
+                  "seasonality": {
+                    "description": "anomaly_rule only: the seasonal period the history is compared against, hourly, daily or weekly.",
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
                   "selectedQueryName": {
                     "description": "The name of the query whose result is evaluated, such as A or F1. Must match a query in compositeQuery.",
                     "type": "string"
@@ -8111,8 +8137,7 @@
                 },
                 "required": [
                   "compositeQuery",
-                  "selectedQueryName",
-                  "thresholds"
+                  "selectedQueryName"
                 ],
                 "type": "object"
               },
@@ -8240,10 +8265,11 @@
                 "type": "string"
               },
               "ruleType": {
-                "description": "The evaluation strategy: threshold_rule compares against thresholds, promql_rule evaluates a PromQL expression. Defaults to threshold_rule for builder and clickhouse_sql queries and is forced to promql_rule for promql queries.",
+                "description": "The evaluation strategy: threshold_rule compares against thresholds, promql_rule evaluates a PromQL expression, anomaly_rule fires when the anomaly score of a metrics query carrying the anomaly function passes condition.target, a z-score from 1 to 7. Defaults to threshold_rule for builder and clickhouse_sql queries and is forced to promql_rule for promql queries. anomaly_rule takes schemaVersion v1 only: condition.target, op and matchType, evalWindow, frequency and preferredChannels replace thresholds, evaluation and notificationSettings.",
                 "enum": [
                   "threshold_rule",
-                  "promql_rule"
+                  "promql_rule",
+                  "anomaly_rule"
                 ],
                 "type": "string"
               },
@@ -8274,8 +8300,6 @@
               "alert",
               "alertType",
               "condition",
-              "evaluation",
-              "notificationSettings",
               "ruleType",
               "schemaVersion"
             ],

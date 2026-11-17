@@ -268,7 +268,7 @@ HTTP mode exposes unauthenticated probe endpoints. New Kubernetes deployments sh
 | `fusescope_list_alert_rules` | List configured alert-rule summaries, including inactive/OK and disabled rules |
 | `fusescope_get_alert` | Get one alert rule's full definition by `id` |
 | `fusescope_get_alert_history` | Get one rule's firing or state-transition history |
-| `fusescope_create_alert` | Create a v2alpha1 threshold or PromQL alert with direct or policy routing |
+| `fusescope_create_alert` | Create a v2alpha1 threshold or PromQL alert with direct or policy routing, or a v1 metric anomaly alert |
 | `fusescope_update_alert` | Fully replace an existing alert rule by `id` |
 | `fusescope_delete_alert` | Permanently delete a confirmed alert rule by UUIDv7 `id` |
 | `fusescope_list_dashboards` | List tenant-dashboard summaries and discover UUIDs |
@@ -315,8 +315,8 @@ Docs tools use the same authentication path as other MCP tools.
 
 | Resource | Read when you need |
 |---|---|
-| `fusescope://alert/instructions` | Alert schemas, fields, thresholds, evaluation, and notification workflow |
-| `fusescope://alert/examples` | Alert payloads from the SigNoz OpenAPI spec (threshold, formula, PromQL, tiered routing, notification settings) plus a Cost Meter budget example |
+| `fusescope://alert/instructions` | Alert schemas, fields, thresholds, evaluation, v1 anomaly rules, and notification workflow |
+| `fusescope://alert/examples` | Alert payloads from the SigNoz OpenAPI spec (threshold, formula, PromQL, tiered routing, notification settings) plus Cost Meter budget and v1 metric anomaly examples |
 | `fusescope://dashboard/instructions` | Dashboard fields, variables, chaining, and layout |
 | `fusescope://dashboard/widgets-instructions` | Panel choices and query-specific guides |
 | `fusescope://dashboard/widgets-examples` | Panel examples and validation patterns |
@@ -823,13 +823,13 @@ Run sample spans through the mapping groups in a sandbox and return each span as
 Create a new alert rule in FuseScope via `POST /api/v2/rules`.
 
 - **Parameters**: JSON payload matching the FuseScope alert rule schema.
-- **Schema**: every `ruleType` (`threshold_rule`, `promql_rule`) uses **v2alpha1**: structured `condition.thresholds`, `evaluation`, `notificationSettings`, and `schemaVersion: "v2alpha1"` set explicitly, since FuseScope reads an omitted value as the retired v1 schema. FuseScope rejects `anomaly_rule`.
-- **Notification routing**: For direct routing, reuse a fully paginated `fusescope_list_notification_channels` result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. V2 needs an exact returned displayName on every tier: FuseScope rejects a tier with no channels or a channel name that does not exist, and top-level `preferredChannels` plays no part in routing. If none fits, ask the user or offer `fusescope_create_notification_channel` with user-provided config; never create automatically. Confirmed v2 policy routing may omit tier channels.
+- **Schema**: `threshold_rule` and `promql_rule` use **v2alpha1**: structured `condition.thresholds`, `evaluation`, `notificationSettings`, and `schemaVersion: "v2alpha1"` set explicitly, since FuseScope reads an omitted value as v1. `anomaly_rule` takes **v1** only: a metrics builder query whose last function is `anomaly`, named by `condition.selectedQueryName`; `condition.target` is the z-score (1 to 7); `op` is `above`, `below`, or `outside_bounds`; `seasonality` is `hourly` (default), `daily`, or `weekly`; `algorithm` is `standard`; `evalWindow`, `frequency`, and `preferredChannels` replace `evaluation`, `notificationSettings`, and tier channels. The condition's `target` and `seasonality` override the function's args. `$value` and `$threshold` are unitless z-scores, and the `anomaly_baseline` annotation is reserved (FuseScope sets `anomaly_baseline: flat` on alerts scored against a flat baseline).
+- **Notification routing**: For direct routing, reuse a fully paginated `fusescope_list_notification_channels` result only from the same still-current prepared operation; otherwise call it, refreshing only if state may have changed. V2 needs an exact returned displayName on every tier: FuseScope rejects a tier with no channels or a channel name that does not exist, and top-level `preferredChannels` routes only v1 anomaly rules. If none fits, ask the user or offer `fusescope_create_notification_channel` with user-provided config; never create automatically. Confirmed v2 policy routing may omit tier channels.
 - **Tip**: Reuse alert resources only when already read for the same prepared operation; otherwise read `fusescope://alert/instructions` and `fusescope://alert/examples`. For PromQL, read `fusescope://promql/instructions` when needed.
 
 #### `fusescope_update_alert`
 
-Update an existing alert rule via `PUT /api/v2/rules/{id}`. This fully replaces the rule: reuse `fusescope_get_alert`, `fusescope://alert/instructions`, `fusescope://alert/examples`, and fully paginated `fusescope_list_notification_channels` results only from the same still-current prepared operation; otherwise read/call them, refreshing only if state may have changed, then preserve unchanged fields. Direct v2 needs an exact listed displayName on every tier; confirmed v2 policy routing may omit them.
+Update an existing alert rule via `PUT /api/v2/rules/{id}`. This fully replaces the rule: reuse `fusescope_get_alert`, `fusescope://alert/instructions`, `fusescope://alert/examples`, and fully paginated `fusescope_list_notification_channels` results only from the same still-current prepared operation; otherwise read/call them, refreshing only if state may have changed, then preserve unchanged fields. Direct v2 needs an exact listed displayName on every tier; confirmed v2 policy routing may omit them. V1 anomaly rules route through top-level `preferredChannels` and keep `schemaVersion: "v1"`.
 
 - **Parameters**:
   - `id` (required) - UUIDv7 of the rule to update (obtain from `fusescope_list_alert_rules` / `fusescope_get_alert`).
