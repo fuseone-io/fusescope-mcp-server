@@ -5,6 +5,15 @@ All notable changes to the FuseScope MCP Server will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.19.0] - 2026-11-17
+
+### Added
+- The `anomaly` query function: `fusescope_query_metrics` and the builder-query tools describe its arguments (`z_score_threshold`, `seasonality`), the predicted, band and score series, and its errors.
+- `anomaly_rule` alert rules (rule schema v1) in the alert create and update tools, with instructions and an example.
+
+### Fixed
+- Anomaly queries no longer get a default limit, which FuseScope refuses.
+
 ## [0.18.1] - 2026-10-31
 
 ### Changed
