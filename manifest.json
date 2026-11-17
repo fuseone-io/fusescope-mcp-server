@@ -75,7 +75,7 @@
     },
     {
       "name": "fusescope_create_alert",
-      "description": "Create a v2alpha1 threshold or PromQL alert; direct routing resolves exact displayName values with fusescope_list_notification_channels, while confirmed v2 policy routing may omit channels"
+      "description": "Create a v2alpha1 threshold or PromQL alert, or a v1 metric anomaly alert; direct routing resolves exact displayName values with fusescope_list_notification_channels, while confirmed v2 policy routing may omit channels"
     },
     {
       "name": "fusescope_update_alert",
@@ -220,7 +220,7 @@
     {
       "uri": "fusescope://alert/instructions",
       "name": "Alert Rule Instructions",
-      "description": "Read this before creating or updating an alert unless its current content was already read for the same prepared operation. It explains the query envelopes, threshold tiers, and evaluation specs the input schema does not describe, and when to reuse or call fusescope_list_notification_channels. Read fusescope://alert/examples only when examples are still needed.",
+      "description": "Read this before creating or updating an alert unless its current content was already read for the same prepared operation. It explains the query envelopes, threshold tiers, and evaluation specs the input schema does not describe, v1 anomaly rules, and when to reuse or call fusescope_list_notification_channels. Read fusescope://alert/examples only when examples are still needed.",
       "mimeType": "text/markdown"
     },
     {
