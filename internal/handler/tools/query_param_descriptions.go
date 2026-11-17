@@ -26,6 +26,12 @@ const (
 		"FuseScope applies them to time_series results only and returns scalar results unchanged, so set requestType to time_series. " +
 		"Names are the Query Builder function names, for example cutOffMin, cutOffMax, clampMin, clampMax, absolute, runningDiff, cumulativeSum, ewma3, median5, timeShift, or fillZero; " +
 		"args carries the function's parameters, for example [{\"value\": 10}] for cutOffMin. FuseScope validates names and args."
+	metricsFunctionsParamDescription = "Post-query transforms applied in order to each time_series result, as an array of {name, args} objects, or a JSON-encoded string of that array; scalar results come back unchanged. " +
+		"Names are Query Builder function names, e.g. cutOffMin (args [{\"value\": 10}]), clampMax, absolute, runningDiff, cumulativeSum, ewma3, median5, timeShift, fillZero, or anomaly. " +
+		"anomaly goes last, with args [{\"name\": \"z_score_threshold\", \"value\": 3}, {\"name\": \"seasonality\", \"value\": \"daily\"}] (1 to 7; hourly by default, daily or weekly); " +
+		"it scores each series against its 4 previous seasons, adds predictedSeries, upperBoundSeries, lowerBoundSeries and anomalyScores, and sends no limit. " +
+		"FuseScope rejects it with having, timeShift or fillZero before it, source meter, a stepInterval below the window minimum or not dividing the season, or a window over 7d; " +
+		"413 means too many series or points, 429 too many concurrent anomaly queries. FuseScope validates names and args."
 )
 
 // fusescope_aggregate_logs and fusescope_search_logs.

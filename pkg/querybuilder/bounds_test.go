@@ -128,6 +128,24 @@ func TestApplyBounds_LeavesFormulaInputsUnboundedAndBoundsFormulaResults(t *test
 	require.Len(t, applied, 2)
 }
 
+// FuseScope refuses a limit on the query carrying the anomaly function, since
+// each evaluated window would keep its own top series.
+func TestApplyBounds_LeavesAnomalyQueriesUnbounded(t *testing.T) {
+	request := decode(t, `{"requestType":"time_series","compositeQuery":{"queries":[
+		{"type":"builder_query","spec":{"name":"A","signal":"metrics","aggregations":[{"metricName":"requests","spaceAggregation":"sum"}],
+			"functions":[{"name":"ewma3"},{"name":"anomaly","args":[{"name":"z_score_threshold","value":3}]}]}},
+		{"type":"builder_query","spec":{"name":"B","signal":"metrics","aggregations":[{"metricName":"errors","spaceAggregation":"sum"}],
+			"functions":[{"name":"ewma3"}]}}
+	]}}`)
+	applied := ApplyBounds(request)
+
+	require.NotContains(t, querySpec(t, request, 0), "limit", "FuseScope rejects a limit on the anomaly query")
+	require.NotContains(t, querySpec(t, request, 0), "order")
+	require.Equal(t, DefaultAggregateQueryLimit, querySpec(t, request, 1)["limit"], "other queries keep their default bounds")
+	require.Len(t, applied, 1)
+	require.Equal(t, `query "B"`, applied[0].QueryName)
+}
+
 // Every field other than an inserted limit or order reaches SigNoz exactly as
 // the caller sent it, so SigNoz, not this server, judges the request.
 func TestApplyBounds_ForwardsEveryOtherFieldVerbatim(t *testing.T) {

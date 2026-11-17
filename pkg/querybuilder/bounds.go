@@ -40,6 +40,7 @@ func (b AppliedBounds) OrderText() string {
 type queryView struct {
 	builder     bool
 	ai          bool // builder_ai_query: SigNoz picks the order
+	anomaly     bool // carries the anomaly function, which FuseScope evaluates without a limit
 	formula     bool
 	name        string
 	signal      string
@@ -53,7 +54,8 @@ type queryView struct {
 // Builder v5 request decoded from JSON. It edits only spec.limit and spec.order
 // in place, and only where the caller left them unset; builder queries a
 // formula references keep no limit or order unless the caller set them, so the
-// formula sees every input series. Every other field is
+// formula sees every input series, and neither does a query carrying the
+// anomaly function, which FuseScope refuses to limit. Every other field is
 // forwarded verbatim for SigNoz, the only validator, to judge. A query whose
 // shape cannot be read is left untouched. Numeric strings in spec.limit and
 // spec.offset become JSON integers, because MCP clients are inconsistent about
@@ -93,7 +95,7 @@ func ApplyBounds(request map[string]any) []AppliedBounds {
 		if !view.builder && !view.formula {
 			continue
 		}
-		if view.builder && inputs[strings.ToLower(strings.TrimSpace(view.name))] {
+		if view.builder && (view.anomaly || inputs[strings.ToLower(strings.TrimSpace(view.name))]) {
 			continue
 		}
 		bounds := AppliedBounds{QueryIndex: i, QueryName: displayName(view.name, i)}
@@ -158,7 +160,11 @@ func readQuery(envelope map[string]any) queryView {
 			}
 			return view
 		case metricQuery:
-			return builderView(q.Name, "metrics", q.Limit, q.Order)
+			view := builderView(q.Name, "metrics", q.Limit, q.Order)
+			if q.Functions != nil {
+				view.anomaly = HasAnomaly(*q.Functions)
+			}
+			return view
 		}
 	case apitypes.Querybuildertypesv5QueryEnvelopeBuilderAI:
 		if typed.Spec == nil {
