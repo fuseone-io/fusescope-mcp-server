@@ -28,11 +28,11 @@ const (
 // functionsProperty advertises the functions parameter: an array of the
 // generated Function type, or a JSON-encoded string of that array for clients
 // that stringify nested values.
-func functionsProperty() mcp.ToolOption {
+func functionsProperty(description string) mcp.ToolOption {
 	return mcp.WithArray("functions",
 		stringOrArrayType(),
 		mcp.Items(mcp.SchemaFor[querybuilder.Function]()),
-		mcp.Description(functionsParamDescription))
+		mcp.Description(description))
 }
 
 // decodeJSONArg decodes a nested argument that arrives as JSON (an array or an

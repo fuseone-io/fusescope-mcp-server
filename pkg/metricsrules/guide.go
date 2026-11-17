@@ -119,6 +119,60 @@ different ` + "`orderBy`" + ` shape.
 For time_series queries with groupBy, limit selects top groups using the ordering across the entire time
 range, not each time bucket. A short-lived spike can therefore fall outside the selected groups.
 
+A ` + "`builder_query`" + ` carrying the anomaly function is the exception: FuseScope rejects a limit or having on it,
+so omit both; the server inserts none there.
+
+## Anomaly Function
+
+` + "`anomaly`" + ` scores each series of a metrics ` + "`builder_query`" + ` against the same time in its 4 previous
+seasons: the prediction is the median of those seasons, and the score is how many scaled deviations the value
+sits from it. Add it as the last entry of ` + "`spec.functions`" + `:
+
+- ` + "`z_score_threshold`" + `: 1 to 7, the half-width of the expected band; named, or the first positional arg.
+- ` + "`seasonality`" + `: ` + "`hourly`" + ` (default), ` + "`daily`" + ` or ` + "`weekly`" + `; named, or the second positional arg.
+
+The query's bucket in the response then carries ` + "`predictedSeries`" + `, ` + "`upperBoundSeries`" + `,
+` + "`lowerBoundSeries`" + ` and ` + "`anomalyScores`" + ` next to ` + "`series`" + `, each with the same order and labels.
+A point is scored only when at least 2 of the 4 previous seasons have data for its series (weekly needs
+weeks of history); other points carry no score.
+
+FuseScope answers 400 for: more than one anomaly function in the request; a request that is not
+` + "`time_series`" + `; a target that is not an enabled metrics builder query or uses ` + "`source: \"meter\"`" + `;
+more than one aggregation; a limit or having on the target; anomaly not last, or ` + "`timeShift`" + ` or
+` + "`fillZero`" + ` before it; an unknown, repeated or conflicting arg, a threshold outside 1 to 7, or an unknown
+seasonality; a stepInterval below the window's minimum or not dividing the season; ` + "`formatOptions.fillGaps`" + `;
+a window over 7 days. 413 means the evaluation passed FuseScope's series or point limits: narrow the filter,
+group by fewer labels, or shorten the window. 429 means too many anomaly evaluations are running: retry
+after a short wait.
+
+` + "```json" + `
+{
+  "start": 1711123200000,
+  "end": 1711209600000,
+  "requestType": "time_series",
+  "compositeQuery": {
+    "queries": [{
+      "type": "builder_query",
+      "spec": {
+        "signal": "metrics",
+        "name": "A",
+        "stepInterval": 300,
+        "aggregations": [{
+          "metricName": "http_server_requests",
+          "timeAggregation": "rate",
+          "spaceAggregation": "sum"
+        }],
+        "groupBy": [{"name": "service.name", "fieldContext": "attribute"}],
+        "functions": [{
+          "name": "anomaly",
+          "args": [{"name": "z_score_threshold", "value": 3}, {"name": "seasonality", "value": "daily"}]
+        }]
+      }
+    }]
+  }
+}
+` + "```" + `
+
 ---
 
 ## Payload Examples

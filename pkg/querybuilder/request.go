@@ -3,6 +3,7 @@ package querybuilder
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/fuseone-io/fusescope-mcp-server/internal/apiclient/apitypes"
 )
@@ -267,6 +268,17 @@ func traceEnvelope(queryType string, query traceQuery) (apitypes.Querybuildertyp
 // Function is the upstream-generated post-query transform, forwarded verbatim
 // for SigNoz to validate.
 type Function = apitypes.Querybuildertypesv5Function
+
+// HasAnomaly reports whether functions include the anomaly function, matched
+// in any case as FuseScope matches it.
+func HasAnomaly(functions []Function) bool {
+	for _, function := range functions {
+		if function.Name != nil && strings.EqualFold(strings.TrimSpace(string(*function.Name)), string(apitypes.Querybuildertypesv5FunctionNameAnomaly)) {
+			return true
+		}
+	}
+	return false
+}
 
 // AggregateSpec describes the grouped request fusescope_aggregate_logs and
 // fusescope_aggregate_traces send. Signal is "logs" or "traces"; Aggregations are

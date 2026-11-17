@@ -152,9 +152,14 @@ func (h *Handler) handleQueryMetrics(ctx context.Context, req mcp.CallToolReques
 		Having: mqr.Having,
 	}
 	// limit and order shape the result the caller reads: the formula when
-	// there is one, otherwise the primary query.
+	// there is one, otherwise the primary query. FuseScope refuses a limit on
+	// the anomaly query, and clients often send the advertised default.
+	unboundedAnomaly := mqr.Formula == "" && querybuilder.HasAnomaly(mqr.Functions)
 	if mqr.Formula == "" {
-		primary.Limit, primary.OrderKey, primary.OrderDir = mqr.Limit, mqr.OrderKey, mqr.OrderDir
+		primary.OrderKey, primary.OrderDir = mqr.OrderKey, mqr.OrderDir
+		if !unboundedAnomaly {
+			primary.Limit = mqr.Limit
+		}
 	}
 	querySpecs = append(querySpecs, primary)
 
@@ -201,13 +206,16 @@ func (h *Handler) handleQueryMetrics(ctx context.Context, req mcp.CallToolReques
 	if mqr.OrderKey != "" {
 		resultOrder = mqr.OrderKey + " " + mqr.OrderDir
 	}
-	if mqr.Formula != "" {
+	switch {
+	case mqr.Formula != "":
 		decisions = append(decisions, "formula input bounds: none; every input series reaches the formula")
 		decisions = append(decisions, fmt.Sprintf("formula result bounds: limit=%d groups, order=%s", resultLimit, resultOrder))
-	} else {
+	case unboundedAnomaly:
+		decisions = append(decisions, "result bounds: none; FuseScope refuses a limit on the anomaly query and scores every series, up to its series and point limits")
+	default:
 		decisions = append(decisions, fmt.Sprintf("result bounds: limit=%d groups, order=%s", resultLimit, resultOrder))
 	}
-	if mqr.LimitClamped {
+	if mqr.LimitClamped && !unboundedAnomaly {
 		decisions = append(decisions, fmt.Sprintf("limit clamped to %d groups to bound server memory", MaxRawResultLimit))
 	}
 	if len(mqr.Functions) > 0 && mqr.RequestType == "scalar" {
@@ -218,7 +226,7 @@ func (h *Handler) handleQueryMetrics(ctx context.Context, req mcp.CallToolReques
 	} else if mqr.Having != "" {
 		decisions = append(decisions, fmt.Sprintf("having: %s", mqr.Having))
 	}
-	if mqr.RequestType == "time_series" {
+	if mqr.RequestType == "time_series" && !unboundedAnomaly {
 		decisions = append(decisions, "time-series selection: top groups are ranked across the entire time range; a short-lived spike can fall outside the selected groups")
 	}
 

@@ -135,10 +135,10 @@
           "uri": "fusescope://logs/query-builder-guide"
         },
         {
-          "description": "Read this before choosing aggregations for fusescope_query_metrics or building metrics Query Builder JSON. It explains timeAggregation, spaceAggregation, and reduceTo by metric type; formulas and limits; groupBy and filter label names; top-N selection across the full window; step intervals; examples; and Cost Meter queries.",
+          "description": "Read this before choosing aggregations for fusescope_query_metrics or building metrics Query Builder JSON. It explains timeAggregation, spaceAggregation, and reduceTo by metric type; formulas and limits; groupBy and filter label names; top-N selection across the full window; the anomaly function; step intervals; examples; and Cost Meter queries.",
           "mimeType": "text/markdown",
           "name": "Metrics Aggregation Guide",
-          "size": 12115,
+          "size": 14519,
           "uri": "fusescope://metrics-aggregation-guide"
         },
         {

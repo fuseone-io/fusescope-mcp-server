@@ -160,4 +160,23 @@ func TestQueryTools_SendResultShapingUpstream(t *testing.T) {
 		require.Equal(t, []string{"service.name", "host.name"}, groupByNames(specs["B"]))
 		require.Contains(t, text, "limit clamped to")
 	})
+
+	// Clients often send the advertised limit default; FuseScope refuses any
+	// limit on the anomaly query.
+	t.Run("query_metrics sends no limit with the anomaly function and says so", func(t *testing.T) {
+		text, specs := upstreamSpecs(t, "fusescope_query_metrics", map[string]any{
+			"metricName": "http_requests_total",
+			"metricType": "gauge",
+			"limit":      "100",
+			"groupBy":    "service.name",
+			"functions":  `[{"name": "anomaly", "args": [{"name": "z_score_threshold", "value": 3}, {"name": "seasonality", "value": "daily"}]}]`,
+			"timeRange":  "1h",
+		})
+		spec := specs["A"]
+		require.NotContains(t, spec, "limit")
+		require.NotContains(t, spec, "order")
+		requireSpecJSON(t, `[{"name":"anomaly","args":[{"name":"z_score_threshold","value":3},{"name":"seasonality","value":"daily"}]}]`, spec["functions"])
+		require.Contains(t, text, "result bounds: none; FuseScope refuses a limit on the anomaly query and scores every series")
+		require.NotContains(t, text, "limit=100")
+	})
 }
